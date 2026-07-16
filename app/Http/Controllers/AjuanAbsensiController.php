@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AbsenSiswa;
 use App\Models\AjuanAbsensi;
+use App\Models\Kelas;
 use App\Models\Siswa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,36 +13,37 @@ use Illuminate\Support\Facades\Auth;
 class AjuanAbsensiController extends Controller
 {
     /**
-     * Pengganti ajuanabsenpilih.php/laporentry.php - form Admin Absensi
-     * cari siswa lalu ajukan absensi (BELUM masuk ke absen_siswa).
+     * Pengganti laporlistkelas.php - grid kartu kelas (diambil dari tabel `kelas`
+     * asli, bukan hasil generate dari data siswa), dikelompokkan warna per
+     * tingkat (7/8/9).
      */
-    public function ajukan(Request $request)
+    public function pilihKelas()
     {
-        $siswa = null;
-        $cari = trim((string) $request->input('cari'));
-        $hariIni = Carbon::today();
+        $daftarKelas = Kelas::orderBy('nama_kelas')->get();
 
-        if ($cari !== '') {
-            $siswa = Siswa::query()
-                ->where(function ($query) use ($cari) {
-                    $query->where('nama_lengkap', 'like', '%'.$cari.'%')
-                        ->orWhere('id_member', 'like', '%'.$cari.'%');
-                })
-                ->orderByDesc('id_member')
-                ->limit(20)
-                ->get();
+        return view('ajuan-absensi.pilih-kelas', compact('daftarKelas'));
+    }
 
-            $ajuanHariIni = AjuanAbsensi::whereIn('id_siswa', $siswa->pluck('id_member'))
-                ->whereDate('tgl_absen', $hariIni)
-                ->get()
-                ->keyBy('id_siswa');
+    /**
+     * Pengganti laporabsen.php - daftar siswa di 1 kelas untuk diajukan
+     * absensinya oleh Admin Absensi (BELUM masuk ke absen_siswa).
+     */
+    public function ajukan(Request $request, string $kelas)
+    {
+        $siswa = Siswa::where('kelas', $kelas)
+            ->orderBy('nama_lengkap')
+            ->get();
 
-            $siswa->each(function ($s) use ($ajuanHariIni) {
-                $s->ajuanHariIni = $ajuanHariIni->get($s->id_member);
-            });
-        }
+        $ajuanHariIni = AjuanAbsensi::whereIn('id_siswa', $siswa->pluck('id_member'))
+            ->whereDate('tgl_absen', Carbon::today())
+            ->get()
+            ->keyBy('id_siswa');
 
-        return view('ajuan-absensi.ajukan', ['siswa' => $siswa, 'cari' => $cari]);
+        $siswa->each(function ($s) use ($ajuanHariIni) {
+            $s->ajuanHariIni = $ajuanHariIni->get($s->id_member);
+        });
+
+        return view('ajuan-absensi.ajukan', ['siswa' => $siswa, 'kelas' => $kelas]);
     }
 
     /**

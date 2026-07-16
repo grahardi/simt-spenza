@@ -121,6 +121,28 @@
         .badge-i { background: #eaf3de; color: #3b6d11; }
         .badge-a { background: #fcebeb; color: #a32d2d; }
         .badge-d { background: #e6f1fb; color: #185fa5; }
+
+        /* Grid kartu kelas untuk Ajukan Absensi - pengganti laporlistkelas.php */
+        .kelas-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+        }
+        .kelas-btn {
+            display: flex; align-items: center; justify-content: center;
+            aspect-ratio: 1; border-radius: 14px;
+            font-weight: 700; font-size: 15px; text-decoration: none;
+            color: #fff; transition: transform .1s ease;
+        }
+        .kelas-btn:hover { transform: translateY(-2px); color: #fff; }
+        .kelas-7 { background: #1abc9c; }
+        .kelas-8 { background: #c9971f; }
+        .kelas-9 { background: #c0392b; }
+        .kelas-lain { background: #6c757d; }
+        @media (max-width: 576px) {
+            .kelas-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .kelas-btn { font-size: 13px; border-radius: 10px; }
+        }
     </style>
 </head>
 <body>
