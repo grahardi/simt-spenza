@@ -47,36 +47,24 @@
                 <thead>
                     <tr>
                         <th>No</th>
+                        <th>No. Induk</th>
                         <th>NISN</th>
                         <th>Nama</th>
                         <th>Kelas</th>
                         <th>L/P</th>
                         <th>WhatsApp</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($siswa as $i => $s)
                         <tr>
                             <td>{{ $siswa->firstItem() + $i }}</td>
+                            <td>{{ $s->id_member }}</td>
                             <td>{{ $s->nisn }}</td>
                             <td>{{ $s->nama_lengkap }}</td>
                             <td>{{ $s->kelas }}</td>
                             <td>{{ $s->jenis_kelamin }}</td>
                             <td>{{ $s->whatsapp }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('siswa.edit', $s) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('siswa.destroy', $s) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Yakin hapus data siswa ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>
