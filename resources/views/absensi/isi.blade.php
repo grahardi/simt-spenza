@@ -28,15 +28,6 @@
     </form>
 </div>
 
-@php
-    $tombol = [
-        's' => ['label' => 'Sakit', 'icon' => 'fa-thermometer', 'kelas' => 'sakit'],
-        'i' => ['label' => 'Ijin', 'icon' => 'fa-envelope', 'kelas' => 'ijin'],
-        'a' => ['label' => 'Alfa', 'icon' => 'fa-times', 'kelas' => 'alfa'],
-        'd' => ['label' => 'Dispensasi', 'icon' => 'fa-bus', 'kelas' => 'dispensasi'],
-    ];
-@endphp
-
 @if ($siswa !== null)
     <div class="p-4 bg-white rounded shadow">
         @if ($siswa->isEmpty())
@@ -57,32 +48,32 @@
                             <div class="mt-1">
                                 <span class="badge-status badge-{{ $absenIni->keterangan }}">
                                     <i class="fas fa-check-circle me-1"></i>
-                                    Sudah terabsen {{ strtolower($absenIni->labelKeterangan()) }} hari ini
+                                    Sudah terabsen {{ strtolower($absenIni->labelKeterangan()) }} hari ini - klik tombol lagi untuk ubah
                                 </span>
                             </div>
                         @endif
                     </div>
 
+                    {{-- Semua tombol SELALU bisa diklik (termasuk yang statusnya sedang aktif),
+                         supaya piket bisa mengubah status kapan saja. Yang aktif cuma ditandai
+                         dengan ikon centang, tidak dimatikan. --}}
                     <div class="siswa-aksi">
-                        @foreach ($tombol as $kode => $t)
-                            @if ($absenIni && $absenIni->keterangan === $kode)
-                                <span class="btn-absen btn-absen-{{ $t['kelas'] }} btn-absen-aktif">
-                                    <i class="fas {{ $t['icon'] }} me-1"></i> {{ $t['label'] }}
-                                </span>
-                            @elseif (in_array($kode, ['s', 'i']))
-                                <button type="button" class="btn-absen btn-absen-{{ $t['kelas'] }}" data-bs-toggle="modal" data-bs-target="#modal{{ ucfirst($kode) }}{{ $s->id_member }}">
-                                    <i class="fas {{ $t['icon'] }} me-1"></i> {{ $t['label'] }}
-                                </button>
-                            @else
-                                <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="keterangan" value="{{ $kode }}">
-                                    <button type="submit" class="btn-absen btn-absen-{{ $t['kelas'] }}">
-                                        <i class="fas {{ $t['icon'] }} me-1"></i> {{ $t['label'] }}
-                                    </button>
-                                </form>
-                            @endif
-                        @endforeach
+                        <button type="button" class="btn-absen btn-absen-sakit {{ $absenIni?->keterangan === 's' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
+                            @if ($absenIni?->keterangan === 's') <i class="fas fa-check me-1"></i> @else <i class="fas fa-thermometer me-1"></i> @endif Sakit
+                        </button>
+                        <button type="button" class="btn-absen btn-absen-ijin {{ $absenIni?->keterangan === 'i' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalIjin{{ $s->id_member }}">
+                            @if ($absenIni?->keterangan === 'i') <i class="fas fa-check me-1"></i> @else <i class="fas fa-envelope me-1"></i> @endif Ijin
+                        </button>
+                        <button type="button" class="btn-absen btn-absen-dispensasi {{ $absenIni?->keterangan === 'd' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalDispensasi{{ $s->id_member }}">
+                            @if ($absenIni?->keterangan === 'd') <i class="fas fa-check me-1"></i> @else <i class="fas fa-bus me-1"></i> @endif Dispensasi
+                        </button>
+                        <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="keterangan" value="a">
+                            <button type="submit" class="btn-absen btn-absen-alfa {{ $absenIni?->keterangan === 'a' ? 'btn-absen-aktif' : '' }}">
+                                @if ($absenIni?->keterangan === 'a') <i class="fas fa-check me-1"></i> @else <i class="fas fa-times me-1"></i> @endif Alfa
+                            </button>
+                        </form>
                         <form method="POST" action="{{ route('absensi.telat', $s) }}" class="d-inline">
                             @csrf
                             <button type="submit" class="btn-absen btn-absen-telat">
@@ -143,6 +134,34 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
                                 <button type="submit" class="btn btn-success">Absen</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modalDispensasi{{ $s->id_member }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form method="POST" action="{{ route('absensi.tandai', $s) }}" enctype="multipart/form-data" class="modal-content">
+                            @csrf
+                            <input type="hidden" name="keterangan" value="d">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Absen Dispensasi - {{ $s->nama_lengkap }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Foto Bukti (opsional)</label>
+                                    <input type="file" name="foto" accept="image/*" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Keterangan (opsional)</label>
+                                    <input type="text" name="catatan" class="form-control" placeholder="contoh: lomba, kegiatan dinas sekolah">
+                                </div>
+                                <p class="text-muted small mb-0">Foto & keterangan boleh dikosongkan - klik Absen untuk simpan langsung.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-info text-white">Absen</button>
                             </div>
                         </form>
                     </div>

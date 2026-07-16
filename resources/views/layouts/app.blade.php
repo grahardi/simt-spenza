@@ -108,8 +108,10 @@
         .btn-absen-alfa { background: #fcebeb; color: #a32d2d; }
         .btn-absen-dispensasi { background: #e6f1fb; color: #185fa5; }
         .btn-absen-telat { background: #eeedfe; color: #534ab7; }
-        .btn-absen-aktif { opacity: .55; cursor: default; }
-        .btn-absen-aktif:hover { transform: none; box-shadow: none; }
+        .btn-absen-aktif {
+            box-shadow: inset 0 0 0 2px currentColor;
+            opacity: 1;
+        }
         .badge-status {
             display: inline-flex; align-items: center;
             border-radius: 999px; padding: 4px 12px;
