@@ -124,7 +124,22 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 8. Keagamaan — dari `agamalistall.php` dkk
 9. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas Guru Absen (piket), Jadwal
 
-### Catatan soal password lama
+## Catatan tambahan: pagination pakai Bootstrap, bukan default
+Ikon panah pagination Laravel default didesain untuk Tailwind (SVG tanpa
+constraint ukuran) - kalau project pakai Bootstrap, ikonnya tampil raksasa/
+tidak ke-style. Tambahkan baris ini di `app/Providers/AppServiceProvider.php`,
+di dalam method `boot()`:
+```php
+use Illuminate\Pagination\Paginator;
+
+public function boot(): void
+{
+    Paginator::useBootstrapFive();
+}
+```
+Ini cukup ditambahkan sekali, berlaku untuk semua `->links()` di seluruh
+aplikasi (Absensi, Siswa, Guru, dst).
+
 Password akun-akun lama di tabel `member` masih **plain text** (belum di-hash).
 `LegacyPasswordEloquentUserProvider` menangani ini secara otomatis: begitu
 seorang user login sukses, password langsung di-hash ulang (bcrypt) dan

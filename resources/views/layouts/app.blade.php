@@ -22,7 +22,18 @@
             .bottom-nav { display: none; }
         }
 
-        /* Grid kartu menu ikon - pengganti pola panel_*.php lama, mobile-friendly */
+        /* Menu atas: tombol ikon + teks (Home, Profil, Notifikasi, Logout) */
+        .top-nav { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+        .top-nav a, .top-nav button {
+            display: flex; align-items: center; gap: 6px;
+            color: #fff; text-decoration: none; background: none; border: none;
+            padding: 6px 10px; border-radius: 8px; font-size: 13px;
+        }
+        .top-nav a:hover, .top-nav button:hover, .top-nav a.active { background: rgba(255,255,255,.15); color: #fff; }
+        .top-nav span.label { display: none; }
+        @media (min-width: 576px) {
+            .top-nav span.label { display: inline; }
+        }
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -80,11 +91,22 @@
     <header class="bg-indigo text-white p-2 shadow" style="background:#4b0082;">
         <div class="container d-flex align-items-center">
             <span class="fw-semibold">SIMT Sekolah</span>
-            <a href="{{ route('profil') }}" class="ms-auto text-white me-3"><i class="fas fa-user-circle fa-lg"></i></a>
-            <form method="POST" action="{{ route('logout') }}" class="m-0">
-                @csrf
-                <button type="submit" class="btn btn-link text-white p-0"><i class="fas fa-sign-out-alt fa-lg"></i></button>
-            </form>
+
+            <nav class="top-nav">
+                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="fas fa-home"></i><span class="label">Home</span>
+                </a>
+                <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}">
+                    <i class="fas fa-user-circle"></i><span class="label">Profil</span>
+                </a>
+                <a href="{{ route('modul', 'notifikasi') }}" class="{{ request()->routeIs('modul') && request()->route('slug') === 'notifikasi' ? 'active' : '' }}">
+                    <i class="fas fa-bell"></i><span class="label">Notifikasi</span>
+                </a>
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
+                    @csrf
+                    <button type="submit"><i class="fas fa-sign-out-alt"></i><span class="label">Logout</span></button>
+                </form>
+            </nav>
         </div>
     </header>
 
