@@ -29,6 +29,50 @@
             .desktop-nav a i { margin-right: 6px; }
             .desktop-nav a.active, .desktop-nav a:hover { background: rgba(255,255,255,.15); color: #fff; }
         }
+
+        /* Grid kartu menu ikon - pengganti pola panel_*.php lama, mobile-friendly */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .menu-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px 6px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.06), inset 0 -3px 0 rgba(0,0,0,0.05);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.12);
+            text-decoration: none;
+        }
+        .menu-card i {
+            font-size: 26px;
+            color: #4b0082;
+            margin-bottom: 8px;
+        }
+        .menu-title {
+            color: #e67e23;
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 1.2;
+        }
+        @media (max-width: 576px) {
+            .menu-grid { gap: 8px; }
+            .menu-card { padding: 10px 2px; border-radius: 10px; }
+            .menu-card i { font-size: 20px; margin-bottom: 6px; }
+            .menu-title { font-size: 11px; }
+        }
     </style>
 </head>
 <body>
