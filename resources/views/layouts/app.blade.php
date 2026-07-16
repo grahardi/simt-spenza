@@ -27,7 +27,11 @@
     <header class="bg-indigo text-white p-2 shadow" style="background:#4b0082;">
         <div class="container d-flex align-items-center">
             <span class="fw-semibold">SIMT Sekolah</span>
-            <a href="{{ route('profil') }}" class="ms-auto text-white"><i class="fas fa-user-circle fa-lg"></i></a>
+            <a href="{{ route('profil') }}" class="ms-auto text-white me-3"><i class="fas fa-user-circle fa-lg"></i></a>
+            <form method="POST" action="{{ route('logout') }}" class="m-0">
+                @csrf
+                <button type="submit" class="btn btn-link text-white p-0"><i class="fas fa-sign-out-alt fa-lg"></i></button>
+            </form>
         </div>
     </header>
 

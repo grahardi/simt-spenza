@@ -34,11 +34,51 @@ dulu untuk kerangka dasar, belum dipakai untuk autentikasi produksi.)
 
 ## 3. Salin file dari skeleton ini
 - `app/Models/*.php` → `app/Models/`
-- `app/Http/Controllers/*.php` → `app/Http/Controllers/`
+- `app/Auth/*.php` → `app/Auth/`
+- `app/Providers/LegacyAuthServiceProvider.php` → `app/Providers/`
+- `app/Http/Controllers/**/*.php` → `app/Http/Controllers/`
+- `app/Http/Middleware/*.php` → `app/Http/Middleware/`
 - `resources/views/*` → `resources/views/`
-- `routes/web.php` → gabung dengan punya Breeze (pertahankan bagian auth Breeze)
+- `routes/web.php` → **timpa total** punya Breeze (modul ini pakai login sendiri berbasis tabel `member`, bukan Breeze)
 
-Tidak ada migration untuk disalin di update ini — tabel data sudah ada.
+### 3a. Daftarkan service provider baru
+Di `bootstrap/providers.php`, tambahkan:
+```php
+return [
+    App\Providers\AppServiceProvider::class,
+    App\Providers\LegacyAuthServiceProvider::class, // baris baru
+];
+```
+
+### 3b. Daftarkan middleware alias `role`
+Di `bootstrap/app.php`, di dalam `->withMiddleware(function (Middleware $middleware) { ... })`:
+```php
+$middleware->alias([
+    'role' => \App\Http\Middleware\EnsureHasRole::class,
+]);
+```
+
+### 3c. Tambahkan guard & provider `member` di `config/auth.php`
+```php
+'guards' => [
+    'web' => [...], // bawaan Breeze, boleh dibiarkan untuk kebutuhan lain
+    'member' => [
+        'driver' => 'session',
+        'provider' => 'members',
+    ],
+],
+
+'providers' => [
+    'users' => [...], // bawaan Breeze
+    'members' => [
+        'driver' => 'eloquent-legacy', // didaftarkan oleh LegacyAuthServiceProvider
+        'model' => App\Models\Member::class,
+    ],
+],
+```
+
+Login memakai nomor ID (kolom `user`), bukan email — sesuai kebiasaan akun yang
+sudah ada, jadi tidak perlu migrasi data akun sama sekali.
 
 ## 4. Setel `.env` ke database `simtnew`
 ```
@@ -75,7 +115,7 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 
 ## Roadmap migrasi modul selanjutnya (urutan usulan)
 1. ✅ Absensi Siswa — sudah jadi, sudah disesuaikan ke `tbl_member`/`absen_siswa` asli
-2. **Autentikasi** — jembatani tabel `member` (role flag) ke sistem login Laravel
+2. ✅ Autentikasi — login pakai nomor ID + password, role dari tabel `member`
 3. Data Master Siswa & Guru (CRUD) — dari `siswatambah.php`, `gurutambah.php`, `daftarnama.php`
 4. Keterlambatan — dari `telatkelas.php`, `caritelat.php`, dst
 5. Kebersihan Kelas — dari `bersihkelas.php` dkk
@@ -83,5 +123,13 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 7. Bimbingan Konseling — dari `bimbingan.php` dkk
 8. Keagamaan — dari `agamalistall.php` dkk
 9. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas, Jadwal
+
+### Catatan soal password lama
+Password akun-akun lama di tabel `member` masih **plain text** (belum di-hash).
+`LegacyPasswordEloquentUserProvider` menangani ini secara otomatis: begitu
+seorang user login sukses, password langsung di-hash ulang (bcrypt) dan
+disimpan — tidak perlu reset password massal, dan tidak ada jendela waktu
+di mana user tidak bisa login. Setelah semua akun aktif pernah login sekali
+lewat sistem baru, seluruh isi kolom password akan otomatis ter-hash semua.
 
 Kirim saja pesan "lanjut modul [nama]" kalau mau saya kerjakan modul berikutnya.
