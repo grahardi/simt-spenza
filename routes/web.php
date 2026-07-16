@@ -32,6 +32,7 @@ Route::middleware('auth:member')->group(function () {
     // Modul Absensi Siswa - semua role yang dulu bisa akses absenjelas.php
     Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
+        Route::get('/foto/{absen}', [AbsensiSiswaController::class, 'foto'])->name('foto');
 
         // Isi absensi manual & catat terlambat - khusus piket/admin
         Route::middleware('role:piket,admin')->group(function () {

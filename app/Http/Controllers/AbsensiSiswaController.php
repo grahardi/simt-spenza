@@ -45,6 +45,16 @@ class AbsensiSiswaController extends Controller
     }
 
     /**
+     * Menampilkan foto bukti sakit/ijin (link yang dulu belum pernah dibuat rute-nya).
+     */
+    public function foto(AbsenSiswa $absen)
+    {
+        abort_unless($absen->gambar, 404);
+
+        return redirect(\Illuminate\Support\Facades\Storage::url($absen->gambar));
+    }
+
+    /**
      * Pengganti isiabsen.php - form cari siswa untuk diisi absensinya manual.
      */
     public function isi(Request $request)

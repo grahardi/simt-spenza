@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * Mengarah ke tabel `member` (tabel login asli sistem lama).
@@ -16,7 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * - `password` : dulu plain text, sekarang bertahap di-hash lewat
  *                LegacyPasswordEloquentUserProvider
  * - flag role  : admin, walikelas, tatib, bk, piket, guru, keagamaan,
- *                kebersihan, kepsek, adminsoal (masing-masing 0/1)
+ *                kebersihan, kepsek, adminsoal (masing-masing 0/1) -
+ *                KECUALI `piket`, lihat isPiketToday().
  */
 class Member extends Authenticatable
 {
@@ -45,8 +47,45 @@ class Member extends Authenticatable
     }
 
     /**
-     * Daftar role yang dipetakan dari kolom flag lama ke nama role yang
-     * dipakai middleware (lihat EnsureHasRole).
+     * Nama hari dalam Bahasa Indonesia (HURUF BESAR), memakai waktu Jakarta -
+     * pengganti include/besar.php lama.
+     */
+    public static function namaHariJakartaHuruBesar(): string
+    {
+        $peta = [
+            'Sunday' => 'MINGGU', 'Monday' => 'SENIN', 'Tuesday' => 'SELASA',
+            'Wednesday' => 'RABU', 'Thursday' => 'KAMIS', 'Friday' => 'JUMAT',
+            'Saturday' => 'SABTU',
+        ];
+
+        return $peta[Carbon::now('Asia/Jakarta')->format('l')];
+    }
+
+    /**
+     * Kolom `piket` di sistem lama punya 2 arti berbeda:
+     * - '1'                -> piket admin, aktif SETIAP hari
+     * - 'SENIN'/'SELASA'/dst -> piket kelas/harian, HANYA aktif di hari itu
+     * Pengecekan HARUS pakai waktu Jakarta (bukan waktu server sandbox/hosting).
+     */
+    public function isPiketToday(): bool
+    {
+        $nilai = trim((string) $this->piket);
+
+        if ($nilai === '') {
+            return false;
+        }
+
+        if ($nilai === '1') {
+            return true;
+        }
+
+        return strtoupper($nilai) === self::namaHariJakartaHuruBesar();
+    }
+
+    /**
+     * Daftar role yang dimiliki, dipetakan dari kolom flag lama.
+     * `piket` diperlakukan khusus lewat isPiketToday() karena isinya bisa
+     * berupa nama hari, bukan cuma 0/1 seperti kolom role lainnya.
      */
     public function roles(): array
     {
@@ -55,7 +94,6 @@ class Member extends Authenticatable
             'walikelas' => 'walikelas',
             'tatib' => 'tatib',
             'bk' => 'bk',
-            'piket' => 'piket',
             'guru' => 'guru',
             'keagamaan' => 'keagamaan',
             'kebersihan' => 'kebersihan',
@@ -70,11 +108,19 @@ class Member extends Authenticatable
             }
         }
 
+        if ($this->isPiketToday()) {
+            $roles[] = 'piket';
+        }
+
         return $roles;
     }
 
     public function hasRole(string $role): bool
     {
+        if ($role === 'piket') {
+            return $this->isPiketToday();
+        }
+
         return in_array($role, $this->roles(), true);
     }
 }
