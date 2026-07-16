@@ -28,6 +28,15 @@
     </form>
 </div>
 
+@php
+    $tombol = [
+        's' => ['label' => 'Sakit', 'icon' => 'fa-thermometer', 'kelas' => 'sakit'],
+        'i' => ['label' => 'Ijin', 'icon' => 'fa-envelope', 'kelas' => 'ijin'],
+        'a' => ['label' => 'Alfa', 'icon' => 'fa-times', 'kelas' => 'alfa'],
+        'd' => ['label' => 'Dispensasi', 'icon' => 'fa-bus', 'kelas' => 'dispensasi'],
+    ];
+@endphp
+
 @if ($siswa !== null)
     <div class="p-4 bg-white rounded shadow">
         @if ($siswa->isEmpty())
@@ -36,34 +45,49 @@
             </div>
         @else
             @foreach ($siswa as $s)
-                <div class="d-flex flex-column flex-md-row align-items-md-center py-3 {{ !$loop->last ? 'border-bottom' : '' }}">
-                    <div class="me-md-3 mb-2 mb-md-0">
+                @php $absenIni = $s->absenHariIni; @endphp
+                <div class="siswa-row {{ !$loop->last ? 'border-bottom' : '' }}">
+                    <div class="siswa-info">
                         <h6 class="mb-0 text-uppercase">
                             <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
                         </h6>
                         <small class="text-muted">No. Induk {{ $s->id_member }} &middot; Kelas {{ $s->kelas }}</small>
-                    </div>
-                    <div class="ms-md-auto d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
-                            <i class="fas fa-thermometer me-1"></i> Sakit
-                        </button>
-                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalIjin{{ $s->id_member }}">
-                            <i class="fas fa-envelope me-1"></i> Ijin
-                        </button>
 
-                        <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="keterangan" value="a">
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times me-1"></i> Alfa</button>
-                        </form>
-                        <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="keterangan" value="d">
-                            <button type="submit" class="btn btn-info btn-sm text-white"><i class="fas fa-bus me-1"></i> Dispensasi</button>
-                        </form>
+                        @if ($absenIni)
+                            <div class="mt-1">
+                                <span class="badge-status badge-{{ $absenIni->keterangan }}">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Sudah terabsen {{ strtolower($absenIni->labelKeterangan()) }} hari ini
+                                </span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="siswa-aksi">
+                        @foreach ($tombol as $kode => $t)
+                            @if ($absenIni && $absenIni->keterangan === $kode)
+                                <span class="btn-absen btn-absen-{{ $t['kelas'] }} btn-absen-aktif">
+                                    <i class="fas {{ $t['icon'] }} me-1"></i> {{ $t['label'] }}
+                                </span>
+                            @elseif (in_array($kode, ['s', 'i']))
+                                <button type="button" class="btn-absen btn-absen-{{ $t['kelas'] }}" data-bs-toggle="modal" data-bs-target="#modal{{ ucfirst($kode) }}{{ $s->id_member }}">
+                                    <i class="fas {{ $t['icon'] }} me-1"></i> {{ $t['label'] }}
+                                </button>
+                            @else
+                                <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
+                                    @csrf
+                                    <input type="hidden" name="keterangan" value="{{ $kode }}">
+                                    <button type="submit" class="btn-absen btn-absen-{{ $t['kelas'] }}">
+                                        <i class="fas {{ $t['icon'] }} me-1"></i> {{ $t['label'] }}
+                                    </button>
+                                </form>
+                            @endif
+                        @endforeach
                         <form method="POST" action="{{ route('absensi.telat', $s) }}" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-clock me-1"></i> Terlambat</button>
+                            <button type="submit" class="btn-absen btn-absen-telat">
+                                <i class="fas fa-clock me-1"></i> Terlambat
+                            </button>
                         </form>
                     </div>
                 </div>

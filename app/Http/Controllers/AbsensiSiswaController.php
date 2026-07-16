@@ -56,6 +56,7 @@ class AbsensiSiswaController extends Controller
 
     /**
      * Pengganti isiabsen.php - form cari siswa untuk diisi absensinya manual.
+     * Menampilkan status absensi hari ini kalau siswa sudah pernah ditandai.
      */
     public function isi(Request $request)
     {
@@ -71,6 +72,15 @@ class AbsensiSiswaController extends Controller
                 ->orderByDesc('id_member')
                 ->limit(20)
                 ->get();
+
+            $absenHariIni = AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
+                ->whereDate('tgl_absen', Carbon::today())
+                ->get()
+                ->keyBy('id_siswa');
+
+            $siswa->each(function ($s) use ($absenHariIni) {
+                $s->absenHariIni = $absenHariIni->get($s->id_member);
+            });
         }
 
         return view('absensi.isi', ['siswa' => $siswa, 'cari' => $cari]);
@@ -104,6 +114,17 @@ class AbsensiSiswaController extends Controller
         );
 
         return back()->with('status', 'Absensi '.$siswa->nama_lengkap.' berhasil dicatat.');
+    }
+
+    /**
+     * Hapus 1 record absensi (dipakai dari modal "Ubah" di halaman rekap).
+     */
+    public function hapus(AbsenSiswa $absen)
+    {
+        $nama = $absen->siswa->nama_lengkap ?? 'siswa';
+        $absen->delete();
+
+        return back()->with('status', 'Absensi '.$nama.' berhasil dihapus.');
     }
 
     /**

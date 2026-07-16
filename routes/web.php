@@ -38,6 +38,7 @@ Route::middleware('auth:member')->group(function () {
         Route::middleware('role:piket,admin')->group(function () {
             Route::get('/isi', [AbsensiSiswaController::class, 'isi'])->name('isi');
             Route::post('/tandai/{siswa}', [AbsensiSiswaController::class, 'tandai'])->name('tandai');
+            Route::delete('/hapus/{absen}', [AbsensiSiswaController::class, 'hapus'])->name('hapus');
             Route::post('/telat/{siswa}', [AbsensiSiswaController::class, 'telat'])->name('telat');
             Route::get('/telat', [AbsensiSiswaController::class, 'listTelat'])->name('telat.list');
         });

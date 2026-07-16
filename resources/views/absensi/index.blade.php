@@ -82,44 +82,6 @@
                                 </td>
                             @endif
                         </tr>
-
-                        @if ($bisaUbah)
-                            <div class="modal fade" id="modalUbah{{ $a->id_siswa }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <form method="POST" action="{{ route('absensi.tandai', $a->siswa) }}" enctype="multipart/form-data" class="modal-content">
-                                        @csrf
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Ubah Absensi - {{ $a->siswa->nama_lengkap }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Keterangan</label>
-                                                <select name="keterangan" class="form-select" required>
-                                                    <option value="h" @selected($a->keterangan === 'h')>Hadir</option>
-                                                    <option value="s" @selected($a->keterangan === 's')>Sakit</option>
-                                                    <option value="i" @selected($a->keterangan === 'i')>Ijin</option>
-                                                    <option value="a" @selected($a->keterangan === 'a')>Alfa</option>
-                                                    <option value="d" @selected($a->keterangan === 'd')>Dispensasi</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Foto Bukti (opsional, ganti kalau perlu)</label>
-                                                <input type="file" name="foto" accept="image/*" class="form-control">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Keterangan Tambahan</label>
-                                                <input type="text" name="catatan" class="form-control" value="{{ $a->tambahan }}">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        @endif
                     @endforeach
                 </tbody>
             </table>
@@ -129,7 +91,57 @@
     @endif
 </div>
 
+{{-- Modal ditaruh di LUAR tabel - taruh di dalam tabel bikin browser "membetulkan"
+     HTML yang tidak valid dan modal jadi berantakan/backdrop tidak muncul benar. --}}
 @if ($bisaUbah)
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @foreach ($absensi as $a)
+        <div class="modal fade" id="modalUbah{{ $a->id_siswa }}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ubah Absensi - {{ $a->siswa->nama_lengkap }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form method="POST" action="{{ route('absensi.tandai', $a->siswa) }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Keterangan</label>
+                                <select name="keterangan" class="form-select" required>
+                                    <option value="h" @selected($a->keterangan === 'h')>Hadir</option>
+                                    <option value="s" @selected($a->keterangan === 's')>Sakit</option>
+                                    <option value="i" @selected($a->keterangan === 'i')>Ijin</option>
+                                    <option value="a" @selected($a->keterangan === 'a')>Alfa</option>
+                                    <option value="d" @selected($a->keterangan === 'd')>Dispensasi</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Foto Bukti (opsional, ganti kalau perlu)</label>
+                                <input type="file" name="foto" accept="image/*" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Keterangan Tambahan</label>
+                                <input type="text" name="catatan" class="form-control" value="{{ $a->tambahan }}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                    <form method="POST" action="{{ route('absensi.hapus', $a) }}"
+                          onsubmit="return confirm('Yakin hapus absensi {{ $a->siswa->nama_lengkap }} hari ini?')"
+                          class="px-3 pb-3">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-trash me-1"></i> Hapus Absensi Ini
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endif
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

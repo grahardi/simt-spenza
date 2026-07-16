@@ -85,6 +85,40 @@
             .menu-icon { width: 40px; height: 40px; font-size: 17px; margin-bottom: 6px; }
             .menu-title { font-size: 11px; }
         }
+
+        /* Tombol aksi absensi (Sakit/Ijin/Alfa/Dispensasi/Terlambat) */
+        .siswa-row {
+            display: flex; flex-direction: column; gap: 10px;
+            padding: 16px 0;
+        }
+        @media (min-width: 768px) {
+            .siswa-row { flex-direction: row; align-items: center; }
+            .siswa-info { flex: 1; }
+        }
+        .siswa-aksi { display: flex; flex-wrap: wrap; gap: 8px; }
+        .btn-absen {
+            display: inline-flex; align-items: center;
+            border: none; border-radius: 999px;
+            padding: 8px 16px; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: transform .1s ease, box-shadow .1s ease;
+        }
+        .btn-absen:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,.15); }
+        .btn-absen-sakit { background: #faeeda; color: #854f0b; }
+        .btn-absen-ijin { background: #eaf3de; color: #3b6d11; }
+        .btn-absen-alfa { background: #fcebeb; color: #a32d2d; }
+        .btn-absen-dispensasi { background: #e6f1fb; color: #185fa5; }
+        .btn-absen-telat { background: #eeedfe; color: #534ab7; }
+        .btn-absen-aktif { opacity: .55; cursor: default; }
+        .btn-absen-aktif:hover { transform: none; box-shadow: none; }
+        .badge-status {
+            display: inline-flex; align-items: center;
+            border-radius: 999px; padding: 4px 12px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-s { background: #faeeda; color: #854f0b; }
+        .badge-i { background: #eaf3de; color: #3b6d11; }
+        .badge-a { background: #fcebeb; color: #a32d2d; }
+        .badge-d { background: #e6f1fb; color: #185fa5; }
     </style>
 </head>
 <body>
