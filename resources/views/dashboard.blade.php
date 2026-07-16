@@ -15,7 +15,7 @@
         'guru' => [
             'title' => 'Menu Jabatan Guru',
             'items' => [
-                ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('modul', 'jadwal-mengajar')],
+                ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('modul', 'laporan-keagamaan')],
                 ['label' => 'List Pelanggaran', 'icon' => 'fas fa-file-alt', 'color' => 'coral', 'href' => route('modul', 'list-pelanggaran')],
                 ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('modul', 'upload-rpp')],
@@ -28,7 +28,7 @@
         'walikelas' => [
             'title' => 'Menu Wali Kelas',
             'items' => [
-                ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('modul', 'aktivitas-kelas')],
+                ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('aktivitas-kelas')],
                 ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Pelanggaran Tatib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-tatib')],
                 ['label' => 'DKN Kelas', 'icon' => 'fas fa-list-ol', 'color' => 'purple', 'href' => route('modul', 'dkn-kelas')],

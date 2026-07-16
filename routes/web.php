@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\MemberLoginController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AjuanAbsensiController;
+use App\Http\Controllers\AktivitasKelasController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +54,16 @@ Route::middleware('auth:member')->group(function () {
     // Data Master Guru - pengganti gurutambah.php, arsipguru.php
     Route::resource('guru', GuruController::class)
         ->middleware('role:kepsek,admin,piket');
+
+    // Jadwal Mengajar - khusus guru, jadwal hari ini
+    Route::get('/jadwal-mengajar', [JadwalGuruController::class, 'index'])
+        ->name('jadwal-mengajar')
+        ->middleware('role:guru');
+
+    // Aktivitas Kelas - khusus wali kelas, rekap absensi kelas yang diampu
+    Route::get('/aktivitas-kelas', [AktivitasKelasController::class, 'index'])
+        ->name('aktivitas-kelas')
+        ->middleware('role:walikelas');
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.
     // Selama belum di-ACC, siswa dianggap belum tercatat absen (bisa jadi Alpha).

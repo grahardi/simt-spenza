@@ -123,7 +123,11 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 7. Tata Tertib (Tatib) — dari `tatibentry.php`, `tindakan.php` dkk
 8. Bimbingan Konseling — dari `bimbingan.php` dkk
 9. Keagamaan — dari `agamalistall.php` dkk
-10. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas Guru Absen (piket), Jadwal, Notifikasi
+10. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas Guru Absen (piket), Notifikasi, DKN Kelas, Nilai PSAJ
+
+### Modul kecil yang baru ditambahkan
+- ✅ **Jadwal Mengajar** (guru) — jadwal hari ini dari tabel `datajadwal`, filter otomatis pakai hari & guru yang login
+- ✅ **Aktivitas Kelas** (wali kelas) — rekap absensi hari ini untuk kelas yang diampu (dari kolom `member.walikelas`, isinya nama kelas langsung seperti "7 - A", bukan flag 0/1)
 
 ## Catatan tambahan: pagination pakai Bootstrap, bukan default
 Ikon panah pagination Laravel default didesain untuk Tailwind (SVG tanpa
