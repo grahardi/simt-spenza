@@ -129,9 +129,19 @@ class AbsensiSiswaController extends Controller
 
     /**
      * Pengganti caritelat.php + telat.php - catat siswa terlambat hari ini.
+     * Ditolak kalau siswa sudah tercatat absen (sakit/ijin/alfa/dispensasi) hari ini -
+     * tidak masuk akal berstatus 2 hal sekaligus.
      */
     public function telat(Request $request, Siswa $siswa)
     {
+        $sudahAbsen = AbsenSiswa::where('id_siswa', $siswa->id_member)
+            ->whereDate('tgl_absen', Carbon::today())
+            ->exists();
+
+        if ($sudahAbsen) {
+            return back()->with('status', $siswa->nama_lengkap.' sudah tercatat absen hari ini, tidak bisa ditandai terlambat juga.');
+        }
+
         Keterlambatan::create([
             'id_siswa' => $siswa->id_member,
             'tgl_absen' => Carbon::today()->toDateString(),

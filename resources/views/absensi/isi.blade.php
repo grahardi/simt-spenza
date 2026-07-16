@@ -48,39 +48,44 @@
                             <div class="mt-1">
                                 <span class="badge-status badge-{{ $absenIni->keterangan }}">
                                     <i class="fas fa-check-circle me-1"></i>
-                                    Sudah terabsen {{ strtolower($absenIni->labelKeterangan()) }} hari ini - klik tombol lagi untuk ubah
+                                    Sudah terabsen {{ strtolower($absenIni->labelKeterangan()) }} hari ini
                                 </span>
+                                <div class="text-muted small mt-1">
+                                    Untuk mengubah, buka menu <a href="{{ route('absensi.index') }}">Data Absensi Siswa</a> &rarr; tombol "Ubah".
+                                </div>
                             </div>
                         @endif
                     </div>
 
-                    {{-- Semua tombol SELALU bisa diklik (termasuk yang statusnya sedang aktif),
-                         supaya piket bisa mengubah status kapan saja. Yang aktif cuma ditandai
-                         dengan ikon centang, tidak dimatikan. --}}
-                    <div class="siswa-aksi">
-                        <button type="button" class="btn-absen btn-absen-sakit {{ $absenIni?->keterangan === 's' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
-                            @if ($absenIni?->keterangan === 's') <i class="fas fa-check me-1"></i> @else <i class="fas fa-thermometer me-1"></i> @endif Sakit
-                        </button>
-                        <button type="button" class="btn-absen btn-absen-ijin {{ $absenIni?->keterangan === 'i' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalIjin{{ $s->id_member }}">
-                            @if ($absenIni?->keterangan === 'i') <i class="fas fa-check me-1"></i> @else <i class="fas fa-envelope me-1"></i> @endif Ijin
-                        </button>
-                        <button type="button" class="btn-absen btn-absen-dispensasi {{ $absenIni?->keterangan === 'd' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalDispensasi{{ $s->id_member }}">
-                            @if ($absenIni?->keterangan === 'd') <i class="fas fa-check me-1"></i> @else <i class="fas fa-bus me-1"></i> @endif Dispensasi
-                        </button>
-                        <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="keterangan" value="a">
-                            <button type="submit" class="btn-absen btn-absen-alfa {{ $absenIni?->keterangan === 'a' ? 'btn-absen-aktif' : '' }}">
-                                @if ($absenIni?->keterangan === 'a') <i class="fas fa-check me-1"></i> @else <i class="fas fa-times me-1"></i> @endif Alfa
+                    {{-- Menu tombol HANYA muncul kalau siswa belum terabsen hari ini.
+                         Kalau sudah terabsen, ubahnya lewat halaman rekap (absensi.index),
+                         bukan di sini - supaya tidak dobel jalur ubah data. --}}
+                    @if (! $absenIni)
+                        <div class="siswa-aksi">
+                            <button type="button" class="btn-absen btn-absen-sakit" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
+                                <i class="fas fa-thermometer me-1"></i> Sakit
                             </button>
-                        </form>
-                        <form method="POST" action="{{ route('absensi.telat', $s) }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn-absen btn-absen-telat">
-                                <i class="fas fa-clock me-1"></i> Terlambat
+                            <button type="button" class="btn-absen btn-absen-ijin" data-bs-toggle="modal" data-bs-target="#modalIjin{{ $s->id_member }}">
+                                <i class="fas fa-envelope me-1"></i> Ijin
                             </button>
-                        </form>
-                    </div>
+                            <button type="button" class="btn-absen btn-absen-dispensasi" data-bs-toggle="modal" data-bs-target="#modalDispensasi{{ $s->id_member }}">
+                                <i class="fas fa-bus me-1"></i> Dispensasi
+                            </button>
+                            <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
+                                @csrf
+                                <input type="hidden" name="keterangan" value="a">
+                                <button type="submit" class="btn-absen btn-absen-alfa">
+                                    <i class="fas fa-times me-1"></i> Alfa
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('absensi.telat', $s) }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn-absen btn-absen-telat">
+                                    <i class="fas fa-clock me-1"></i> Terlambat
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="modal fade" id="modalSakit{{ $s->id_member }}" tabindex="-1">
