@@ -49,9 +49,15 @@ class AjuanAbsensiController extends Controller
             ->get()
             ->keyBy('id_siswa');
 
-        $siswa->each(function ($s) use ($ajuanHariIni, $absenSebelumnya) {
+        $absenResmiHariIni = AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
+            ->whereDate('tgl_absen', $hariIni)
+            ->get()
+            ->keyBy('id_siswa');
+
+        $siswa->each(function ($s) use ($ajuanHariIni, $absenSebelumnya, $absenResmiHariIni) {
             $s->ajuanHariIni = $ajuanHariIni->get($s->id_member);
             $s->absenSebelumnya = $absenSebelumnya->get($s->id_member);
+            $s->absenResmiHariIni = $absenResmiHariIni->get($s->id_member);
         });
 
         return view('ajuan-absensi.ajukan', ['siswa' => $siswa, 'kelas' => $kelas]);
@@ -62,6 +68,14 @@ class AjuanAbsensiController extends Controller
      */
     public function simpan(Request $request, Siswa $siswa)
     {
+        $sudahAbsenResmi = AbsenSiswa::where('id_siswa', $siswa->id_member)
+            ->whereDate('tgl_absen', Carbon::today())
+            ->exists();
+
+        if ($sudahAbsenResmi) {
+            return back()->with('status', $siswa->nama_lengkap.' sudah tercatat absen resmi hari ini, tidak perlu diajukan lagi.');
+        }
+
         $data = $request->validate([
             'keterangan' => ['required', 'in:s,i,a,d'],
             'catatan' => ['nullable', 'string', 'max:100'],

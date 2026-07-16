@@ -29,7 +29,7 @@
         </div>
     @else
         @foreach ($siswa as $s)
-            @php $ajuanIni = $s->ajuanHariIni; $kemarin = $s->absenSebelumnya; @endphp
+            @php $ajuanIni = $s->ajuanHariIni; $kemarin = $s->absenSebelumnya; $resmiIni = $s->absenResmiHariIni; @endphp
             <div class="siswa-row-ringkas {{ !$loop->last ? 'border-bottom' : '' }}">
                 <div class="siswa-nama">
                     <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
@@ -38,7 +38,13 @@
                     </div>
                 </div>
 
-                @if ($ajuanIni)
+                @if ($resmiIni)
+                    {{-- Sudah tercatat resmi di absen_siswa (via Isi Absensi piket atau sudah di-ACC) -
+                         tidak perlu dan tidak bisa diajukan lagi. --}}
+                    <span class="badge-status badge-{{ $resmiIni->keterangan }}">
+                        <i class="fas fa-check-circle me-1"></i> Siswa Terabsen {{ $resmiIni->labelKeterangan() }}
+                    </span>
+                @elseif ($ajuanIni)
                     <span class="badge-status badge-{{ $ajuanIni->keterangan }}">
                         <i class="fas fa-hourglass-half me-1"></i> Sudah diajukan {{ strtolower($ajuanIni->labelKeterangan()) }}
                     </span>

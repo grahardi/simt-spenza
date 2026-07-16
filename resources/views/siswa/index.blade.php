@@ -48,11 +48,9 @@
                     <tr>
                         <th>No</th>
                         <th>No. Induk</th>
-                        <th>NISN</th>
                         <th>Nama</th>
                         <th>Kelas</th>
                         <th>L/P</th>
-                        <th>WhatsApp</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,11 +58,9 @@
                         <tr>
                             <td>{{ $siswa->firstItem() + $i }}</td>
                             <td>{{ $s->id_member }}</td>
-                            <td>{{ $s->nisn }}</td>
                             <td>{{ $s->nama_lengkap }}</td>
                             <td>{{ $s->kelas }}</td>
                             <td>{{ $s->jenis_kelamin }}</td>
-                            <td>{{ $s->whatsapp }}</td>
                         </tr>
                     @endforeach
                 </tbody>
