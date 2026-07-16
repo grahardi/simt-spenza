@@ -118,7 +118,7 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 2. ✅ Autentikasi — login pakai nomor ID + password, role dari tabel `member`
 3. ✅ Data Master Siswa & Guru (CRUD) — sudah jadi, dashboard berbasis panel per-role
 4. ✅ Absensi Piket — isi absensi manual (Sakit/Ijin/Alfa/Dispensasi), catat & lihat siswa terlambat
-5. Ajuan Absensi (siswa/wali ajukan sakit/ijin + foto, piket verifikasi/konfirmasi) — dari `ajuanabsen.php`, `verifikasi.php`, `konfirmasi.php`
+5. ✅ Ajuan Absensi — Admin Absensi keliling kelas ajukan (belum resmi), Piket ACC/Tolak (baru resmi masuk absen_siswa)
 6. Kebersihan Kelas — dari `bersihkelas.php` dkk
 7. Tata Tertib (Tatib) — dari `tatibentry.php`, `tindakan.php` dkk
 8. Bimbingan Konseling — dari `bimbingan.php` dkk

@@ -50,9 +50,6 @@
                                     <i class="fas fa-check-circle me-1"></i>
                                     Sudah terabsen {{ strtolower($absenIni->labelKeterangan()) }} hari ini
                                 </span>
-                                <div class="text-muted small mt-1">
-                                    Untuk mengubah, buka menu <a href="{{ route('absensi.index') }}">Data Absensi Siswa</a> &rarr; tombol "Ubah".
-                                </div>
                             </div>
                         @endif
                     </div>

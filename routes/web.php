@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\MemberLoginController;
 use App\Http\Controllers\AbsensiSiswaController;
+use App\Http\Controllers\AjuanAbsensiController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,20 @@ Route::middleware('auth:member')->group(function () {
     // Data Master Guru - pengganti gurutambah.php, arsipguru.php
     Route::resource('guru', GuruController::class)
         ->middleware('role:kepsek,admin,piket');
+
+    // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.
+    // Selama belum di-ACC, siswa dianggap belum tercatat absen (bisa jadi Alpha).
+    Route::prefix('ajuan-absensi')->name('ajuan-absensi.')->group(function () {
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/ajukan', [AjuanAbsensiController::class, 'ajukan'])->name('ajukan');
+            Route::post('/ajukan/{siswa}', [AjuanAbsensiController::class, 'simpan'])->name('simpan');
+        });
+        Route::middleware('role:piket')->group(function () {
+            Route::get('/', [AjuanAbsensiController::class, 'index'])->name('index');
+            Route::post('/{ajuan}/acc', [AjuanAbsensiController::class, 'acc'])->name('acc');
+            Route::post('/{ajuan}/tolak', [AjuanAbsensiController::class, 'tolak'])->name('tolak');
+        });
+    });
 
     // Placeholder modul lain, supaya link di bottom-nav tidak 404 dulu.
     Route::get('/jadwal', fn () => view('placeholder', ['judul' => 'Jadwal Pelajaran']))->name('jadwal.index');
