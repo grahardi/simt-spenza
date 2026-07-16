@@ -47,12 +47,23 @@ DB_USERNAME=...
 DB_PASSWORD=...
 ```
 
-## 5. Migrate HANYA untuk tabel bawaan Laravel (users, sessions, cache, dst dari Breeze)
+## 5. Migrate
 ```bash
 php artisan migrate
 ```
-Ini aman karena tabel bawaan Laravel (`users`, `password_reset_tokens`, `sessions`,
-dst) namanya tidak bentrok dengan tabel data sekolah yang sudah ada.
+Ini akan menjalankan:
+- Migration bawaan Laravel/Breeze (`users`, `password_reset_tokens`, `sessions`, dst) — aman, tidak bentrok dengan tabel sekolah.
+- **`rename_tbl_member_to_datasiswa`** — merename `tbl_member` → `datasiswa`,
+  kolom `tanggal_gabung` → `nisn`, `jenis_member` → `kelas`. Ini mengubah
+  tabel yang sudah ada (bukan bikin baru), jadi **backup dulu** sebelum migrate:
+  ```bash
+  mysqldump -u [user] -p simtnew tbl_member > backup_tbl_member_sebelum_rename.sql
+  ```
+  Kalau perlu batalkan: `php artisan migrate:rollback` (sudah ada method `down()`
+  yang mengembalikan nama tabel/kolom seperti semula).
+
+Tabel `siswa` (legacy, tidak dipakai aplikasi) dibiarkan apa adanya — silakan
+di-backup lalu `DROP TABLE siswa;` manual kalau sudah yakin aman.
 
 ## 6. Jalankan
 ```bash

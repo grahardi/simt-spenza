@@ -27,8 +27,8 @@ class AbsensiSiswaController extends Controller
         $absensi = AbsenSiswa::with('siswa')
             ->whereDate('tgl_absen', $tanggal)
             ->orderBy(
-                \App\Models\Siswa::select('jenis_member')
-                    ->whereColumn('tbl_member.id_member', 'absen_siswa.id_siswa')
+                \App\Models\Siswa::select('kelas')
+                    ->whereColumn('datasiswa.id_member', 'absen_siswa.id_siswa')
             )
             ->paginate(20)
             ->withQueryString();

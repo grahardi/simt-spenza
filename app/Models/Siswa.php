@@ -6,33 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Mengarah ke tabel `tbl_member` (BUKAN tabel `siswa`).
- * Terkonfirmasi dari absen26.sql: `tbl_member` berisi data siswa aktif/nyata
- * (foto, whatsapp, jenis_member sebagai nama kelas). Tabel `siswa` di database
- * adalah tabel lama yang datanya tidak lengkap/tidak dipakai lagi.
+ * Mengarah ke tabel `datasiswa` (hasil rename dari `tbl_member`).
+ * Kolom `nisn` (dulu `tanggal_gabung`) dan `kelas` (dulu `jenis_member`)
+ * sudah diluruskan namanya lewat migration rename_tbl_member_to_datasiswa.
  */
 class Siswa extends Model
 {
-    protected $table = 'tbl_member';
+    protected $table = 'datasiswa';
     protected $primaryKey = 'id_member';
     public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
-        'tanggal_gabung', 'jenis_member', 'nama_lengkap', 'jenis_kelamin',
+        'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin',
         'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku',
     ];
-
-    /**
-     * Nama kelas di sistem lama disimpan sebagai teks bebas di jenis_member
-     * (contoh: "9 - A"), BUKAN foreign key ke tabel `kelas`. Accessor ini
-     * dipakai supaya kode di controller/view tetap bisa memanggil ->kelas
-     * tanpa tahu detail ini.
-     */
-    public function getKelasAttribute(): string
-    {
-        return $this->jenis_member;
-    }
 
     public function absensi(): HasMany
     {
