@@ -35,8 +35,8 @@ Route::middleware('auth:member')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
         Route::get('/foto/{absen}', [AbsensiSiswaController::class, 'foto'])->name('foto');
 
-        // Isi absensi manual & catat terlambat - khusus piket/admin
-        Route::middleware('role:piket,admin')->group(function () {
+        // Isi absensi manual & catat terlambat - KHUSUS piket (admin tidak boleh ubah absensi resmi)
+        Route::middleware('role:piket')->group(function () {
             Route::get('/isi', [AbsensiSiswaController::class, 'isi'])->name('isi');
             Route::post('/tandai/{siswa}', [AbsensiSiswaController::class, 'tandai'])->name('tandai');
             Route::delete('/hapus/{absen}', [AbsensiSiswaController::class, 'hapus'])->name('hapus');

@@ -3,7 +3,7 @@
 @section('title', 'Data Absensi Siswa')
 
 @php
-    $bisaUbah = $tanggal->isToday() && (auth('member')->user()->hasRole('piket') || auth('member')->user()->hasRole('admin'));
+    $bisaUbah = $tanggal->isToday() && auth('member')->user()->hasRole('piket');
 @endphp
 
 @section('content')

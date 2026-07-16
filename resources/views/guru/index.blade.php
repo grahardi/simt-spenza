@@ -43,7 +43,6 @@
                         <th>Nama</th>
                         <th>Jabatan</th>
                         <th>Telepon</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,19 +53,6 @@
                             <td>{{ $g->nama }}</td>
                             <td>{{ $g->jabatan }}</td>
                             <td>{{ $g->telepon }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('guru.edit', $g) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('guru.destroy', $g) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Yakin hapus data guru ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>

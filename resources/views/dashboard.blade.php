@@ -52,7 +52,6 @@
                 ['label' => 'Ajukan Absensi', 'icon' => 'fas fa-inbox', 'color' => 'purple', 'href' => route('ajuan-absensi.pilih-kelas')],
                 ['label' => 'List Ajuan', 'icon' => 'fas fa-list', 'color' => 'teal', 'href' => route('ajuan-absensi.list')],
                 ['label' => 'Siswa Absen Hari Ini', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
-                ['label' => 'Isi Absensi', 'icon' => 'fas fa-pen', 'color' => 'blue', 'href' => route('absensi.isi')],
             ],
         ],
         'piket' => [
