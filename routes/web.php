@@ -60,6 +60,8 @@ Route::middleware('auth:member')->group(function () {
             Route::get('/ajukan', [AjuanAbsensiController::class, 'pilihKelas'])->name('pilih-kelas');
             Route::get('/ajukan/{kelas}', [AjuanAbsensiController::class, 'ajukan'])->name('ajukan');
             Route::post('/ajukan-siswa/{siswa}', [AjuanAbsensiController::class, 'simpan'])->name('simpan');
+            Route::get('/list', [AjuanAbsensiController::class, 'listAjuan'])->name('list');
+            Route::delete('/{ajuan}/hapus', [AjuanAbsensiController::class, 'hapusAjuan'])->name('hapus-ajuan');
         });
         Route::middleware('role:piket')->group(function () {
             Route::get('/', [AjuanAbsensiController::class, 'index'])->name('index');

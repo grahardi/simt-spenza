@@ -29,25 +29,20 @@
         </div>
     @else
         @foreach ($siswa as $s)
-            @php $ajuanIni = $s->ajuanHariIni; @endphp
-            <div class="siswa-row {{ !$loop->last ? 'border-bottom' : '' }}">
-                <div class="siswa-info">
-                    <h6 class="mb-0 text-uppercase">
-                        <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
-                    </h6>
-                    <small class="text-muted">No. Induk {{ $s->id_member }} &middot; Kelas {{ $s->kelas }}</small>
-
-                    @if ($ajuanIni)
-                        <div class="mt-1">
-                            <span class="badge-status badge-{{ $ajuanIni->keterangan }}">
-                                <i class="fas fa-hourglass-half me-1"></i>
-                                Ajuan {{ strtolower($ajuanIni->labelKeterangan()) }} terkirim, menunggu ACC piket
-                            </span>
-                        </div>
-                    @endif
+            @php $ajuanIni = $s->ajuanHariIni; $kemarin = $s->absenSebelumnya; @endphp
+            <div class="siswa-row-ringkas {{ !$loop->last ? 'border-bottom' : '' }}">
+                <div class="siswa-nama">
+                    <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
+                    <div class="text-muted" style="font-size:11px">
+                        Kemarin: {{ $kemarin ? $kemarin->labelKeterangan() : 'Hadir' }}
+                    </div>
                 </div>
 
-                @if (! $ajuanIni)
+                @if ($ajuanIni)
+                    <span class="badge-status badge-{{ $ajuanIni->keterangan }}">
+                        <i class="fas fa-hourglass-half me-1"></i> Sudah diajukan {{ strtolower($ajuanIni->labelKeterangan()) }}
+                    </span>
+                @else
                     <div class="siswa-aksi">
                         <button type="button" class="btn-absen btn-absen-sakit" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
                             <i class="fas fa-thermometer me-1"></i> Sakit
@@ -58,6 +53,13 @@
                         <button type="button" class="btn-absen btn-absen-dispensasi" data-bs-toggle="modal" data-bs-target="#modalDispensasi{{ $s->id_member }}">
                             <i class="fas fa-bus me-1"></i> Dispensasi
                         </button>
+                        <form method="POST" action="{{ route('ajuan-absensi.simpan', $s) }}" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="keterangan" value="a">
+                            <button type="submit" class="btn-absen btn-absen-alfa">
+                                <i class="fas fa-times me-1"></i> Alfa
+                            </button>
+                        </form>
                     </div>
                 @endif
             </div>

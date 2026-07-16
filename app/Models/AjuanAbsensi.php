@@ -33,6 +33,7 @@ class AjuanAbsensi extends Model
     const KETERANGAN_LABEL = [
         's' => 'Sakit',
         'i' => 'Ijin',
+        'a' => 'Alfa',
         'd' => 'Dispensasi',
     ];
 

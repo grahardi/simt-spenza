@@ -96,6 +96,14 @@
             .siswa-info { flex: 1; }
         }
         .siswa-aksi { display: flex; flex-wrap: wrap; gap: 8px; }
+
+        /* Baris siswa ringkas untuk Ajukan Absensi - 1 baris (No.Induk-Nama),
+           info "kemarin" kecil di bawahnya, tombol di kanan */
+        .siswa-row-ringkas {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 10px; padding: 10px 0; flex-wrap: wrap;
+        }
+        .siswa-nama { font-weight: 600; font-size: 14px; }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;

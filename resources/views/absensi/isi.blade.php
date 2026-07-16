@@ -41,8 +41,8 @@
                     <div class="siswa-info">
                         <h6 class="mb-0 text-uppercase">
                             <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
+                            <span class="text-muted normal-case" style="font-size:12px; text-transform:none;">&middot; Kelas {{ $s->kelas }}</span>
                         </h6>
-                        <small class="text-muted">No. Induk {{ $s->id_member }} &middot; Kelas {{ $s->kelas }}</small>
 
                         @if ($absenIni)
                             <div class="mt-1">

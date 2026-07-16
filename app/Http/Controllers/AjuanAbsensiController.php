@@ -27,6 +27,8 @@ class AjuanAbsensiController extends Controller
     /**
      * Pengganti laporabsen.php - daftar siswa di 1 kelas untuk diajukan
      * absensinya oleh Admin Absensi (BELUM masuk ke absen_siswa).
+     * Kolom "Absen Kemarin" pakai logika cekabsen.php lama: hari Senin
+     * cek 2 hari lalu (Jumat), hari lain cek 1 hari lalu (Sabtu/Minggu libur).
      */
     public function ajukan(Request $request, string $kelas)
     {
@@ -34,13 +36,22 @@ class AjuanAbsensiController extends Controller
             ->orderBy('nama_lengkap')
             ->get();
 
+        $hariIni = Carbon::today();
+        $tanggalSebelumnya = $hariIni->isMonday() ? $hariIni->copy()->subDays(2) : $hariIni->copy()->subDay();
+
         $ajuanHariIni = AjuanAbsensi::whereIn('id_siswa', $siswa->pluck('id_member'))
-            ->whereDate('tgl_absen', Carbon::today())
+            ->whereDate('tgl_absen', $hariIni)
             ->get()
             ->keyBy('id_siswa');
 
-        $siswa->each(function ($s) use ($ajuanHariIni) {
+        $absenSebelumnya = AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
+            ->whereDate('tgl_absen', $tanggalSebelumnya)
+            ->get()
+            ->keyBy('id_siswa');
+
+        $siswa->each(function ($s) use ($ajuanHariIni, $absenSebelumnya) {
             $s->ajuanHariIni = $ajuanHariIni->get($s->id_member);
+            $s->absenSebelumnya = $absenSebelumnya->get($s->id_member);
         });
 
         return view('ajuan-absensi.ajukan', ['siswa' => $siswa, 'kelas' => $kelas]);
@@ -52,7 +63,7 @@ class AjuanAbsensiController extends Controller
     public function simpan(Request $request, Siswa $siswa)
     {
         $data = $request->validate([
-            'keterangan' => ['required', 'in:s,i,d'],
+            'keterangan' => ['required', 'in:s,i,a,d'],
             'catatan' => ['nullable', 'string', 'max:100'],
             'foto' => ['nullable', 'image', 'max:2048'],
         ]);
@@ -73,6 +84,34 @@ class AjuanAbsensiController extends Controller
         );
 
         return back()->with('status', 'Ajuan absensi '.$siswa->nama_lengkap.' berhasil dikirim, menunggu ACC piket.');
+    }
+
+    /**
+     * Pengganti ajuanabsenedit.php (sisi Admin Absensi) - daftar semua ajuan
+     * yang sudah dikirim tapi belum di-ACC piket, dengan filter tanggal
+     * (default hari ini), dan tombol Hapus kalau Admin Absensi salah input.
+     */
+    public function listAjuan(Request $request)
+    {
+        $tanggal = $request->date('tgl') ?? Carbon::today();
+        $tanggal = Carbon::parse($tanggal);
+
+        $ajuan = AjuanAbsensi::with('siswa')
+            ->whereDate('tgl_absen', $tanggal)
+            ->orderByDesc('id_absen_siswa')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('ajuan-absensi.list', compact('ajuan', 'tanggal'));
+    }
+
+    /** Admin Absensi hapus ajuan sendiri (salah input, dsb) - beda dari tolak-nya piket. */
+    public function hapusAjuan(AjuanAbsensi $ajuan)
+    {
+        $nama = $ajuan->siswa->nama_lengkap ?? 'siswa';
+        $ajuan->delete();
+
+        return back()->with('status', 'Ajuan '.$nama.' berhasil dihapus.');
     }
 
     /**
