@@ -3,35 +3,44 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Mengarah ke tabel `tbl_member` (BUKAN tabel `siswa`).
+ * Terkonfirmasi dari absen26.sql: `tbl_member` berisi data siswa aktif/nyata
+ * (foto, whatsapp, jenis_member sebagai nama kelas). Tabel `siswa` di database
+ * adalah tabel lama yang datanya tidak lengkap/tidak dipakai lagi.
+ */
 class Siswa extends Model
 {
-    protected $table = 'siswa';
+    protected $table = 'tbl_member';
+    protected $primaryKey = 'id_member';
+    public $incrementing = true;
+    public $timestamps = false;
 
     protected $fillable = [
-        'nis', 'nama_lengkap', 'kelas_id', 'jenis_kelamin',
-        'whatsapp', 'alamat', 'foto', 'tanggal_gabung',
+        'tanggal_gabung', 'jenis_member', 'nama_lengkap', 'jenis_kelamin',
+        'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku',
     ];
 
-    protected $casts = [
-        'tanggal_gabung' => 'date',
-    ];
-
-    public function kelas(): BelongsTo
+    /**
+     * Nama kelas di sistem lama disimpan sebagai teks bebas di jenis_member
+     * (contoh: "9 - A"), BUKAN foreign key ke tabel `kelas`. Accessor ini
+     * dipakai supaya kode di controller/view tetap bisa memanggil ->kelas
+     * tanpa tahu detail ini.
+     */
+    public function getKelasAttribute(): string
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->jenis_member;
     }
 
     public function absensi(): HasMany
     {
-        return $this->hasMany(AbsenSiswa::class);
+        return $this->hasMany(AbsenSiswa::class, 'id_siswa', 'id_member');
     }
 
-    /** Absensi pada tanggal tertentu (dipakai untuk cek "absensi kemarin" seperti kode lama). */
     public function absenPadaTanggal(string $tanggal): ?AbsenSiswa
     {
-        return $this->absensi()->where('tanggal', $tanggal)->first();
+        return $this->absensi()->whereDate('tgl_absen', $tanggal)->first();
     }
 }

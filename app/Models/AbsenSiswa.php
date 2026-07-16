@@ -8,15 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AbsenSiswa extends Model
 {
     protected $table = 'absen_siswa';
+    protected $primaryKey = 'id_absen_siswa';
+    public $incrementing = true;
+    public $timestamps = false;
 
-    protected $fillable = ['siswa_id', 'tanggal', 'keterangan', 'gambar', 'diinput_oleh'];
+    protected $fillable = ['tgl_absen', 'keterangan', 'id_siswa', 'tambahan', 'gambar'];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tgl_absen' => 'date',
     ];
 
     const KETERANGAN_LABEL = [
-        'h' => 'Hadir',
         's' => 'Sakit',
         'i' => 'Ijin',
         'a' => 'Alpha',
@@ -25,11 +27,11 @@ class AbsenSiswa extends Model
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'id_siswa', 'id_member');
     }
 
     public function labelKeterangan(): string
     {
-        return self::KETERANGAN_LABEL[$this->keterangan] ?? 'Tidak diketahui';
+        return self::KETERANGAN_LABEL[$this->keterangan] ?? 'Hadir';
     }
 }

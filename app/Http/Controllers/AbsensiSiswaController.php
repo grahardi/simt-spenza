@@ -10,37 +10,34 @@ class AbsensiSiswaController extends Controller
 {
     /**
      * Pengganti absenjelas.php.
-     * Perbaikan dari versi lama:
-     * - Query pakai Eloquent (aman dari SQL injection, tidak ada lagi string interpolation).
-     * - Output otomatis di-escape oleh Blade (aman dari XSS), tidak perlu echo manual.
-     * - Pagination pakai Laravel paginate(), bukan hitung manual $lim.
+     * Disesuaikan dengan struktur asli dari absen26.sql:
+     * tbl_member.id_member <-> absen_siswa.id_siswa, kolom tgl_absen & keterangan.
+     * Perbaikan dari versi lama: Eloquent (aman dari SQL injection), Blade
+     * auto-escape (aman dari XSS), paginate() bukan hitung manual $lim.
      */
     public function index(Request $request)
     {
         $tanggal = $request->date('tgl') ?? Carbon::today();
         $tanggal = Carbon::parse($tanggal);
 
-        // Senin -> "kemarin" dihitung mundur 2 hari (Sabtu), sesuai logika hari.php lama.
         $tanggalSebelumnya = $tanggal->isMonday()
             ? $tanggal->copy()->subDays(2)
             : $tanggal->copy()->subDay();
 
-        $absensi = AbsenSiswa::with(['siswa.kelas'])
-            ->whereDate('tanggal', $tanggal)
+        $absensi = AbsenSiswa::with('siswa')
+            ->whereDate('tgl_absen', $tanggal)
             ->orderBy(
-                \App\Models\Siswa::select('kelas_id')
-                    ->whereColumn('siswa.id', 'absen_siswa.siswa_id')
+                \App\Models\Siswa::select('jenis_member')
+                    ->whereColumn('tbl_member.id_member', 'absen_siswa.id_siswa')
             )
             ->paginate(20)
             ->withQueryString();
 
-        // Absensi hari sebelumnya untuk tiap siswa yang tampil, diambil dalam 1 query
-        // (menggantikan pola "include cekabsen.php di dalam loop" yang dulu query per-baris).
-        $siswaIds = $absensi->pluck('siswa_id');
-        $absenSebelumnya = AbsenSiswa::whereIn('siswa_id', $siswaIds)
-            ->whereDate('tanggal', $tanggalSebelumnya)
+        $siswaIds = $absensi->pluck('id_siswa');
+        $absenSebelumnya = AbsenSiswa::whereIn('id_siswa', $siswaIds)
+            ->whereDate('tgl_absen', $tanggalSebelumnya)
             ->get()
-            ->keyBy('siswa_id');
+            ->keyBy('id_siswa');
 
         return view('absensi.index', [
             'absensi' => $absensi,

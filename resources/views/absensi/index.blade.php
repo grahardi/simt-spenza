@@ -46,7 +46,7 @@
                         <tr>
                             <td>{{ $absensi->firstItem() + $i }}</td>
                             <td>{{ $a->siswa->nama_lengkap }}</td>
-                            <td>{{ $a->siswa->kelas?->nama_kelas ?? '-' }}</td>
+                            <td>{{ $a->siswa->kelas }}</td>
                             <td>
                                 @if (in_array($a->keterangan, ['s', 'i']) && $a->gambar)
                                     <a href="{{ route('absensi.foto', $a) }}"
@@ -61,7 +61,7 @@
                                 @endif
                             </td>
                             <td>
-                                {{ ($absenSebelumnya[$a->siswa_id] ?? null)?->labelKeterangan() ?? '-' }}
+                                {{ ($absenSebelumnya[$a->id_siswa] ?? null)?->labelKeterangan() ?? '-' }}
                             </td>
                         </tr>
                     @endforeach
