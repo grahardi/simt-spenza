@@ -17,17 +17,9 @@
         .bottom-nav a { color: #6c757d; text-align: center; font-size: 11px; flex: 1; }
         .bottom-nav a.active { color: #4b0082; }
         .bottom-nav i { display: block; font-size: 20px; margin-bottom: 2px; }
-        .desktop-nav { display: none; }
         @media (min-width: 768px) {
             body { padding-bottom: 0; }
             .bottom-nav { display: none; }
-            .desktop-nav { display: flex; gap: 4px; margin-left: 24px; }
-            .desktop-nav a {
-                color: rgba(255,255,255,.85); text-decoration: none;
-                padding: 6px 12px; border-radius: 6px; font-size: 14px;
-            }
-            .desktop-nav a i { margin-right: 6px; }
-            .desktop-nav a.active, .desktop-nav a:hover { background: rgba(255,255,255,.15); color: #fff; }
         }
 
         /* Grid kartu menu ikon - pengganti pola panel_*.php lama, mobile-friendly */
@@ -38,8 +30,8 @@
         }
         .menu-card {
             background: #fff;
-            border-radius: 14px;
-            padding: 16px 6px;
+            border-radius: 16px;
+            padding: 18px 6px 14px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -56,21 +48,30 @@
             box-shadow: 0 7px 14px rgba(0,0,0,0.12);
             text-decoration: none;
         }
-        .menu-card i {
-            font-size: 26px;
-            color: #4b0082;
-            margin-bottom: 8px;
+        .menu-icon {
+            width: 52px; height: 52px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 8px; font-size: 22px;
         }
         .menu-title {
-            color: #e67e23;
             font-weight: 600;
             font-size: 13px;
             line-height: 1.2;
+            color: #3a3a3a;
         }
+        /* Palet warna kartu - dipetakan per kategori menu, bukan acak */
+        .bg-blue   { background: #e6f1fb; color: #185fa5; }
+        .bg-teal   { background: #e1f5ee; color: #0f6e56; }
+        .bg-coral  { background: #faece7; color: #993c1d; }
+        .bg-pink   { background: #fbeaf0; color: #993556; }
+        .bg-amber  { background: #faeeda; color: #854f0b; }
+        .bg-green  { background: #eaf3de; color: #3b6d11; }
+        .bg-purple { background: #eeedfe; color: #534ab7; }
+        .bg-red    { background: #fcebeb; color: #a32d2d; }
         @media (max-width: 576px) {
             .menu-grid { gap: 8px; }
-            .menu-card { padding: 10px 2px; border-radius: 10px; }
-            .menu-card i { font-size: 20px; margin-bottom: 6px; }
+            .menu-card { padding: 12px 2px 10px; border-radius: 12px; }
+            .menu-icon { width: 40px; height: 40px; font-size: 17px; margin-bottom: 6px; }
             .menu-title { font-size: 11px; }
         }
     </style>
@@ -79,23 +80,6 @@
     <header class="bg-indigo text-white p-2 shadow" style="background:#4b0082;">
         <div class="container d-flex align-items-center">
             <span class="fw-semibold">SIMT Sekolah</span>
-
-            {{-- Menu untuk desktop, menggantikan pola panel_*.php per-role lama --}}
-            <nav class="desktop-nav">
-                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-home"></i>Depan
-                </a>
-                <a href="{{ route('absensi.index') }}" class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}">
-                    <i class="fas fa-clipboard-check"></i>Absensi
-                </a>
-                <a href="{{ route('jadwal.index') }}" class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt"></i>Jadwal
-                </a>
-                <a href="{{ route('tugas.index') }}" class="{{ request()->routeIs('tugas.*') ? 'active' : '' }}">
-                    <i class="fas fa-tasks"></i>Tugas
-                </a>
-            </nav>
-
             <a href="{{ route('profil') }}" class="ms-auto text-white me-3"><i class="fas fa-user-circle fa-lg"></i></a>
             <form method="POST" action="{{ route('logout') }}" class="m-0">
                 @csrf
@@ -108,7 +92,7 @@
         @yield('content')
     </main>
 
-    {{-- Menu bawah berbasis ikon untuk mobile, menggantikan pola menu.php / panel_*.php lama --}}
+    {{-- Menu bawah berbasis ikon untuk mobile, menggantikan pola menu.php lama --}}
     <nav class="bottom-nav">
         <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <i class="fas fa-home"></i>Depan
@@ -116,11 +100,11 @@
         <a href="{{ route('absensi.index') }}" class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}">
             <i class="fas fa-clipboard-check"></i>Absensi
         </a>
-        <a href="{{ route('jadwal.index') }}" class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
-            <i class="fas fa-calendar-alt"></i>Jadwal
+        <a href="{{ route('siswa.index') }}" class="{{ request()->routeIs('siswa.*') ? 'active' : '' }}">
+            <i class="fas fa-user-graduate"></i>Siswa
         </a>
-        <a href="{{ route('tugas.index') }}" class="{{ request()->routeIs('tugas.*') ? 'active' : '' }}">
-            <i class="fas fa-tasks"></i>Tugas
+        <a href="{{ route('guru.index') }}" class="{{ request()->routeIs('guru.*') ? 'active' : '' }}">
+            <i class="fas fa-chalkboard-teacher"></i>Guru
         </a>
         <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}">
             <i class="fas fa-user"></i>Profil

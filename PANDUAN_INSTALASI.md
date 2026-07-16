@@ -116,13 +116,13 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 ## Roadmap migrasi modul selanjutnya (urutan usulan)
 1. ✅ Absensi Siswa — sudah jadi, sudah disesuaikan ke `tbl_member`/`absen_siswa` asli
 2. ✅ Autentikasi — login pakai nomor ID + password, role dari tabel `member`
-3. Data Master Siswa & Guru (CRUD) — dari `siswatambah.php`, `gurutambah.php`, `daftarnama.php`
+3. ✅ Data Master Siswa & Guru (CRUD) — sudah jadi, dashboard berbasis panel per-role
 4. Keterlambatan — dari `telatkelas.php`, `caritelat.php`, dst
 5. Kebersihan Kelas — dari `bersihkelas.php` dkk
 6. Tata Tertib (Tatib) — dari `tatibentry.php`, `tindakan.php` dkk
 7. Bimbingan Konseling — dari `bimbingan.php` dkk
 8. Keagamaan — dari `agamalistall.php` dkk
-9. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas, Jadwal
+9. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas Guru Absen (piket), Jadwal
 
 ### Catatan soal password lama
 Password akun-akun lama di tabel `member` masih **plain text** (belum di-hash).

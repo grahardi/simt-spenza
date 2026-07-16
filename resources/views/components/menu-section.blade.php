@@ -6,7 +6,9 @@
     <div class="menu-grid">
         @foreach ($items as $item)
             <a href="{{ $item['href'] }}" class="menu-card">
-                <i class="{{ $item['icon'] }}"></i>
+                <span class="menu-icon bg-{{ $item['color'] ?? 'purple' }}">
+                    <i class="{{ $item['icon'] }}"></i>
+                </span>
                 <span class="menu-title">{{ $item['label'] }}</span>
             </a>
         @endforeach

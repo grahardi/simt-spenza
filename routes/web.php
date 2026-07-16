@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\MemberLoginController;
 use App\Http\Controllers\AbsensiSiswaController;
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +33,14 @@ Route::middleware('auth:member')->group(function () {
     Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
     });
+
+    // Data Master Siswa - pengganti daftarnama.php, siswatambah.php, prosessiswa.php
+    Route::resource('siswa', SiswaController::class)
+        ->middleware('role:guru,walikelas,kepsek,admin,piket');
+
+    // Data Master Guru - pengganti gurutambah.php, arsipguru.php
+    Route::resource('guru', GuruController::class)
+        ->middleware('role:kepsek,admin,piket');
 
     // Placeholder modul lain, supaya link di bottom-nav tidak 404 dulu.
     Route::get('/jadwal', fn () => view('placeholder', ['judul' => 'Jadwal Pelajaran']))->name('jadwal.index');
