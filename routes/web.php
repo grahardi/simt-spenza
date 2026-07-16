@@ -32,6 +32,14 @@ Route::middleware('auth:member')->group(function () {
     // Modul Absensi Siswa - semua role yang dulu bisa akses absenjelas.php
     Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
+
+        // Isi absensi manual & catat terlambat - khusus piket/admin
+        Route::middleware('role:piket,admin')->group(function () {
+            Route::get('/isi', [AbsensiSiswaController::class, 'isi'])->name('isi');
+            Route::post('/tandai/{siswa}', [AbsensiSiswaController::class, 'tandai'])->name('tandai');
+            Route::post('/telat/{siswa}', [AbsensiSiswaController::class, 'telat'])->name('telat');
+            Route::get('/telat', [AbsensiSiswaController::class, 'listTelat'])->name('telat.list');
+        });
     });
 
     // Data Master Siswa - pengganti daftarnama.php, siswatambah.php, prosessiswa.php

@@ -49,6 +49,7 @@
         'admin' => [
             'title' => 'Menu Admin Absensi',
             'items' => [
+                ['label' => 'Isi Absensi', 'icon' => 'fas fa-pen', 'color' => 'blue', 'href' => route('absensi.isi')],
                 ['label' => 'Ajuan Absensi Siswa', 'icon' => 'fas fa-inbox', 'color' => 'purple', 'href' => route('modul', 'ajuan-absensi-siswa')],
                 ['label' => 'Absensi Siswa', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'List Ajuan', 'icon' => 'fas fa-list', 'color' => 'teal', 'href' => route('modul', 'list-ajuan')],
@@ -57,12 +58,12 @@
         'piket' => [
             'title' => 'Menu Piket',
             'items' => [
-                ['label' => 'Siswa Terlambat', 'icon' => 'fas fa-clock', 'color' => 'red', 'href' => route('modul', 'siswa-terlambat')],
+                ['label' => 'Isi Absensi', 'icon' => 'fas fa-pen', 'color' => 'blue', 'href' => route('absensi.isi')],
+                ['label' => 'Siswa Terlambat', 'icon' => 'fas fa-clock', 'color' => 'red', 'href' => route('absensi.telat.list')],
                 ['label' => 'Absensi Siswa', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Arsip Surat', 'icon' => 'fas fa-envelope-open-text', 'color' => 'amber', 'href' => route('modul', 'arsip-surat')],
                 ['label' => 'Ajuan Absensi Masuk', 'icon' => 'fas fa-door-open', 'color' => 'purple', 'href' => route('modul', 'ajuan-absensi-masuk')],
                 ['label' => 'Absensi Guru', 'icon' => 'fas fa-chalkboard-teacher', 'color' => 'green', 'href' => route('guru.index')],
-                ['label' => 'Ubah Absensi', 'icon' => 'fas fa-edit', 'color' => 'teal', 'href' => route('modul', 'ubah-absensi')],
                 // Guru absen -> guru upload tugas -> piket sampaikan ke siswa di kelas
                 ['label' => 'Tugas Guru Absen', 'icon' => 'fas fa-clipboard-list', 'color' => 'pink', 'href' => route('modul', 'tugas-guru-absen')],
             ],
