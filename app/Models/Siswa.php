@@ -31,4 +31,17 @@ class Siswa extends Model
     {
         return $this->absensi()->whereDate('tgl_absen', $tanggal)->first();
     }
+
+    /**
+     * URL foto profil siswa. File-nya ada di storage/app/public/siswa/,
+     * nama filenya persis isi kolom foto_profil.
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        if (empty($this->foto_profil)) {
+            return null;
+        }
+
+        return \Illuminate\Support\Facades\Storage::url('siswa/'.$this->foto_profil);
+    }
 }

@@ -38,11 +38,17 @@
             @foreach ($siswa as $s)
                 @php $absenIni = $s->absenHariIni; @endphp
                 <div class="siswa-row {{ !$loop->last ? 'border-bottom' : '' }}">
-                    <div class="siswa-info">
-                        <h6 class="mb-0 text-uppercase">
-                            <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
-                            <span class="text-muted normal-case" style="font-size:12px; text-transform:none;">&middot; Kelas {{ $s->kelas }}</span>
-                        </h6>
+                    <div class="siswa-info d-flex align-items-center gap-2">
+                        @if ($s->foto_url)
+                            <img src="{{ $s->foto_url }}" alt="" class="foto-siswa-kecil">
+                        @else
+                            <span class="foto-siswa-kecil foto-siswa-kosong">{{ strtoupper(substr($s->nama_lengkap, 0, 1)) }}</span>
+                        @endif
+                        <div>
+                            <h6 class="mb-0 text-uppercase">
+                                <span class="text-primary">{{ $s->id_member }}</span> - {{ $s->nama_lengkap }}
+                                <span class="text-muted normal-case" style="font-size:12px; text-transform:none;">&middot; Kelas {{ $s->kelas }}</span>
+                            </h6>
 
                         @if ($absenIni)
                             <div class="mt-1">
@@ -52,6 +58,7 @@
                                 </span>
                             </div>
                         @endif
+                        </div>
                     </div>
 
                     {{-- Menu tombol HANYA muncul kalau siswa belum terabsen hari ini.

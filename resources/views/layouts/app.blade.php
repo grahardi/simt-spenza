@@ -105,6 +105,16 @@
             gap: 10px; padding: 10px 0; flex-wrap: wrap;
         }
         .siswa-nama { font-weight: 600; font-size: 14px; }
+
+        /* Foto profil siswa kecil di hasil pencarian (Isi Absensi, dll) */
+        .foto-siswa-kecil {
+            width: 40px; height: 40px; border-radius: 50%;
+            object-fit: cover; flex-shrink: 0;
+        }
+        .foto-siswa-kosong {
+            display: flex; align-items: center; justify-content: center;
+            background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 14px;
+        }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;
