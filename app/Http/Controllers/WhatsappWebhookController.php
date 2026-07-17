@@ -29,6 +29,8 @@ class WhatsappWebhookController extends Controller
         $sesi = WhatsappSesi::firstOrCreate(['nomor' => $nomor], ['langkah' => 'menu']);
 
         $balasan = match ($sesi->langkah) {
+            'registrasi_input_induk' => $this->prosesRegistrasiInputInduk($sesi, $teks),
+            'registrasi_konfirmasi' => $this->prosesRegistrasiKonfirmasi($sesi, $teks),
             'pilih_siswa' => $this->prosesPilihSiswa($sesi, $teks),
             'pilih_jenis' => $this->prosesPilihJenis($sesi, $teks),
             'tunggu_foto' => $this->prosesTungguFoto($sesi, $gambarBase64),
@@ -38,21 +40,53 @@ class WhatsappWebhookController extends Controller
         return response()->json(['balasan' => $balasan]);
     }
 
+    private function teksMenu(): string
+    {
+        return "Assalamu'alaikum, Bapak/Ibu Wali Murid \xF0\x9F\x99\x8F\n\n"
+            ."*SIMT SMP Negeri 1 Turen*\n\n"
+            ."Ketik salah satu:\n"
+            ."*registrasi* - hubungkan nomor ini dengan data anak\n"
+            ."*absen* - ajukan Sakit/Ijin\n"
+            ."*info* - info seputar bot ini";
+    }
+
+    /**
+     * Menu utama - hanya bereaksi kalau teksnya PERSIS salah satu dari 3
+     * pilihan (registrasi/absen/info), sesuai arahan. Selain itu, tampilkan
+     * menu lagi supaya user tahu pilihan yang benar.
+     */
     private function prosesMenuUtama(WhatsappSesi $sesi, string $nomor, string $teks): string
     {
-        $tesksLower = strtolower($teks);
+        $pilihan = strtolower(trim($teks));
 
-        if (!str_contains($tesksLower, 'absen') && $tesksLower !== '1') {
-            return "Assalamu'alaikum, Bapak/Ibu Wali Murid \xF0\x9F\x99\x8F\n\n"
-                ."*SIMT SMP Negeri 1 Turen*\n\n"
-                ."Balas *1* atau ketik *Absen* untuk mengajukan Sakit/Ijin anak Bapak/Ibu.";
+        if ($pilihan === 'registrasi') {
+            $sesi->update(['langkah' => 'registrasi_input_induk']);
+
+            return "Silakan ketik *Nomor Induk* siswa yang mau dihubungkan dengan nomor WhatsApp ini.\n\n"
+                ."Ketik *batal* untuk kembali ke menu.";
         }
 
+        if ($pilihan === 'absen') {
+            return $this->mulaiAbsen($sesi, $nomor);
+        }
+
+        if ($pilihan === 'info') {
+            return "Bot ini dipakai untuk:\n"
+                ."1. *Registrasi* - menghubungkan nomor WhatsApp Bapak/Ibu dengan data anak di sekolah (pakai Nomor Induk siswa)\n"
+                ."2. *Absen* - mengajukan Sakit/Ijin untuk anak yang sudah terhubung, lengkap dengan foto surat keterangan\n\n"
+                ."Ketik *registrasi* atau *absen* untuk mulai.";
+        }
+
+        return $this->teksMenu();
+    }
+
+    private function mulaiAbsen(WhatsappSesi $sesi, string $nomor): string
+    {
         $daftarSiswa = Siswa::where('whatsapp', 'like', '%'.substr($nomor, -10).'%')->get();
 
         if ($daftarSiswa->isEmpty()) {
-            return "Mohon maaf, nomor ini belum terhubung dengan data siswa manapun.\n"
-                ."Silakan hubungi pihak sekolah untuk menghubungkan nomor WhatsApp Bapak/Ibu ke data anak.";
+            return "Mohon maaf, nomor ini belum terhubung dengan data siswa manapun.\n\n"
+                ."Ketik *registrasi* dulu untuk menghubungkan nomor ini dengan data anak Bapak/Ibu.";
         }
 
         if ($daftarSiswa->count() === 1) {
@@ -66,6 +100,55 @@ class WhatsappWebhookController extends Controller
         $daftar = $daftarSiswa->values()->map(fn ($s, $i) => ($i + 1).'. '.$s->nama_lengkap.' ('.$s->kelas.')')->implode("\n");
 
         return "Nomor ini terhubung dengan beberapa siswa:\n\n{$daftar}\n\nBalas dengan angka pilihan Bapak/Ibu.";
+    }
+
+    /**
+     * Registrasi langkah 1: input Nomor Induk, cari siswanya, minta konfirmasi
+     * sebelum benar-benar menghubungkan (supaya tidak salah pasang gara-gara
+     * salah ketik nomor induk).
+     */
+    private function prosesRegistrasiInputInduk(WhatsappSesi $sesi, string $teks): string
+    {
+        if (strtolower(trim($teks)) === 'batal') {
+            $sesi->reset();
+
+            return $this->teksMenu();
+        }
+
+        $noInduk = preg_replace('/\D/', '', $teks);
+        $siswa = $noInduk !== '' ? Siswa::find($noInduk) : null;
+
+        if (!$siswa) {
+            return "Nomor Induk *{$teks}* tidak ditemukan. Coba periksa lagi ya, atau ketik *batal* untuk kembali ke menu.";
+        }
+
+        $sesi->update(['langkah' => 'registrasi_konfirmasi', 'id_siswa_calon_registrasi' => $siswa->id_member]);
+
+        return "Ditemukan: *{$siswa->nama_lengkap}* ({$siswa->kelas})\n\n"
+            ."Apakah benar ini anak Bapak/Ibu? Balas *YA* untuk menghubungkan nomor ini, atau *TIDAK* untuk batal.";
+    }
+
+    /** Registrasi langkah 2: konfirmasi, baru benar-benar simpan ke data siswa. */
+    private function prosesRegistrasiKonfirmasi(WhatsappSesi $sesi, string $teks): string
+    {
+        $jawaban = strtolower(trim($teks));
+
+        if (str_contains($jawaban, 'ya')) {
+            $siswa = Siswa::find($sesi->id_siswa_calon_registrasi);
+            $siswa?->update(['whatsapp' => $sesi->nomor]);
+            $sesi->reset();
+
+            return "\xE2\x9C\x85 Berhasil! Nomor WhatsApp ini sekarang terhubung dengan *{$siswa?->nama_lengkap}*.\n\n"
+                ."Ketik *absen* kapan saja untuk mengajukan Sakit/Ijin.";
+        }
+
+        if (str_contains($jawaban, 'tidak') || $jawaban === 'batal') {
+            $sesi->reset();
+
+            return "Registrasi dibatalkan.\n\n".$this->teksMenu();
+        }
+
+        return "Mohon balas *YA* atau *TIDAK* saja.";
     }
 
     private function prosesPilihSiswa(WhatsappSesi $sesi, string $teks): string

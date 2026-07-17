@@ -9,10 +9,15 @@ class WhatsappSesi extends Model
     protected $table = 'whatsapp_sesi';
     public $timestamps = false;
 
-    protected $fillable = ['nomor', 'langkah', 'id_siswa_dipilih', 'jenis_dipilih', 'updated_at'];
+    protected $fillable = ['nomor', 'langkah', 'id_siswa_dipilih', 'jenis_dipilih', 'id_siswa_calon_registrasi', 'updated_at'];
 
     public function reset(): void
     {
-        $this->update(['langkah' => 'menu', 'id_siswa_dipilih' => null, 'jenis_dipilih' => null]);
+        $this->update([
+            'langkah' => 'menu',
+            'id_siswa_dipilih' => null,
+            'jenis_dipilih' => null,
+            'id_siswa_calon_registrasi' => null,
+        ]);
     }
 }

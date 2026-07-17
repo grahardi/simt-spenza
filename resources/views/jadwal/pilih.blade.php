@@ -5,7 +5,6 @@
 @section('title', 'Jadwal Pelajaran')
 
 @section('content')
-<div class="alert alert-danger py-2 mb-3"><i class="fas fa-exclamation-triangle me-1"></i> Ada beberapa jadwal yang masih perbaikan. Harap ditunggu.</div>
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <h1 class="h5 pt-2 mb-0"><i class="fas fa-calendar-alt me-2"></i>Jadwal Pelajaran</h1>
 </div>
