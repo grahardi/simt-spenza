@@ -129,6 +129,52 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 - ✅ **Jadwal Mengajar** (guru) — jadwal hari ini dari tabel `datajadwal`, filter otomatis pakai hari & guru yang login
 - ✅ **Aktivitas Kelas** (wali kelas) — rekap absensi hari ini untuk kelas yang diampu (dari kolom `member.walikelas`, isinya nama kelas langsung seperti "7 - A", bukan flag 0/1)
 
+## Sinkronisasi Jadwal Guru dari Excel (`jadwal_jadi__5_.xlsx`)
+
+Kode guru di file Excel (02-51, dari sheet "kodeguru") **beda** dengan `id_guru` asli
+di database - jadi harus dicocokkan dulu lewat nama (fuzzy match), baru bisa dipakai
+mengisi tabel `datajadwal`. Prosesnya sengaja 2 langkah (pratinjau dulu, baru apply)
+supaya bisa dicek manual dulu sebelum data beneran masuk.
+
+### 1. Salin file yang diperlukan
+- `database/data/kodeguru_reference.php` (hasil ekstrak sheet "kodeguru", 49 baris)
+- `database/data/jadwal_matrix.php` (hasil ekstrak sheet "jadwal", 1260 baris jadwal Senin-Jumat)
+- `database/migrations/2026_01_04_000001_create_kodeguru_table.php`
+- `app/Models/KodeGuru.php`
+- `app/Console/Commands/SinkronJadwalGuru.php`
+
+### 2. Migrate
+```bash
+php artisan migrate
+```
+
+### 3. Jalankan pratinjau (TIDAK mengubah data apapun)
+```bash
+php artisan jadwal:sinkron
+```
+Ini akan menampilkan tabel: kode Excel, nama di Excel, nama yang paling mirip
+ditemukan di tabel `guru`, skor kemiripan (%), dan status. Skor >= 60% dianggap
+cocok otomatis, di bawah itu ditandai "perlu cek manual".
+
+Hasil pencocokan (termasuk yang di bawah 60%) disimpan ke tabel `kodeguru` untuk
+direview. Kalau ada yang salah cocok atau butuh dikoreksi manual, edit langsung
+kolom `id_guru` di tabel `kodeguru` (lewat phpMyAdmin atau `php artisan tinker`)
+sebelum lanjut ke langkah berikutnya.
+
+**Kode yang tidak ada gurunya sama sekali di database** (skor rendah/tidak ada
+kandidat sama sekali) otomatis dilewati saat isi jadwal - tidak perlu dihapus manual
+satu-satu.
+
+### 4. Setelah dicek, isi tabel datajadwal
+```bash
+php artisan jadwal:sinkron --apply
+```
+Ini mengisi/update `datajadwal` berdasarkan hasil pencocokan di tabel `kodeguru`.
+Baris dengan kode yang tidak berhasil dicocokkan (skor < 60% atau memang tidak ada
+di tabel `kodeguru`) otomatis dilewati - laporan di akhir menampilkan berapa baris
+masuk dan berapa dilewati.
+
+
 ## Catatan tambahan: pagination pakai Bootstrap, bukan default
 Ikon panah pagination Laravel default didesain untuk Tailwind (SVG tanpa
 constraint ukuran) - kalau project pakai Bootstrap, ikonnya tampil raksasa/
