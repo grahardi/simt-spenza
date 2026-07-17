@@ -10,6 +10,7 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\KeagamaanController;
 use App\Http\Controllers\RppController;
+use App\Http\Controllers\SmartController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TatibController;
@@ -115,6 +116,13 @@ Route::middleware('auth:member')->group(function () {
         Route::post('/upload', [RppController::class, 'simpan'])->name('simpan')->middleware('role:guru');
         Route::get('/semua', [RppController::class, 'semua'])->name('semua')->middleware('role:kepsek');
         Route::post('/{rppItem}/setujui', [RppController::class, 'setujui'])->name('setujui')->middleware('role:kepsek');
+    });
+
+    // Peminjaman Ruang Serbaguna (nama lama: "smart")
+    Route::prefix('smart')->name('smart.')->middleware('role:guru,kepsek,piket')->group(function () {
+        Route::get('/', [SmartController::class, 'kalender'])->name('kalender');
+        Route::get('/pinjam/{tanggal}/{jam}', [SmartController::class, 'pinjam'])->name('pinjam');
+        Route::post('/pinjam/{tanggal}/{jam}', [SmartController::class, 'simpan'])->name('simpan');
     });
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.
