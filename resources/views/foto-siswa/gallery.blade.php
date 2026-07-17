@@ -37,20 +37,20 @@
                         <div class="p-2 flex-grow-1 d-flex flex-column">
                             <div class="fw-semibold small text-truncate" title="{{ $s->nama_lengkap }}">{{ $s->nama_lengkap }}</div>
                             <div class="text-muted" style="font-size:11px;">{{ $s->id_member }} &middot; {{ $s->kelas }}</div>
-                            <form method="POST" action="{{ route('foto-siswa.upload', $s) }}" enctype="multipart/form-data" class="mt-auto pt-2">
-                                @csrf
-                                <label class="btn btn-sm btn-outline-primary w-100 mb-0">
-                                    <i class="fas fa-upload me-1"></i> {{ $s->foto_url ? 'Ganti' : 'Upload' }}
-                                    <input type="file" name="foto" accept="image/jpeg" class="d-none" onchange="this.form.submit()">
-                                </label>
-                            </form>
+                            @if ($s->foto_url)
+                                <a href="{{ $s->foto_url }}" download class="btn btn-sm btn-outline-secondary w-100 mt-auto">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </a>
+                            @else
+                                <span class="text-muted small mt-auto">Belum ada foto</span>
+                            @endif
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
 
-        <div class="text-muted small mt-3">Menampilkan {{ $siswa->count() }} siswa. Format foto: JPG/JPEG.</div>
+        <div class="text-muted small mt-3">Menampilkan {{ $siswa->count() }} siswa.</div>
     @endif
 </div>
 @endsection
