@@ -16,7 +16,7 @@
             <i class="far fa-question-circle me-1"></i> Tidak ada jadwal mengajar hari {{ ucfirst(strtolower($hari)) }}.
         </div>
     @else
-        <div class="jadwal-timeline">
+        <div class="d-flex flex-column gap-2">
             @foreach ($jadwal as $j)
                 @php
                     $parts = $j->waktu ? array_map('trim', explode('-', $j->waktu)) : [];
@@ -24,26 +24,14 @@
                     $selesai = $parts[1] ?? null;
                     $sedangBerlangsung = $mulai && $selesai && $sekarang >= $mulai && $sekarang <= $selesai;
                 @endphp
-                <div class="jadwal-item {{ $sedangBerlangsung ? 'jadwal-item-aktif' : '' }}">
-                    <div class="jadwal-jam">
-                        <span class="jadwal-jam-angka">{{ $j->jamhari }}</span>
-                        <span class="jadwal-jam-label">Jam ke</span>
-                    </div>
-                    <div class="jadwal-garis"></div>
-                    <div class="jadwal-detail">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-1">
-                            <span class="fw-bold">{{ $j->kelas }}</span>
-                            @if ($j->waktu)
-                                <span class="text-muted small"><i class="far fa-clock me-1"></i>{{ $j->waktu }}</span>
-                            @endif
-                        </div>
-                        <div class="text-muted">{{ $j->mapel }}</div>
-                        @if ($sedangBerlangsung)
-                            <span class="badge-status mt-1" style="background:#eaf3de;color:#3b6d11;">
-                                <i class="fas fa-circle me-1" style="font-size:8px;"></i> Sedang berlangsung
-                            </span>
-                        @endif
-                    </div>
+                <div class="jadwal-baris {{ $sedangBerlangsung ? 'jadwal-baris-aktif' : '' }}">
+                    <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
+                    <span class="jadwal-waktu-kecil">{{ $j->waktu ?? '-' }}</span>
+                    <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
+                    <span class="jadwal-mapel-kecil">{{ $j->mapel }}</span>
+                    @if ($sedangBerlangsung)
+                        <span class="jadwal-live-dot" title="Sedang berlangsung"></span>
+                    @endif
                 </div>
             @endforeach
         </div>

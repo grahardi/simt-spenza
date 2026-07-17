@@ -141,31 +141,33 @@
         }
         .tab-tahun.active { background: #4b0082; color: #fff; }
 
-        /* Timeline Jadwal Mengajar - pengganti tabel polos */
-        .jadwal-timeline { display: flex; flex-direction: column; }
-        .jadwal-item { display: flex; gap: 14px; position: relative; padding-bottom: 18px; }
-        .jadwal-item:last-child { padding-bottom: 0; }
-        .jadwal-jam {
-            width: 52px; flex-shrink: 0; text-align: center;
-            display: flex; flex-direction: column; align-items: center;
+        /* Jadwal Mengajar - 1 baris ringkas per pelajaran */
+        .jadwal-baris {
+            display: flex; align-items: center; gap: 12px;
+            background: #f9f9fb; border-radius: 10px; padding: 10px 14px;
+            border-left: 4px solid #d8d3ec;
         }
-        .jadwal-jam-angka {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
+        .jadwal-jam-kecil {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 13px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .jadwal-jam-label { font-size: 10px; color: #999; margin-top: 2px; }
-        .jadwal-garis {
-            position: absolute; left: 26px; top: 42px; bottom: 0;
-            width: 2px; background: #eee;
+        .jadwal-waktu-kecil { color: #999; font-size: 12px; width: 105px; flex-shrink: 0; }
+        .jadwal-kelas-kecil { font-weight: 700; width: 70px; flex-shrink: 0; }
+        .jadwal-mapel-kecil { color: #555; flex: 1; }
+        .jadwal-live-dot {
+            width: 9px; height: 9px; border-radius: 50%; background: #3b6d11;
+            flex-shrink: 0; box-shadow: 0 0 0 3px rgba(59,109,17,.15);
         }
-        .jadwal-item:last-child .jadwal-garis { display: none; }
-        .jadwal-detail {
-            flex: 1; background: #f9f9fb; border-radius: 12px;
-            padding: 12px 14px; margin-left: 6px;
+        .jadwal-baris-aktif {
+            background: #f2edfa; border-left-color: #4b0082;
         }
-        .jadwal-item-aktif .jadwal-jam-angka { background: #4b0082; color: #fff; }
-        .jadwal-item-aktif .jadwal-detail { background: #f2edfa; border: 1px solid #d9cdf5; }
+        .jadwal-baris-aktif .jadwal-jam-kecil { background: #4b0082; color: #fff; }
+        @media (max-width: 576px) {
+            .jadwal-baris { flex-wrap: wrap; }
+            .jadwal-waktu-kecil { width: auto; order: 3; font-size: 11px; }
+            .jadwal-mapel-kecil { width: 100%; order: 4; font-size: 13px; }
+        }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;
