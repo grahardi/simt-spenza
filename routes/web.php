@@ -9,6 +9,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\KeagamaanController;
+use App\Http\Controllers\RppController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TatibController;
@@ -106,6 +107,14 @@ Route::middleware('auth:member')->group(function () {
         Route::get('/', [KeagamaanController::class, 'index'])->name('index')->middleware('role:guru');
         Route::post('/lapor/{siswa}', [KeagamaanController::class, 'simpan'])->name('simpan')->middleware('role:guru');
         Route::get('/rekap', [KeagamaanController::class, 'rekap'])->name('rekap')->middleware('role:keagamaan,piket,kepsek');
+    });
+
+    // RPP - guru upload, kepala sekolah setujui
+    Route::prefix('rpp')->name('rpp.')->group(function () {
+        Route::get('/upload', [RppController::class, 'upload'])->name('upload')->middleware('role:guru');
+        Route::post('/upload', [RppController::class, 'simpan'])->name('simpan')->middleware('role:guru');
+        Route::get('/semua', [RppController::class, 'semua'])->name('semua')->middleware('role:kepsek');
+        Route::post('/{rppItem}/setujui', [RppController::class, 'setujui'])->name('setujui')->middleware('role:kepsek');
     });
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.

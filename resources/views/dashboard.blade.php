@@ -19,7 +19,7 @@
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
                 ['label' => 'List Pelanggaran', 'icon' => 'fas fa-file-alt', 'color' => 'coral', 'href' => route('tatib.index')],
-                ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('modul', 'upload-rpp')],
+                ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.upload')],
                 ['label' => 'Smartboard', 'icon' => 'fas fa-chalkboard', 'color' => 'teal', 'href' => route('modul', 'smartboard')],
                 ['label' => 'Nilai PSAJ Tulis', 'icon' => 'fas fa-book-open', 'color' => 'amber', 'href' => route('modul', 'nilai-psaj-tulis')],
                 ['label' => 'Rekap Kehadiran', 'icon' => 'fas fa-clipboard-list', 'color' => 'green', 'href' => route('absensi.index')],
@@ -47,7 +47,7 @@
                 ['label' => 'Kehadiran Guru', 'icon' => 'fas fa-chalkboard-teacher', 'color' => 'green', 'href' => route('guru.index')],
                 ['label' => 'Ketidakhadiran', 'icon' => 'fas fa-user-times', 'color' => 'red', 'href' => route('modul', 'ketidakhadiran')],
                 ['label' => 'Rekap Absen Guru', 'icon' => 'fas fa-chart-bar', 'color' => 'blue', 'href' => route('modul', 'rekap-absen-guru')],
-                ['label' => 'RPP Guru', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('modul', 'rpp-guru')],
+                ['label' => 'RPP Guru', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.semua')],
             ],
         ],
         'admin' => [
