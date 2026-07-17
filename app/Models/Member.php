@@ -121,6 +121,10 @@ class Member extends Authenticatable
             return $this->isPiketToday();
         }
 
+        if ($role === 'superadmin') {
+            return strtolower(trim((string) $this->jabatan)) === 'superadmin';
+        }
+
         return in_array($role, $this->roles(), true);
     }
 }

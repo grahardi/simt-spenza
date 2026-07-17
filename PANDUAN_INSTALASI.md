@@ -221,3 +221,35 @@ di mana user tidak bisa login. Setelah semua akun aktif pernah login sekali
 lewat sistem baru, seluruh isi kolom password akan otomatis ter-hash semua.
 
 Kirim saja pesan "lanjut modul [nama]" kalau mau saya kerjakan modul berikutnya.
+
+## Fitur Superadmin (Panel AdminLTE Terpisah)
+
+Panel superadmin pakai layout berbeda (AdminLTE 3.2, lewat CDN) supaya terlihat
+lebih formal/administratif dibanding tampilan mobile-friendly biasa.
+
+### Cara mengaktifkan akun Superadmin
+Isi kolom `jabatan` di tabel `member` untuk akun yang dituju dengan teks **"Superadmin"**
+(case-insensitive). Begitu login, akan muncul kartu ungu "Panel Superadmin" di
+dashboard utama, klik untuk masuk.
+
+### Migration baru
+```bash
+php artisan migrate
+```
+Ini menambah kolom `aktif` (boolean, default 1) di tabel `guru` - dipakai fitur
+"Nonaktifkan" guru tanpa menghapus datanya sama sekali.
+
+### Yang bisa dilakukan superadmin
+- **Data Siswa**: Tambah, Edit, **Mutasi** (pindah kelas/tandai keluar-lulus).
+  Sengaja **tidak ada Hapus** - supaya riwayat absensi/pelanggaran/bimbingan yang
+  mengacu ke siswa itu tidak jadi rusak/yatim.
+- **Data Guru & Roles**: Tambah, Edit, **Nonaktifkan/Aktifkan** (bukan hapus).
+  Tombol "Roles" per guru untuk: buat akun login baru, atur jabatan login
+  (isi "Superadmin" di sini untuk kasih akses superadmin ke guru lain), atur
+  wali kelas, piket, dan semua flag role, serta reset password.
+- **Data Absensi**: lihat & edit/hapus SEMUA data absensi (semua tanggal, bukan
+  cuma hari ini seperti piket).
+- **Data Pelanggaran**: edit/hapus semua laporan pelanggaran.
+- **Data Bimbingan Konseling**: edit/hapus semua catatan BK.
+- **Dashboard**: kartu statistik Absensi hari ini/bulan ini, Keterlambatan,
+  Pelanggaran bulan ini, dan Notifikasi belum diaksi guru.

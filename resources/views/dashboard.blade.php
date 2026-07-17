@@ -118,6 +118,20 @@
     <p class="text-muted mb-0">Peran: {{ implode(', ', $member->roles()) ?: '-' }}</p>
 </div>
 
+@if ($member->hasRole('superadmin'))
+    <div class="p-4 rounded shadow mb-4 text-white" style="background:linear-gradient(135deg,#1a1030,#4b0082);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <h3 class="h6 mb-1"><i class="fas fa-user-shield me-2"></i>Panel Superadmin</h3>
+                <p class="mb-0 small opacity-75">Kelola data siswa, guru & roles, absensi, pelanggaran, dan bimbingan konseling secara penuh.</p>
+            </div>
+            <a href="{{ route('superadmin.dashboard') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-right me-1"></i> Buka Panel Superadmin
+            </a>
+        </div>
+    </div>
+@endif
+
 @foreach ($panels as $role => $panel)
     @if ($member->hasRole($role))
         <x-menu-section :title="$panel['title']" :items="$panel['items']" :theme="$panel['theme']" />

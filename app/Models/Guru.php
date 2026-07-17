@@ -12,11 +12,12 @@ class Guru extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nip', 'nuptk', 'nama', 'jenis_kelamin', 'status',
+        'nip', 'nuptk', 'nama', 'jenis_kelamin', 'status', 'aktif',
         'alamat', 'jabatan', 'telepon', 'tgl_lahir',
     ];
 
     protected $casts = [
         'tgl_lahir' => 'date',
+        'aktif' => 'boolean',
     ];
 }

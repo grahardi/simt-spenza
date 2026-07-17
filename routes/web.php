@@ -14,6 +14,12 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\KeagamaanController;
 use App\Http\Controllers\RppController;
 use App\Http\Controllers\SmartController;
+use App\Http\Controllers\Superadmin\AbsensiController as SuperadminAbsensiController;
+use App\Http\Controllers\Superadmin\BkController as SuperadminBkController;
+use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
+use App\Http\Controllers\Superadmin\GuruController as SuperadminGuruController;
+use App\Http\Controllers\Superadmin\PelanggaranController as SuperadminPelanggaranController;
+use App\Http\Controllers\Superadmin\SiswaController as SuperadminSiswaController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\ArsipSuratController;
 use App\Http\Controllers\DknKelasController;
@@ -103,6 +109,45 @@ Route::middleware('auth:member')->group(function () {
     Route::get('/absensi-bulanan', [AbsensiBulananController::class, 'index'])
         ->name('absensi-bulanan')
         ->middleware('role:tatib,kepsek,piket');
+
+    // ===== AREA SUPERADMIN (layout AdminLTE terpisah) =====
+    Route::prefix('superadmin')->name('superadmin.')->middleware('role:superadmin')->group(function () {
+        Route::get('/', [SuperadminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/siswa', [SuperadminSiswaController::class, 'index'])->name('siswa.index');
+        Route::get('/siswa/tambah', [SuperadminSiswaController::class, 'create'])->name('siswa.create');
+        Route::post('/siswa', [SuperadminSiswaController::class, 'store'])->name('siswa.store');
+        Route::get('/siswa/{siswa}/edit', [SuperadminSiswaController::class, 'edit'])->name('siswa.edit');
+        Route::put('/siswa/{siswa}', [SuperadminSiswaController::class, 'update'])->name('siswa.update');
+        Route::get('/siswa/{siswa}/mutasi', [SuperadminSiswaController::class, 'mutasiForm'])->name('siswa.mutasi-form');
+        Route::post('/siswa/{siswa}/mutasi', [SuperadminSiswaController::class, 'mutasi'])->name('siswa.mutasi');
+
+        Route::get('/guru', [SuperadminGuruController::class, 'index'])->name('guru.index');
+        Route::get('/guru/tambah', [SuperadminGuruController::class, 'create'])->name('guru.create');
+        Route::post('/guru', [SuperadminGuruController::class, 'store'])->name('guru.store');
+        Route::get('/guru/{guru}/edit', [SuperadminGuruController::class, 'edit'])->name('guru.edit');
+        Route::put('/guru/{guru}', [SuperadminGuruController::class, 'update'])->name('guru.update');
+        Route::post('/guru/{guru}/toggle-aktif', [SuperadminGuruController::class, 'toggleAktif'])->name('guru.toggle-aktif');
+        Route::get('/guru/{guru}/roles', [SuperadminGuruController::class, 'roles'])->name('guru.roles');
+        Route::post('/guru/{guru}/roles', [SuperadminGuruController::class, 'simpanRoles'])->name('guru.roles.simpan');
+        Route::post('/guru/{guru}/buat-akun', [SuperadminGuruController::class, 'buatAkun'])->name('guru.buat-akun');
+        Route::post('/guru/{guru}/reset-password', [SuperadminGuruController::class, 'resetPassword'])->name('guru.reset-password');
+
+        Route::get('/absensi', [SuperadminAbsensiController::class, 'index'])->name('absensi.index');
+        Route::get('/absensi/{absen}/edit', [SuperadminAbsensiController::class, 'edit'])->name('absensi.edit');
+        Route::put('/absensi/{absen}', [SuperadminAbsensiController::class, 'update'])->name('absensi.update');
+        Route::delete('/absensi/{absen}', [SuperadminAbsensiController::class, 'destroy'])->name('absensi.destroy');
+
+        Route::get('/pelanggaran', [SuperadminPelanggaranController::class, 'index'])->name('pelanggaran.index');
+        Route::get('/pelanggaran/{pelanggaran}/edit', [SuperadminPelanggaranController::class, 'edit'])->name('pelanggaran.edit');
+        Route::put('/pelanggaran/{pelanggaran}', [SuperadminPelanggaranController::class, 'update'])->name('pelanggaran.update');
+        Route::delete('/pelanggaran/{pelanggaran}', [SuperadminPelanggaranController::class, 'destroy'])->name('pelanggaran.destroy');
+
+        Route::get('/bk', [SuperadminBkController::class, 'index'])->name('bk.index');
+        Route::get('/bk/{bkItem}/edit', [SuperadminBkController::class, 'edit'])->name('bk.edit');
+        Route::put('/bk/{bkItem}', [SuperadminBkController::class, 'update'])->name('bk.update');
+        Route::delete('/bk/{bkItem}', [SuperadminBkController::class, 'destroy'])->name('bk.destroy');
+    });
 
     // DKN Kelas - wali kelas upload berkas per mapel
     Route::prefix('dkn')->name('dkn.')->middleware('role:walikelas')->group(function () {
