@@ -272,8 +272,8 @@
         <a href="{{ route('siswa.index') }}" class="{{ request()->routeIs('siswa.*') ? 'active' : '' }}">
             <i class="fas fa-user-graduate"></i>Siswa
         </a>
-        <a href="{{ route('guru.index') }}" class="{{ request()->routeIs('guru.*') ? 'active' : '' }}">
-            <i class="fas fa-chalkboard-teacher"></i>Guru
+        <a href="{{ route('modul', 'jurnal') }}" class="{{ request()->routeIs('modul') && request()->route('slug') === 'jurnal' ? 'active' : '' }}">
+            <i class="fas fa-book"></i>Jurnal
         </a>
         <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}">
             <i class="fas fa-user"></i>Profil
