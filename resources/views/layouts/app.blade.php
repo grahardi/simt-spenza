@@ -120,6 +120,19 @@
             background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 22px;
             display: flex; align-items: center; justify-content: center;
         }
+
+        /* Pilihan kategori berbentuk pill (radio custom) - dipakai di form Lapor Pelanggaran dll */
+        .kategori-pilih { display: flex; flex-wrap: wrap; gap: 8px; }
+        .kategori-radio { position: absolute; opacity: 0; width: 0; height: 0; }
+        .kategori-label {
+            padding: 9px 18px; border-radius: 999px; font-weight: 600; font-size: 13px;
+            cursor: pointer; border: 2px solid transparent; opacity: .55;
+            transition: opacity .15s ease, border-color .15s ease;
+        }
+        .kategori-radio:checked + .kategori-label {
+            opacity: 1; border-color: rgba(0,0,0,.25);
+        }
+        .kategori-label:hover { opacity: .85; }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;
