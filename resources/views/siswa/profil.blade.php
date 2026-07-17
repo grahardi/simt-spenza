@@ -42,9 +42,9 @@
             <table class="table table-striped">
                 <thead><tr><th>No</th><th>Tanggal</th><th>Status</th><th>Keterangan</th></tr></thead>
                 <tbody>
-                    @foreach ($absensi as $i => $a)
+                    @foreach ($absensi as $a)
                         <tr>
-                            <td>{{ $i + 1 }}</td>
+                            <td>{{ $absensi->firstItem() + $loop->index }}</td>
                             <td>{{ $a->tgl_absen->translatedFormat('d F Y') }}</td>
                             <td><span class="badge-status badge-{{ $a->keterangan }}">{{ $a->labelKeterangan() }}</span></td>
                             <td>{{ $a->tambahan }}</td>
@@ -53,6 +53,7 @@
                 </tbody>
             </table>
         </div>
+        {{ $absensi->onEachSide(1)->links() }}
     @endif
 </div>
 
@@ -65,78 +66,62 @@
             <table class="table table-striped">
                 <thead><tr><th>No</th><th>Tanggal Terlambat</th></tr></thead>
                 <tbody>
-                    @foreach ($keterlambatan as $i => $t)
-                        <tr><td>{{ $i + 1 }}</td><td>{{ $t->tgl_absen->translatedFormat('d F Y') }}</td></tr>
+                    @foreach ($keterlambatan as $t)
+                        <tr><td>{{ $keterlambatan->firstItem() + $loop->index }}</td><td>{{ $t->tgl_absen->translatedFormat('d F Y') }}</td></tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+        {{ $keterlambatan->onEachSide(1)->links() }}
     @endif
 </div>
 
 <div class="p-4 bg-white rounded shadow">
-    <h3 class="h6 mb-3"><i class="fas fa-gavel me-2"></i>Data Pelanggaran</h3>
-    @if ($pelanggaran->isEmpty())
-        <div class="text-muted small">Belum ada riwayat pelanggaran.</div>
-    @else
-        <div class="d-flex flex-wrap gap-2 mb-3" id="tabTahunPelanggaran">
-            @foreach ($pelanggaran->keys() as $i => $tahun)
-                <button type="button"
-                        class="btn btn-sm tab-tahun {{ $i === 0 ? 'active' : '' }}"
-                        data-target="pelanggaran-{{ \Illuminate\Support\Str::slug($tahun) }}"
-                        onclick="gantiTabTahun(this)">
-                    {{ $tahun }}
-                </button>
-            @endforeach
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h6 mb-0"><i class="fas fa-gavel me-2"></i>Data Pelanggaran</h3>
+        <div class="fw-bold small">Total Poin {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}: {{ $totalPoinTahunIni }}</div>
+    </div>
 
-        @foreach ($pelanggaran as $tahun => $daftar)
-            <div class="tab-panel-pelanggaran" id="pelanggaran-{{ \Illuminate\Support\Str::slug($tahun) }}" style="{{ $loop->first ? '' : 'display:none;' }}">
-                @if ($daftar->isEmpty())
-                    <div class="text-muted small py-3">Tidak ada pelanggaran di tahun ajaran {{ $tahun }}.</div>
-                @else
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
-                        <tbody>
-                            @foreach ($daftar as $i => $p)
-                                @php $belumDitangani = $p->penanganan === null || strtolower($p->penanganan) === 'belum'; @endphp
-                                <tr>
-                                    <td>{{ $i + 1 }}</td>
-                                    <td>{{ $p->tgl_pelanggaran->translatedFormat('d F Y') }}</td>
-                                    <td>{{ $p->kategori }}</td>
-                                    <td>{{ $p->keterangan }}</td>
-                                    <td>{{ $belumDitangani ? '-' : $p->poin }}</td>
-                                    <td>
-                                        @if ($belumDitangani)
-                                            <span class="badge-status" style="background:#fcebeb;color:#a32d2d;">Belum ditangani</span>
-                                        @else
-                                            {{ $p->penanganan }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr class="fw-bold">
-                                <td colspan="4" class="text-end">Total Poin {{ $tahun }} <span class="fw-normal text-muted">(hanya yang sudah ditangani)</span></td>
-                                <td colspan="2">{{ $daftar->sum(fn ($p) => is_numeric($p->poin) ? (int) $p->poin : 0) }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                @endif
-            </div>
+    {{-- Tahun ajaran sekarang jadi link biasa (reload), supaya paginasi per
+         tahun bisa jalan benar - beda dari sebelumnya yang JS toggle tanpa
+         reload, karena kombinasi tab-tanpa-reload + paginasi tidak sinkron. --}}
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        @foreach ($daftarTahunAjaran as $th)
+            <a href="{{ route('siswa.profil', [$siswa, 'tahun' => $th]) }}"
+               class="tab-tahun {{ $th === $tahunAjaran ? 'active' : '' }}" style="text-decoration:none;">
+                {{ $th }}/{{ $th + 1 }}
+            </a>
         @endforeach
+    </div>
+
+    @if ($pelanggaran->isEmpty())
+        <div class="text-muted small py-3">Tidak ada pelanggaran di tahun ajaran {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}.</div>
+    @else
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
+                <tbody>
+                    @foreach ($pelanggaran as $p)
+                        @php $belumDitangani = $p->penanganan === null || strtolower($p->penanganan) === 'belum'; @endphp
+                        <tr>
+                            <td>{{ $pelanggaran->firstItem() + $loop->index }}</td>
+                            <td>{{ $p->tgl_pelanggaran->translatedFormat('d F Y') }}</td>
+                            <td>{{ $p->kategori }}</td>
+                            <td>{{ $p->keterangan }}</td>
+                            <td>{{ $belumDitangani ? '-' : $p->poin }}</td>
+                            <td>
+                                @if ($belumDitangani)
+                                    <span class="badge-status" style="background:#fcebeb;color:#a32d2d;">Belum ditangani</span>
+                                @else
+                                    {{ $p->penanganan }}
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        {{ $pelanggaran->onEachSide(1)->links() }}
     @endif
 </div>
-
-<script>
-function gantiTabTahun(btn) {
-    document.querySelectorAll('#tabTahunPelanggaran .tab-tahun').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.tab-panel-pelanggaran').forEach(el => el.style.display = 'none');
-    document.getElementById(btn.dataset.target).style.display = '';
-}
-</script>
 @endsection
