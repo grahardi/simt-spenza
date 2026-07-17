@@ -40,7 +40,6 @@
             gap: 12px;
         }
         .menu-card {
-            background: #fff;
             border-radius: 16px;
             padding: 18px 6px 14px;
             text-align: center;
@@ -50,8 +49,8 @@
             justify-content: center;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #f0f0f0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.06), inset 0 -3px 0 rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,.03);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.06);
             transition: transform .15s ease, box-shadow .15s ease;
         }
         .menu-card:hover {
@@ -61,24 +60,26 @@
         }
         .menu-icon {
             width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(255,255,255,.55);
             display: flex; align-items: center; justify-content: center;
             margin-bottom: 8px; font-size: 22px;
+            color: inherit;
         }
         .menu-title {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 13px;
             line-height: 1.2;
-            color: #3a3a3a;
+            color: inherit;
         }
-        /* Palet warna kartu - dipetakan per kategori menu, bukan acak */
-        .bg-blue   { background: #e6f1fb; color: #185fa5; }
-        .bg-teal   { background: #e1f5ee; color: #0f6e56; }
-        .bg-coral  { background: #faece7; color: #993c1d; }
-        .bg-pink   { background: #fbeaf0; color: #993556; }
-        .bg-amber  { background: #faeeda; color: #854f0b; }
-        .bg-green  { background: #eaf3de; color: #3b6d11; }
-        .bg-purple { background: #eeedfe; color: #534ab7; }
-        .bg-red    { background: #fcebeb; color: #a32d2d; }
+        /* Kartu menu diisi penuh warna (bukan cuma ikonnya) - ikon & teks senada */
+        .bg-blue   { background: #d3e9fb; color: #185fa5; }
+        .bg-teal   { background: #c9f0e2; color: #0f6e56; }
+        .bg-coral  { background: #f8ddd1; color: #993c1d; }
+        .bg-pink   { background: #f9d9e5; color: #993556; }
+        .bg-amber  { background: #faedc9; color: #854f0b; }
+        .bg-green  { background: #ddedc8; color: #3b6d11; }
+        .bg-purple { background: #e0dbfc; color: #534ab7; }
+        .bg-red    { background: #f9d4d2; color: #a32d2d; }
         @media (max-width: 576px) {
             .menu-grid { gap: 8px; }
             .menu-card { padding: 12px 2px 10px; border-radius: 12px; }
@@ -155,23 +156,6 @@
             .kelas-btn { width: 56px; height: 56px; font-size: 16px; border-radius: 10px; }
         }
 
-        /* Panel dashboard - tema warna light beda per role, biar gampang dibedakan */
-        .panel-section {
-            border-radius: 18px; padding: 16px 16px 18px; margin-bottom: 18px;
-            border: 1px solid rgba(0,0,0,.04);
-        }
-        .panel-title {
-            font-weight: 700; font-size: 14px; text-align: center;
-            border-radius: 10px; padding: 8px 12px; margin-bottom: 14px;
-        }
-        .panel-theme-blue   { background: #eef6fd; } .panel-theme-blue .panel-title   { background: #d3e9fb; color: #185fa5; }
-        .panel-theme-teal   { background: #eafaf5; } .panel-theme-teal .panel-title   { background: #cdf1e5; color: #0f6e56; }
-        .panel-theme-amber  { background: #fef8ec; } .panel-theme-amber .panel-title  { background: #faedc9; color: #854f0b; }
-        .panel-theme-coral  { background: #fdf2ee; } .panel-theme-coral .panel-title  { background: #f8ddd1; color: #993c1d; }
-        .panel-theme-pink   { background: #fdeff4; } .panel-theme-pink .panel-title   { background: #f9d9e5; color: #993556; }
-        .panel-theme-green  { background: #f2f8ea; } .panel-theme-green .panel-title  { background: #ddedc8; color: #3b6d11; }
-        .panel-theme-purple { background: #f3f1fe; } .panel-theme-purple .panel-title { background: #e0dbfc; color: #534ab7; }
-        .panel-theme-red    { background: #fdedec; } .panel-theme-red .panel-title    { background: #f9d4d2; color: #a32d2d; }
         .panel-section .menu-card { background: rgba(255,255,255,.85); }
 
         /* Avatar inisial di tabel Absensi Siswa */
