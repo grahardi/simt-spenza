@@ -86,9 +86,9 @@
             'title' => 'Menu Bimbingan Konseling',
             'theme' => 'green',
             'items' => [
-                ['label' => 'Pelanggaran Kedisiplinan', 'icon' => 'fas fa-exclamation-triangle', 'color' => 'red', 'href' => route('modul', 'pelanggaran-kedisiplinan')],
-                ['label' => 'Pendampingan', 'icon' => 'fas fa-hands-helping', 'color' => 'pink', 'href' => route('modul', 'pendampingan')],
-                ['label' => 'Pelanggaran Tata Tertib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-tata-tertib-bk')],
+                ['label' => 'Tambah Catatan', 'icon' => 'fas fa-plus', 'color' => 'green', 'href' => route('bimbingan.cari')],
+                ['label' => 'Data Bimbingan', 'icon' => 'fas fa-hands-helping', 'color' => 'pink', 'href' => route('bimbingan.index')],
+                ['label' => 'Pelanggaran Tata Tertib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
             ],
         ],
         'keagamaan' => [

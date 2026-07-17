@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\MemberLoginController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AjuanAbsensiController;
 use App\Http\Controllers\AktivitasKelasController;
+use App\Http\Controllers\BimbinganController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
@@ -89,6 +90,14 @@ Route::middleware('auth:member')->group(function () {
         Route::post('/lapor/{siswa}', [TatibController::class, 'simpan'])->name('simpan');
         Route::get('/', [TatibController::class, 'index'])->name('index');
         Route::post('/{pelanggaran}/tindak', [TatibController::class, 'tindak'])->name('tindak');
+    });
+
+    // Bimbingan Konseling
+    Route::prefix('bimbingan')->name('bimbingan.')->middleware('role:bk,tatib,piket,kepsek')->group(function () {
+        Route::get('/cari', [BimbinganController::class, 'cari'])->name('cari');
+        Route::get('/lapor/{siswa}', [BimbinganController::class, 'lapor'])->name('lapor');
+        Route::post('/lapor/{siswa}', [BimbinganController::class, 'simpan'])->name('simpan');
+        Route::get('/', [BimbinganController::class, 'index'])->name('index');
     });
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.
