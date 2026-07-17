@@ -132,9 +132,8 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 16. ✅ Arsip Surat — galeri foto bukti absensi (sakit/ijin) yang sudah terupload, filter tanggal
 
 ### Belum dimigrasi
-- **DKN Kelas** (walikelas) — daftar kumpulan nilai per kelas
-- **Nilai PSAJ Tulis** (guru) — input nilai ujian
-- **E-rapor** — terintegrasi sistem RADIG 2.0 eksternal, di luar cakupan migrasi ini
+- **Nilai PSAJ Tulis, dan sejenisnya** — ini BUKAN belum dikerjakan, tapi memang sistem/link/aplikasi TERPISAH di luar cakupan migrasi ini (sudah dikonfirmasi Bapak Ginanjar). Kalau nanti perlu ditautkan dari dashboard SIMT (misal jadi link keluar ke aplikasi itu), tinggal kasih tahu URL-nya, tinggal ganti 1 baris `href` di `dashboard.blade.php` untuk item "Nilai PSAJ Tulis".
+- **E-rapor** — sama, terintegrasi sistem RADIG 2.0 eksternal, di luar cakupan migrasi ini.
 
 ### Modul kecil yang baru ditambahkan
 - ✅ **Jadwal Mengajar** (guru) — jadwal hari ini dari tabel `datajadwal`, filter otomatis pakai hari & guru yang login
