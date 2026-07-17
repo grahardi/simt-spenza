@@ -54,7 +54,7 @@
                 </thead>
                 <tbody>
                     @foreach ($pelanggaran as $p)
-                        @php $belumDitangani = $p->penanganan === null || strtolower($p->penanganan) === 'belum'; @endphp
+                        @php $belumDitangani = !$p->sudahDitangani(); @endphp
                         <tr>
                             <td class="small">{{ $p->tgl_pelanggaran->translatedFormat('d M Y') }}</td>
                             <td>{{ $p->siswa->nama_lengkap ?? '-' }}</td>

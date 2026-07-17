@@ -102,7 +102,7 @@
                 <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
                 <tbody>
                     @foreach ($pelanggaran as $p)
-                        @php $belumDitangani = $p->penanganan === null || strtolower($p->penanganan) === 'belum'; @endphp
+                        @php $belumDitangani = !$p->sudahDitangani(); @endphp
                         <tr>
                             <td>{{ $pelanggaran->firstItem() + $loop->index }}</td>
                             <td>{{ $p->tgl_pelanggaran->translatedFormat('d F Y') }}</td>

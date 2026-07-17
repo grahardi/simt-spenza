@@ -36,6 +36,10 @@ class Pelanggaran extends Model
 
     public function sudahDitangani(): bool
     {
+        if (!empty($this->poin)) {
+            return true;
+        }
+
         return $this->penanganan && strtolower($this->penanganan) !== 'belum';
     }
 }
