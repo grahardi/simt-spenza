@@ -89,8 +89,9 @@ class TatibController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        // Akumulasi poin TIDAK difilter tahun ajaran - ini akumulasi total
+        // selama siswa bersekolah, beda dari list pelanggaran yang per tahun.
         $akumulasiPoin = Pelanggaran::with('siswa')
-            ->whereBetween('tgl_pelanggaran', [$mulai->toDateString(), $selesai->toDateString()])
             ->selectRaw('id_siswa, sum(poin) as total_poin, count(*) as jumlah_kejadian')
             ->groupBy('id_siswa')
             ->orderByDesc('total_poin')

@@ -17,33 +17,34 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
-{{-- Nav tab tahun ajaran (arsip per tahun, aplikasi mulai 2025/2026) --}}
-<ul class="nav nav-pills mb-3 gap-2">
-    @foreach ($daftarTahunAjaran as $th)
-        <li class="nav-item">
-            <a href="{{ route('tatib.index', ['tahun' => $th]) }}"
-               class="nav-link {{ $th === $tahunAjaran ? 'active' : '' }}"
-               style="{{ $th === $tahunAjaran ? 'background:#4b0082;' : 'background:#f0f0f0;color:#555;' }}">
-                {{ $th }}/{{ $th + 1 }}
-            </a>
-        </li>
-    @endforeach
-</ul>
+{{-- Tab utama: Pelanggaran (per tahun ajaran) vs Akumulasi (all-time) --}}
+<div class="d-flex gap-2 mb-3" id="tabUtama">
+    <button type="button" class="tab-tahun active" data-target="panelPelanggaran" onclick="gantiTabUtama(this)">
+        <i class="fas fa-gavel me-1"></i> Pelanggaran
+    </button>
+    <button type="button" class="tab-tahun" data-target="panelAkumulasi" onclick="gantiTabUtama(this)">
+        <i class="fas fa-chart-bar me-1"></i> Akumulasi Poin
+    </button>
+</div>
 
-<div class="p-4 bg-white rounded shadow">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h3 class="h6 text-muted mb-0">Tahun Ajaran {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}</h3>
-        <div class="d-flex gap-2" id="tabSubPelanggaran">
-            <button type="button" class="tab-tahun active" data-target="panelDaftarPelanggaran" onclick="gantiSubTab(this)">
-                Data Pelanggaran
-            </button>
-            <button type="button" class="tab-tahun" data-target="panelAkumulasiPoin" onclick="gantiSubTab(this)">
-                Akumulasi Poin
-            </button>
-        </div>
-    </div>
+<div class="tab-panel-utama" id="panelPelanggaran">
+    {{-- Sub-tab tahun ajaran (arsip per tahun, aplikasi mulai 2025/2026) - link reload,
+         karena datanya dipaginasi per tahun. --}}
+    <ul class="nav nav-pills mb-3 gap-2">
+        @foreach ($daftarTahunAjaran as $th)
+            <li class="nav-item">
+                <a href="{{ route('tatib.index', ['tahun' => $th]) }}"
+                   class="nav-link {{ $th === $tahunAjaran ? 'active' : '' }}"
+                   style="{{ $th === $tahunAjaran ? 'background:#4b0082;' : 'background:#f0f0f0;color:#555;' }}">
+                    {{ $th }}/{{ $th + 1 }}
+                </a>
+            </li>
+        @endforeach
+    </ul>
 
-    <div class="sub-tab-panel" id="panelDaftarPelanggaran">
+    <div class="p-4 bg-white rounded shadow">
+        <h3 class="h6 text-muted mb-3">Tahun Ajaran {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}</h3>
+
         @if ($pelanggaran->isEmpty())
             <div class="text-muted text-center py-4">
                 <i class="far fa-question-circle me-1"></i> Tidak ada laporan pelanggaran di tahun ajaran ini.
@@ -101,8 +102,14 @@
             {{ $pelanggaran->onEachSide(1)->links() }}
         @endif
     </div>
+</div>
 
-    <div class="sub-tab-panel" id="panelAkumulasiPoin" style="display:none;">
+<div class="tab-panel-utama" id="panelAkumulasi" style="display:none;">
+    <div class="p-4 bg-white rounded shadow">
+        <h3 class="h6 mb-3">
+            <i class="fas fa-chart-bar me-2"></i>Akumulasi Poin Selama Bersekolah
+            <span class="text-muted small fw-normal">(semua tahun ajaran, tidak difilter)</span>
+        </h3>
         @if ($akumulasiPoin->isEmpty())
             <div class="text-muted small">Belum ada data.</div>
         @else
@@ -152,10 +159,10 @@
 @endforeach
 
 <script>
-function gantiSubTab(btn) {
-    document.querySelectorAll('#tabSubPelanggaran .tab-tahun').forEach(b => b.classList.remove('active'));
+function gantiTabUtama(btn) {
+    document.querySelectorAll('#tabUtama .tab-tahun').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.sub-tab-panel').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-panel-utama').forEach(el => el.style.display = 'none');
     document.getElementById(btn.dataset.target).style.display = '';
 }
 </script>
