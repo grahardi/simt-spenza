@@ -17,25 +17,32 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
-<div class="px-4 py-3 mb-3 bg-white rounded shadow">
-    <form method="GET" class="d-flex gap-2 align-items-center">
-        <label class="form-label mb-0">Tanggal</label>
-        <input type="date" name="tgl" class="form-control" style="max-width:200px"
-               value="{{ $tanggal->format('Y-m-d') }}" onchange="this.form.submit()">
-    </form>
-</div>
+{{-- Nav tab tahun ajaran (arsip per tahun, aplikasi mulai 2025/2026) --}}
+<ul class="nav nav-pills mb-3 gap-2">
+    @foreach ($daftarTahunAjaran as $th)
+        <li class="nav-item">
+            <a href="{{ route('tatib.index', ['tahun' => $th]) }}"
+               class="nav-link {{ $th === $tahunAjaran ? 'active' : '' }}"
+               style="{{ $th === $tahunAjaran ? 'background:#4b0082;' : 'background:#f0f0f0;color:#555;' }}">
+                {{ $th }}/{{ $th + 1 }}
+            </a>
+        </li>
+    @endforeach
+</ul>
 
-<div class="p-4 bg-white rounded shadow">
+<div class="p-4 bg-white rounded shadow mb-3">
+    <h3 class="h6 text-muted mb-3">Tahun Ajaran {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}</h3>
+
     @if ($pelanggaran->isEmpty())
         <div class="text-muted text-center py-4">
-            <i class="far fa-question-circle me-1"></i> Tidak ada laporan pelanggaran pada {{ $tanggal->translatedFormat('d F Y') }}.
+            <i class="far fa-question-circle me-1"></i> Tidak ada laporan pelanggaran di tahun ajaran ini.
         </div>
     @else
         <div class="table-responsive">
             <table class="table table-striped align-middle">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>Tanggal</th>
                         <th>Siswa</th>
                         <th>Kategori</th>
                         <th>Poin</th>
@@ -46,9 +53,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($pelanggaran as $i => $p)
+                    @foreach ($pelanggaran as $p)
                         <tr>
-                            <td>{{ $pelanggaran->firstItem() + $i }}</td>
+                            <td class="small">{{ $p->tgl_pelanggaran->translatedFormat('d M Y') }}</td>
                             <td>{{ $p->siswa->nama_lengkap ?? '-' }}</td>
                             <td>
                                 @php
@@ -80,6 +87,31 @@
         </div>
 
         {{ $pelanggaran->onEachSide(1)->links() }}
+    @endif
+</div>
+
+{{-- Akumulasi poin per siswa untuk tahun ajaran yang sedang dilihat --}}
+<div class="p-4 bg-white rounded shadow">
+    <h3 class="h6 mb-3"><i class="fas fa-chart-bar me-2"></i>Akumulasi Poin Tahun Ajaran {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}</h3>
+    @if ($akumulasiPoin->isEmpty())
+        <div class="text-muted small">Belum ada data.</div>
+    @else
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Jumlah Kejadian</th><th>Total Poin</th></tr></thead>
+                <tbody>
+                    @foreach ($akumulasiPoin as $i => $a)
+                        <tr>
+                            <td>{{ $i + 1 }}</td>
+                            <td>{{ $a->siswa->nama_lengkap ?? '-' }}</td>
+                            <td>{{ $a->siswa->kelas ?? '-' }}</td>
+                            <td>{{ $a->jumlah_kejadian }}</td>
+                            <td class="fw-bold">{{ $a->total_poin }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 </div>
 

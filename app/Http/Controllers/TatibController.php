@@ -62,19 +62,41 @@ class TatibController extends Controller
         return redirect()->route('tatib.index')->with('status', 'Laporan pelanggaran '.$siswa->nama_lengkap.' berhasil disimpan.');
     }
 
-    /** Pengganti tatiblist.php/listpelanggar.php - daftar semua pelanggaran, filter tanggal. */
+    /**
+     * Pengganti tatiblist.php/listpelanggar.php - arsip pelanggaran per
+     * TAHUN AJARAN (1 Juli - 30 Juni), bukan per tanggal - karena aplikasi
+     * baru mulai tahun ajaran 2025/2026. Ditambah akumulasi poin per siswa
+     * di bagian bawah untuk tahun ajaran yang sedang dilihat.
+     */
     public function index(Request $request)
     {
-        $tanggal = $request->date('tgl') ?? Carbon::today();
-        $tanggal = Carbon::parse($tanggal);
+        $sekarang = Carbon::now('Asia/Jakarta');
+        $tahunAjaranSekarang = $sekarang->month >= 7 ? $sekarang->year : $sekarang->year - 1;
+
+        // Aplikasi mulai dipakai tahun ajaran 2025/2026 - itu jadi batas paling awal.
+        $tahunMulai = 2025;
+        $tahunAjaran = (int) ($request->input('tahun') ?? $tahunAjaranSekarang);
+        $tahunAjaran = max($tahunMulai, min($tahunAjaran, $tahunAjaranSekarang));
+
+        $daftarTahunAjaran = range($tahunMulai, $tahunAjaranSekarang);
+
+        $mulai = Carbon::create($tahunAjaran, 7, 1)->startOfDay();
+        $selesai = Carbon::create($tahunAjaran + 1, 6, 30)->endOfDay();
 
         $pelanggaran = Pelanggaran::with(['siswa', 'pelapor'])
-            ->whereDate('tgl_pelanggaran', $tanggal)
-            ->orderByDesc('id_langgar')
+            ->whereBetween('tgl_pelanggaran', [$mulai->toDateString(), $selesai->toDateString()])
+            ->orderByDesc('tgl_pelanggaran')
             ->paginate(20)
             ->withQueryString();
 
-        return view('tatib.index', compact('pelanggaran', 'tanggal'));
+        $akumulasiPoin = Pelanggaran::with('siswa')
+            ->whereBetween('tgl_pelanggaran', [$mulai->toDateString(), $selesai->toDateString()])
+            ->selectRaw('id_siswa, sum(poin) as total_poin, count(*) as jumlah_kejadian')
+            ->groupBy('id_siswa')
+            ->orderByDesc('total_poin')
+            ->get();
+
+        return view('tatib.index', compact('pelanggaran', 'tahunAjaran', 'daftarTahunAjaran', 'akumulasiPoin'));
     }
 
     /** Pengganti updatetatib.php - tandai pelanggaran sudah ditangani. */
