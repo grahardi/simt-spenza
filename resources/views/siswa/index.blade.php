@@ -44,12 +44,12 @@
     @else
         <div class="d-flex flex-column gap-2">
             @foreach ($siswa as $i => $s)
-                <div class="siswa-baris {{ $s->jenis_kelamin === 'P' ? 'siswa-baris-p' : 'siswa-baris-l' }}">
+                <a href="{{ route('siswa.profil', $s) }}" class="siswa-baris {{ $s->jenis_kelamin === 'P' ? 'siswa-baris-p' : 'siswa-baris-l' }}">
                     <span class="siswa-no-kecil">{{ $siswa->firstItem() + $i }}</span>
                     <span class="siswa-induk-kecil">{{ $s->id_member }}</span>
-                    <a href="{{ route('siswa.profil', $s) }}" class="siswa-nama-kecil">{{ $s->nama_lengkap }}</a>
+                    <span class="siswa-nama-kecil">{{ $s->nama_lengkap }}</span>
                     <span class="siswa-kelas-kecil">{{ $s->kelas }}</span>
-                </div>
+                </a>
             @endforeach
         </div>
 

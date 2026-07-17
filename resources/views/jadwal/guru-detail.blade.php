@@ -4,6 +4,7 @@
 
 @php
     $hariIni = \App\Models\Member::namaHariJakartaHuruBesar();
+    $palet = ['blue', 'teal', 'amber', 'coral', 'pink', 'green', 'purple'];
 @endphp
 
 @section('content')
@@ -33,35 +34,21 @@
                 {{ $hari }}
                 @if ($hari === $hariIni) <span class="badge-status" style="background:#eaf3de;color:#3b6d11;">Hari ini</span> @endif
             </h3>
-            <div class="table-responsive mb-2">
-                <table class="table table-sm table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th style="width:70px">Jam</th>
-                            <th>Kelas</th>
-                            <th>Mapel</th>
-                            @if ($hari === $hariIni)
-                                <th></th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $j)
-                            <tr>
-                                <td>{{ $j->jamhari }}</td>
-                                <td>{{ $j->kelas }}</td>
-                                <td>{{ $j->mapel }}</td>
-                                @if ($hari === $hariIni)
-                                    <td class="text-end">
-                                        <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
-                                        </a>
-                                    </td>
-                                @endif
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+
+            <div class="d-flex flex-column gap-2 mb-2">
+                @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $i => $j)
+                    @php $warna = $palet[$i % count($palet)]; @endphp
+                    <div class="jadwal-baris bg-{{ $warna }}">
+                        <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
+                        <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
+                        <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
+                        @if ($hari === $hariIni)
+                            <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
+                                <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
+                            </a>
+                        @endif
+                    </div>
+                @endforeach
             </div>
         @endforeach
     @endif

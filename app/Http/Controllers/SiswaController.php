@@ -19,7 +19,7 @@ class SiswaController extends Controller
             })
             ->orderBy('kelas')
             ->orderBy('nama_lengkap')
-            ->paginate(20)
+            ->paginate(10)
             ->withQueryString();
 
         $daftarKelas = Siswa::query()

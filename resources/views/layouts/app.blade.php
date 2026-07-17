@@ -170,13 +170,14 @@
         .siswa-baris {
             display: flex; align-items: center; gap: 12px;
             border-radius: 10px; padding: 10px 14px;
+            text-decoration: none; color: inherit;
         }
+        .siswa-baris:hover { filter: brightness(0.97); text-decoration: none; color: inherit; }
         .siswa-baris-l { background: #e6f7ea; color: #1e6b3a; } /* hijau muda - laki-laki */
         .siswa-baris-p { background: #fde9ec; color: #99425a; } /* pink muda - perempuan */
         .siswa-no-kecil { width: 28px; flex-shrink: 0; font-weight: 600; opacity: .8; text-align: right; }
         .siswa-induk-kecil { width: 70px; flex-shrink: 0; font-weight: 600; opacity: .85; }
-        .siswa-nama-kecil { flex: 1; font-weight: 700; color: inherit; text-decoration: none; }
-        .siswa-nama-kecil:hover { text-decoration: underline; color: inherit; }
+        .siswa-nama-kecil { flex: 1; font-weight: 700; }
         .siswa-kelas-kecil { width: 70px; flex-shrink: 0; text-align: right; font-weight: 600; opacity: .85; }
         @media (max-width: 576px) {
             .siswa-induk-kecil { width: 56px; font-size: 12px; }
@@ -283,8 +284,8 @@
         <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <i class="fas fa-home"></i>Depan
         </a>
-        <a href="{{ route('absensi.index') }}" class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}">
-            <i class="fas fa-clipboard-check"></i>Absensi
+        <a href="{{ route('jadwal.index') }}" class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
+            <i class="fas fa-calendar-alt"></i>Jadwal
         </a>
         <a href="{{ route('siswa.index') }}" class="{{ request()->routeIs('siswa.*') ? 'active' : '' }}">
             <i class="fas fa-user-graduate"></i>Siswa
