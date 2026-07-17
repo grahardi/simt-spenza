@@ -101,9 +101,9 @@
             <table class="table table-sm table-striped">
                 <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Jumlah Kejadian</th><th>Total Poin</th></tr></thead>
                 <tbody>
-                    @foreach ($akumulasiPoin as $i => $a)
+                    @foreach ($akumulasiPoin as $a)
                         <tr>
-                            <td>{{ $i + 1 }}</td>
+                            <td>{{ $akumulasiPoin->firstItem() + $loop->index }}</td>
                             <td>{{ $a->siswa->nama_lengkap ?? '-' }}</td>
                             <td>{{ $a->siswa->kelas ?? '-' }}</td>
                             <td>{{ $a->jumlah_kejadian }}</td>
@@ -113,6 +113,7 @@
                 </tbody>
             </table>
         </div>
+        {{ $akumulasiPoin->onEachSide(1)->links() }}
     @endif
 </div>
 

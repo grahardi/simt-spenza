@@ -94,7 +94,8 @@ class TatibController extends Controller
             ->selectRaw('id_siswa, sum(poin) as total_poin, count(*) as jumlah_kejadian')
             ->groupBy('id_siswa')
             ->orderByDesc('total_poin')
-            ->get();
+            ->paginate(10, ['*'], 'p_akumulasi')
+            ->withQueryString();
 
         return view('tatib.index', compact('pelanggaran', 'tahunAjaran', 'daftarTahunAjaran', 'akumulasiPoin'));
     }
