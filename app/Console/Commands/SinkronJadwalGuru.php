@@ -86,6 +86,16 @@ class SinkronJadwalGuru extends Command
         $this->newLine();
         $this->info(count($hasil).' kode diproses. '.$tidakDitemukan.' id_guru tidak ditemukan di tabel guru, '.$namaMeleset.' ditemukan tapi namanya beda jauh dari Excel (kemungkinan id_guru sudah dipakai ulang untuk guru baru - cek manual).');
 
+        if ($tidakDitemukan > 0) {
+            $this->newLine();
+            $this->warn('Daftar kode yang id_guru-nya TIDAK ditemukan di tabel guru:');
+            collect($hasil)->where('ditemukan', false)->each(function ($h) {
+                $this->line("  - Kode {$h['kode']} (id_guru {$h['id_guru']}): {$h['nama_excel']} [{$h['mapel']}]");
+            });
+            $this->newLine();
+            $this->comment('Baris jadwal kode-kode di atas TETAP akan dimasukkan ke datajadwal (--apply), nama gurunya tampil "-" sampai ditambahkan ke Data Guru dengan id_guru yang sama.');
+        }
+
         if (!$this->option('apply')) {
             $this->newLine();
             $this->comment('Ini baru PRATINJAU. Jalankan ulang dengan --apply untuk benar-benar mengisi tabel datajadwal.');
