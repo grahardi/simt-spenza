@@ -133,6 +133,13 @@
             opacity: 1; border-color: rgba(0,0,0,.25);
         }
         .kategori-label:hover { opacity: .85; }
+
+        /* Tab tahun ajaran (JS toggle, tanpa reload halaman) - dipakai di Profil Siswa */
+        .tab-tahun {
+            background: #f0f0f0; color: #666; border: none;
+            border-radius: 999px; padding: 6px 16px; font-weight: 600; font-size: 13px;
+        }
+        .tab-tahun.active { background: #4b0082; color: #fff; }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;

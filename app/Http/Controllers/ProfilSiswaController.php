@@ -28,8 +28,17 @@ class ProfilSiswaController extends Controller
 
         $pelanggaran = Pelanggaran::where('id_siswa', $siswa->id_member)
             ->orderByDesc('tgl_pelanggaran')
-            ->limit(50)
-            ->get();
+            ->limit(200)
+            ->get()
+            ->groupBy(function ($p) {
+                // Tahun ajaran: 1 Juli - 30 Juni. Contoh: Maret 2026 -> tahun ajaran 2025
+                // (dimulai Juli 2025), Agustus 2026 -> tahun ajaran 2026.
+                $tanggal = $p->tgl_pelanggaran;
+                $mulai = $tanggal->month >= 7 ? $tanggal->year : $tanggal->year - 1;
+
+                return $mulai.'/'.($mulai + 1);
+            })
+            ->sortKeysDesc();
 
         return view('siswa.profil', compact('siswa', 'absensi', 'keterlambatan', 'pelanggaran'));
     }

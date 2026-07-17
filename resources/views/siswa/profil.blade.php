@@ -79,23 +79,53 @@
     @if ($pelanggaran->isEmpty())
         <div class="text-muted small">Belum ada riwayat pelanggaran.</div>
     @else
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
-                <tbody>
-                    @foreach ($pelanggaran as $i => $p)
-                        <tr>
-                            <td>{{ $i + 1 }}</td>
-                            <td>{{ $p->tgl_pelanggaran->translatedFormat('d F Y') }}</td>
-                            <td>{{ $p->kategori }}</td>
-                            <td>{{ $p->keterangan }}</td>
-                            <td>{{ $p->poin }}</td>
-                            <td>{{ $p->penanganan }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="d-flex flex-wrap gap-2 mb-3" id="tabTahunPelanggaran">
+            @foreach ($pelanggaran->keys() as $i => $tahun)
+                <button type="button"
+                        class="btn btn-sm tab-tahun {{ $i === 0 ? 'active' : '' }}"
+                        data-target="pelanggaran-{{ \Illuminate\Support\Str::slug($tahun) }}"
+                        onclick="gantiTabTahun(this)">
+                    {{ $tahun }}
+                </button>
+            @endforeach
         </div>
+
+        @foreach ($pelanggaran as $tahun => $daftar)
+            <div class="tab-panel-pelanggaran" id="pelanggaran-{{ \Illuminate\Support\Str::slug($tahun) }}" style="{{ $loop->first ? '' : 'display:none;' }}">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
+                        <tbody>
+                            @foreach ($daftar as $i => $p)
+                                <tr>
+                                    <td>{{ $i + 1 }}</td>
+                                    <td>{{ $p->tgl_pelanggaran->translatedFormat('d F Y') }}</td>
+                                    <td>{{ $p->kategori }}</td>
+                                    <td>{{ $p->keterangan }}</td>
+                                    <td>{{ $p->poin }}</td>
+                                    <td>{{ $p->penanganan }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr class="fw-bold">
+                                <td colspan="4" class="text-end">Total Poin {{ $tahun }}</td>
+                                <td colspan="2">{{ $daftar->sum('poin') }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        @endforeach
     @endif
 </div>
+
+<script>
+function gantiTabTahun(btn) {
+    document.querySelectorAll('#tabTahunPelanggaran .tab-tahun').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel-pelanggaran').forEach(el => el.style.display = 'none');
+    document.getElementById(btn.dataset.target).style.display = '';
+}
+</script>
 @endsection
