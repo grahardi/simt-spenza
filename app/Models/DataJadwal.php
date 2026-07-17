@@ -51,7 +51,7 @@ class DataJadwal extends Model
             'PAI' => 'Pendidikan Agama Islam',
             'PKN' => 'Pendidikan Pancasila dan Kewarganegaraan',
             'SEN' => 'Seni Budaya', 'SBD' => 'Seni Budaya',
-            'PJO' => 'Pendidikan Jasmani, Olahraga, dan Kesehatan',
+            'PJO' => 'Pendidikan Jasmani dan Olahraga',
             'PRA' => 'Prakarya',
             'TIK' => 'Informatika',
             'BDR' => 'Bahasa Daerah', 'BD' => 'Bahasa Daerah',

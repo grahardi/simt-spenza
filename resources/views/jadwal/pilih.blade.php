@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends($layout ?? 'layouts.app')
+
+@php $prefix = request()->routeIs('jadwal-publik.*') ? 'jadwal-publik.' : 'jadwal.'; @endphp
 
 @section('title', 'Jadwal Pelajaran')
 
@@ -8,13 +10,13 @@
 </div>
 
 <div class="menu-grid" style="grid-template-columns: repeat(2, 1fr);">
-    <a href="{{ route('jadwal.kelas-grid') }}" class="menu-card bg-blue" style="padding:28px 10px;">
+    <a href="{{ route($prefix.'kelas-grid') }}" class="menu-card bg-blue" style="padding:28px 10px;">
         <span class="menu-icon" style="width:64px;height:64px;font-size:28px;">
             <i class="fas fa-chalkboard"></i>
         </span>
         <span class="menu-title" style="font-size:15px;">Pilih Kelas</span>
     </a>
-    <a href="{{ route('jadwal.pilih-guru') }}" class="menu-card bg-teal" style="padding:28px 10px;">
+    <a href="{{ route($prefix.'pilih-guru') }}" class="menu-card bg-teal" style="padding:28px 10px;">
         <span class="menu-icon" style="width:64px;height:64px;font-size:28px;">
             <i class="fas fa-chalkboard-teacher"></i>
         </span>

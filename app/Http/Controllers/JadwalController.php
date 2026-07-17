@@ -11,10 +11,20 @@ class JadwalController extends Controller
 {
     private array $urutanHari = ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT'];
 
+    /**
+     * Halaman ini juga dipakai untuk versi PUBLIK (tanpa login) lewat
+     * prefix route /jadwal-publik, supaya bisa dibagikan lewat link
+     * langsung ke siapa saja (orang tua, dsb).
+     */
+    private function layout(): string
+    {
+        return request()->routeIs('jadwal-publik.*') ? 'layouts.publik' : 'layouts.app';
+    }
+
     /** Halaman depan Jadwal - pilih mau lihat berdasarkan Kelas atau Guru. */
     public function index()
     {
-        return view('jadwal.pilih');
+        return view('jadwal.pilih', ['layout' => $this->layout()]);
     }
 
     /** Pengganti laporlistkelas.php - grid kelas dari tabel `kelas` asli. */
@@ -22,7 +32,7 @@ class JadwalController extends Controller
     {
         $daftarKelas = Kelas::orderBy('nama_kelas')->get();
 
-        return view('jadwal.pilih-kelas', compact('daftarKelas'));
+        return view('jadwal.pilih-kelas', ['daftarKelas' => $daftarKelas, 'layout' => $this->layout()]);
     }
 
     /** Jadwal 1 minggu penuh (Senin-Jumat) untuk 1 kelas. */
@@ -38,6 +48,7 @@ class JadwalController extends Controller
             'kelas' => $kelas,
             'jadwalPerHari' => $jadwal,
             'urutanHari' => $this->urutanHari,
+            'layout' => $this->layout(),
         ]);
     }
 
@@ -54,7 +65,7 @@ class JadwalController extends Controller
                 ->get();
         }
 
-        return view('jadwal.pilih-guru', ['guru' => $guru, 'cari' => $cari]);
+        return view('jadwal.pilih-guru', ['guru' => $guru, 'cari' => $cari, 'layout' => $this->layout()]);
     }
 
     /** Jadwal 1 minggu penuh (Senin-Jumat) untuk 1 guru, di semua kelas yang diajar. */
@@ -69,6 +80,7 @@ class JadwalController extends Controller
             'guru' => $guru,
             'jadwalPerHari' => $jadwal,
             'urutanHari' => $this->urutanHari,
+            'layout' => $this->layout(),
         ]);
     }
 }

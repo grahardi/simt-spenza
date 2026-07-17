@@ -88,6 +88,12 @@
                 </div>
                 <button type="submit" class="btn-login">Masuk</button>
             </form>
+
+            <div class="text-center mt-3">
+                <a href="{{ route('jadwal-publik.index') }}" class="text-decoration-none small" style="color:#4b0082;">
+                    <i class="fas fa-calendar-alt me-1"></i> Lihat Jadwal Pelajaran (tanpa login)
+                </a>
+            </div>
         </div>
 
         <div class="login-footer">

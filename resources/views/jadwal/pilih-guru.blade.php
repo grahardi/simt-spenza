@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends($layout ?? 'layouts.app')
+
+@php $prefix = request()->routeIs('jadwal-publik.*') ? 'jadwal-publik.' : 'jadwal.'; @endphp
 
 @section('title', 'Pilih Guru - Jadwal')
 
@@ -8,7 +10,7 @@
         <i class="fas fa-chalkboard-teacher fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Jadwal - Pilih Guru</h1>
     </div>
-    <a href="{{ route('jadwal.index') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+    <a href="{{ route($prefix.'index') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
         <i class="fas fa-arrow-left me-1"></i> Kembali
     </a>
 </div>
@@ -33,7 +35,7 @@
         @else
             <div class="list-group">
                 @foreach ($guru as $g)
-                    <a href="{{ route('jadwal.guru', $g) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <a href="{{ route($prefix.'guru', $g) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <span>{{ $g->nama }}</span>
                         <span class="text-muted small">{{ $g->jabatan }}</span>
                     </a>

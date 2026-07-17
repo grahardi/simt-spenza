@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends($layout ?? 'layouts.app')
+
+@php $prefix = request()->routeIs('jadwal-publik.*') ? 'jadwal-publik.' : 'jadwal.'; @endphp
 
 @section('title', 'Jadwal Kelas ' . $kelas)
 
@@ -13,7 +15,7 @@
         <i class="fas fa-chalkboard fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Jadwal Kelas {{ $kelas }}</h1>
     </div>
-    <a href="{{ route('jadwal.kelas-grid') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+    <a href="{{ route($prefix.'kelas-grid') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
         <i class="fas fa-arrow-left me-1"></i> Ganti Kelas
     </a>
 </div>

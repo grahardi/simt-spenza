@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends($layout ?? 'layouts.app')
+
+@php $prefix = request()->routeIs('jadwal-publik.*') ? 'jadwal-publik.' : 'jadwal.'; @endphp
 
 @section('title', 'Jadwal - ' . $guru->nama)
 
@@ -13,7 +15,7 @@
         <i class="fas fa-chalkboard-teacher fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Jadwal {{ $guru->nama }}</h1>
     </div>
-    <a href="{{ route('jadwal.pilih-guru') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+    <a href="{{ route($prefix.'pilih-guru') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
         <i class="fas fa-arrow-left me-1"></i> Ganti Guru
     </a>
 </div>
@@ -42,7 +44,7 @@
                         <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
                         <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
                         <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
-                        @if ($hari === $hariIni)
+                        @if ($hari === $hariIni && $prefix === 'jadwal.')
                             <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
                                 <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
                             </a>

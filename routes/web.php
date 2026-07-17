@@ -43,6 +43,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [MemberLoginController::class, 'create'])->name('login');
 Route::post('/login', [MemberLoginController::class, 'store'])->name('login.store');
+
+// Jadwal Pelajaran versi PUBLIK - bisa diakses & dibagikan tanpa perlu login
+Route::prefix('jadwal-publik')->name('jadwal-publik.')->group(function () {
+    Route::get('/', [JadwalController::class, 'index'])->name('index');
+    Route::get('/kelas', [JadwalController::class, 'kelasGrid'])->name('kelas-grid');
+    Route::get('/kelas/{kelas}', [JadwalController::class, 'kelasDetail'])->name('kelas');
+    Route::get('/guru', [JadwalController::class, 'guruList'])->name('pilih-guru');
+    Route::get('/guru/{guru}', [JadwalController::class, 'guruDetail'])->name('guru');
+});
 Route::post('/logout', [MemberLoginController::class, 'destroy'])->name('logout');
 
 Route::middleware('auth:member')->group(function () {
