@@ -105,8 +105,9 @@ class SinkronJadwalGuru extends Command
 
         $dilewati = 0;
         $dimasukkan = 0;
+        $idBerikutnya = (int) (DataJadwal::max('id') ?? 0) + 1;
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($matrix, $peta, &$dilewati, &$dimasukkan) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($matrix, $peta, &$dilewati, &$dimasukkan, &$idBerikutnya) {
             foreach ($matrix as $baris) {
                 $idGuru = $peta->get($baris['kode']);
 
@@ -117,10 +118,26 @@ class SinkronJadwalGuru extends Command
 
                 $mapel = KodeGuru::where('kode', $baris['kode'])->value('mapel');
 
-                DataJadwal::updateOrCreate(
-                    ['hari' => $baris['hari'], 'jamhari' => $baris['jam'], 'kelas' => $baris['kelas']],
-                    ['kodejam' => $baris['jam'], 'kodeguru' => $idGuru, 'mapel' => $mapel]
-                );
+                $existing = DataJadwal::where('hari', $baris['hari'])
+                    ->where('jamhari', $baris['jam'])
+                    ->where('kelas', $baris['kelas'])
+                    ->first();
+
+                if ($existing) {
+                    $existing->update(['kodejam' => $baris['jam'], 'kodeguru' => $idGuru, 'mapel' => $mapel]);
+                } else {
+                    // Kolom id di tabel datajadwal BUKAN auto-increment - harus
+                    // diisi manual, kalau tidak MySQL menolak insert-nya.
+                    DataJadwal::create([
+                        'id' => $idBerikutnya++,
+                        'hari' => $baris['hari'],
+                        'jamhari' => $baris['jam'],
+                        'kelas' => $baris['kelas'],
+                        'kodejam' => $baris['jam'],
+                        'kodeguru' => $idGuru,
+                        'mapel' => $mapel,
+                    ]);
+                }
                 $dimasukkan++;
             }
         });

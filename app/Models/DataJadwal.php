@@ -12,7 +12,7 @@ class DataJadwal extends Model
     public $incrementing = true;
     public $timestamps = false;
 
-    protected $fillable = ['kodejam', 'jamhari', 'hari', 'waktu', 'kodeguru', 'mapel', 'kodekelas', 'kelas'];
+    protected $fillable = ['id', 'kodejam', 'jamhari', 'hari', 'waktu', 'kodeguru', 'mapel', 'kodekelas', 'kelas'];
 
     public function guru(): BelongsTo
     {
