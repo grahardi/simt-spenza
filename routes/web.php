@@ -5,6 +5,7 @@ use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AjuanAbsensiController;
 use App\Http\Controllers\AktivitasKelasController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
@@ -83,8 +84,16 @@ Route::middleware('auth:member')->group(function () {
     });
 
     // Placeholder modul lain, supaya link di bottom-nav tidak 404 dulu.
-    Route::get('/jadwal', fn () => view('placeholder', ['judul' => 'Jadwal Pelajaran']))->name('jadwal.index');
     Route::get('/tugas', fn () => view('placeholder', ['judul' => 'Tugas Siswa']))->name('tugas.index');
+
+    // Jadwal Pelajaran - lihat berdasarkan Kelas atau Guru, siapa saja yang login boleh lihat
+    Route::prefix('jadwal')->name('jadwal.')->group(function () {
+        Route::get('/', [JadwalController::class, 'index'])->name('index');
+        Route::get('/kelas', [JadwalController::class, 'kelasGrid'])->name('kelas-grid');
+        Route::get('/kelas/{kelas}', [JadwalController::class, 'kelasDetail'])->name('kelas');
+        Route::get('/guru', [JadwalController::class, 'guruList'])->name('pilih-guru');
+        Route::get('/guru/{guru}', [JadwalController::class, 'guruDetail'])->name('guru');
+    });
 
     // Route generik untuk semua menu panel_*.php yang belum dimigrasi satu-satu.
     // Begitu modul aslinya jadi, ganti pemanggilannya di dashboard.blade.php
