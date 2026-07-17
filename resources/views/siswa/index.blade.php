@@ -42,29 +42,15 @@
             <i class="far fa-question-circle me-1"></i> Data siswa tidak ditemukan.
         </div>
     @else
-        <div class="table-responsive">
-            <table class="table table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>No. Induk</th>
-                        <th>Nama</th>
-                        <th>Kelas</th>
-                        <th>L/P</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($siswa as $i => $s)
-                        <tr>
-                            <td>{{ $siswa->firstItem() + $i }}</td>
-                            <td>{{ $s->id_member }}</td>
-                            <td><a href="{{ route('siswa.profil', $s) }}">{{ $s->nama_lengkap }}</a></td>
-                            <td>{{ $s->kelas }}</td>
-                            <td>{{ $s->jenis_kelamin }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="d-flex flex-column gap-2">
+            @foreach ($siswa as $i => $s)
+                <div class="siswa-baris {{ $s->jenis_kelamin === 'P' ? 'siswa-baris-p' : 'siswa-baris-l' }}">
+                    <span class="siswa-no-kecil">{{ $siswa->firstItem() + $i }}</span>
+                    <span class="siswa-induk-kecil">{{ $s->id_member }}</span>
+                    <a href="{{ route('siswa.profil', $s) }}" class="siswa-nama-kecil">{{ $s->nama_lengkap }}</a>
+                    <span class="siswa-kelas-kecil">{{ $s->kelas }}</span>
+                </div>
+            @endforeach
         </div>
 
         {{ $siswa->onEachSide(1)->links() }}

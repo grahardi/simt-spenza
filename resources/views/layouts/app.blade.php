@@ -165,6 +165,23 @@
             .jadwal-waktu-kecil { width: auto; order: 3; font-size: 11px; }
             .jadwal-mapel-kecil { width: 100%; order: 4; font-size: 13px; }
         }
+
+        /* List Data Siswa - 1 baris ringkas, warna beda L/P */
+        .siswa-baris {
+            display: flex; align-items: center; gap: 12px;
+            border-radius: 10px; padding: 10px 14px;
+        }
+        .siswa-baris-l { background: #e6f7ea; color: #1e6b3a; } /* hijau muda - laki-laki */
+        .siswa-baris-p { background: #fde9ec; color: #99425a; } /* pink muda - perempuan */
+        .siswa-no-kecil { width: 28px; flex-shrink: 0; font-weight: 600; opacity: .8; text-align: right; }
+        .siswa-induk-kecil { width: 70px; flex-shrink: 0; font-weight: 600; opacity: .85; }
+        .siswa-nama-kecil { flex: 1; font-weight: 700; color: inherit; text-decoration: none; }
+        .siswa-nama-kecil:hover { text-decoration: underline; color: inherit; }
+        .siswa-kelas-kecil { width: 70px; flex-shrink: 0; text-align: right; font-weight: 600; opacity: .85; }
+        @media (max-width: 576px) {
+            .siswa-induk-kecil { width: 56px; font-size: 12px; }
+            .siswa-kelas-kecil { width: 56px; font-size: 12px; }
+        }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;
