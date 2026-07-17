@@ -140,6 +140,32 @@
             border-radius: 999px; padding: 6px 16px; font-weight: 600; font-size: 13px;
         }
         .tab-tahun.active { background: #4b0082; color: #fff; }
+
+        /* Timeline Jadwal Mengajar - pengganti tabel polos */
+        .jadwal-timeline { display: flex; flex-direction: column; }
+        .jadwal-item { display: flex; gap: 14px; position: relative; padding-bottom: 18px; }
+        .jadwal-item:last-child { padding-bottom: 0; }
+        .jadwal-jam {
+            width: 52px; flex-shrink: 0; text-align: center;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .jadwal-jam-angka {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .jadwal-jam-label { font-size: 10px; color: #999; margin-top: 2px; }
+        .jadwal-garis {
+            position: absolute; left: 26px; top: 42px; bottom: 0;
+            width: 2px; background: #eee;
+        }
+        .jadwal-item:last-child .jadwal-garis { display: none; }
+        .jadwal-detail {
+            flex: 1; background: #f9f9fb; border-radius: 12px;
+            padding: 12px 14px; margin-left: 6px;
+        }
+        .jadwal-item-aktif .jadwal-jam-angka { background: #4b0082; color: #fff; }
+        .jadwal-item-aktif .jadwal-detail { background: #f2edfa; border: 1px solid #d9cdf5; }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;

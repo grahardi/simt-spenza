@@ -26,10 +26,13 @@ class JadwalGuruController extends Controller
             ->orderBy('jamhari')
             ->get();
 
+        $sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('H.i');
+
         return view('jadwal.guru', [
             'jadwal' => $jadwal,
             'hari' => $hari,
             'guru' => $member->guru,
+            'sekarang' => $sekarang,
         ]);
     }
 }
