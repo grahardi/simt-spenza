@@ -36,7 +36,7 @@
                             <tr>
                                 <td>{{ $j->jamhari }}</td>
                                 <td>{{ $j->mapel }}</td>
-                                <td>{{ $j->guru->nama ?? '-' }}</td>
+                                <td>{{ $j->namaGuru() }}</td>
                             </tr>
                         @endforeach
                     </tbody>

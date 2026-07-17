@@ -20,6 +20,23 @@ class DataJadwal extends Model
     }
 
     /**
+     * Nama guru untuk ditampilkan - coba tabel `guru` dulu (via id_guru),
+     * kalau tidak ketemu/kosong coba tabel `member` (juga via id_guru,
+     * BUKAN member.id) sebagai cadangan. Dua-duanya tetap berbasis id_guru,
+     * cuma sumbernya beda kalau salah satu datanya tidak lengkap/kacau.
+     */
+    public function namaGuru(): string
+    {
+        if ($this->guru && !empty($this->guru->nama)) {
+            return $this->guru->nama;
+        }
+
+        $member = Member::where('id_guru', $this->kodeguru)->first();
+
+        return $member->nama ?? '-';
+    }
+
+    /**
      * Nama lengkap mata pelajaran dari singkatannya. Kalau kodenya tidak
      * dikenali, tampilkan apa adanya (bukan tebak-tebakan yang salah).
      */
