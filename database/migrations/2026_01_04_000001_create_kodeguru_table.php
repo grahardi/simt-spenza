@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('kode', 10)->unique();
             $table->string('nama_excel');
             $table->string('mapel')->nullable();
-            $table->foreignId('id_guru')->nullable()->constrained('guru', 'id_guru')->nullOnDelete();
+            $table->integer('id_guru')->nullable();
+            $table->foreign('id_guru')->references('id_guru')->on('guru')->nullOnDelete();
             $table->unsignedTinyInteger('skor_kecocokan')->nullable()
                 ->comment('0-100, persentase kemiripan nama hasil fuzzy match');
             $table->timestamps();
