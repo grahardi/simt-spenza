@@ -18,11 +18,9 @@
             'items' => [
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
-                ['label' => 'List Pelanggaran', 'icon' => 'fas fa-file-alt', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.upload')],
                 ['label' => 'Peminjaman Ruang', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],
                 ['label' => 'Nilai PSAJ Tulis', 'icon' => 'fas fa-book-open', 'color' => 'amber', 'href' => route('modul', 'nilai-psaj-tulis')],
-                ['label' => 'Rekap Kehadiran', 'icon' => 'fas fa-clipboard-list', 'color' => 'green', 'href' => route('absensi.index')],
                 ['label' => 'Daftar Nama Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'teal', 'href' => route('siswa.index')],
                 ['label' => 'Lapor Kebersihan', 'icon' => 'fas fa-broom', 'color' => 'green', 'href' => route('kebersihan.kelas-grid')],
                 ['label' => 'Foto Siswa', 'icon' => 'fas fa-images', 'color' => 'pink', 'href' => route('foto-siswa.pilih-kelas')],

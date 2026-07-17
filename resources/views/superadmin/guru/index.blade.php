@@ -13,6 +13,13 @@
             <div class="col-md-4">
                 <input type="text" name="cari" class="form-control" placeholder="Cari nama guru..." value="{{ request('cari') }}">
             </div>
+            <div class="col-md-3">
+                <select name="status" class="form-control">
+                    <option value="">Semua status</option>
+                    <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
+                    <option value="nonaktif" @selected(request('status') === 'nonaktif')>Nonaktif</option>
+                </select>
+            </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-secondary w-100"><i class="fas fa-search"></i></button>
             </div>

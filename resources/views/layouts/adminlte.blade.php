@@ -66,6 +66,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.kelas.index') }}" class="nav-link {{ request()->routeIs('superadmin.kelas.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-door-closed"></i>
+                            <p>Data Kelas</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.absensi.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-clipboard-check"></i>
                             <p>Data Absensi</p>

@@ -15,6 +15,8 @@ class GuruController extends Controller
     {
         $guru = Guru::query()
             ->when($request->filled('cari'), fn ($q) => $q->where('nama', 'like', '%'.$request->input('cari').'%'))
+            ->when($request->input('status') === 'aktif', fn ($q) => $q->where('aktif', true))
+            ->when($request->input('status') === 'nonaktif', fn ($q) => $q->where('aktif', false))
             ->orderBy('nama')
             ->paginate(20)
             ->withQueryString();

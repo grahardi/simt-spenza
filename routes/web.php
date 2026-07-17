@@ -18,6 +18,7 @@ use App\Http\Controllers\Superadmin\AbsensiController as SuperadminAbsensiContro
 use App\Http\Controllers\Superadmin\BkController as SuperadminBkController;
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\GuruController as SuperadminGuruController;
+use App\Http\Controllers\Superadmin\KelasController as SuperadminKelasController;
 use App\Http\Controllers\Superadmin\PelanggaranController as SuperadminPelanggaranController;
 use App\Http\Controllers\Superadmin\SiswaController as SuperadminSiswaController;
 use App\Http\Controllers\TugasController;
@@ -121,6 +122,12 @@ Route::middleware('auth:member')->group(function () {
         Route::put('/siswa/{siswa}', [SuperadminSiswaController::class, 'update'])->name('siswa.update');
         Route::get('/siswa/{siswa}/mutasi', [SuperadminSiswaController::class, 'mutasiForm'])->name('siswa.mutasi-form');
         Route::post('/siswa/{siswa}/mutasi', [SuperadminSiswaController::class, 'mutasi'])->name('siswa.mutasi');
+
+        Route::get('/kelas', [SuperadminKelasController::class, 'index'])->name('kelas.index');
+        Route::get('/kelas/tambah', [SuperadminKelasController::class, 'create'])->name('kelas.create');
+        Route::post('/kelas', [SuperadminKelasController::class, 'store'])->name('kelas.store');
+        Route::get('/kelas/{kelas}/edit', [SuperadminKelasController::class, 'edit'])->name('kelas.edit');
+        Route::put('/kelas/{kelas}', [SuperadminKelasController::class, 'update'])->name('kelas.update');
 
         Route::get('/guru', [SuperadminGuruController::class, 'index'])->name('guru.index');
         Route::get('/guru/tambah', [SuperadminGuruController::class, 'create'])->name('guru.create');
