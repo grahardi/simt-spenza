@@ -42,7 +42,7 @@
                         @if ($s->foto_url)
                             <img src="{{ $s->foto_url }}" alt="" class="foto-siswa-kecil">
                         @else
-                            <span class="foto-siswa-kecil foto-siswa-kosong">{{ strtoupper(substr($s->nama_lengkap, 0, 1)) }}</span>
+                            <span class="foto-siswa-kecil foto-siswa-kosong">{{ $s->initials() }}</span>
                         @endif
                         <div>
                             <h6 class="mb-0 text-uppercase">

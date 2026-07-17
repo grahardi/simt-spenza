@@ -115,6 +115,11 @@
             display: flex; align-items: center; justify-content: center;
             background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 14px;
         }
+        .foto-siswa-placeholder {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 22px;
+            display: flex; align-items: center; justify-content: center;
+        }
         .btn-absen {
             display: inline-flex; align-items: center;
             border: none; border-radius: 999px;

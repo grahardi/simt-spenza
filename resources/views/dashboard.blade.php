@@ -25,6 +25,7 @@
                 ['label' => 'Rekap Kehadiran', 'icon' => 'fas fa-clipboard-list', 'color' => 'green', 'href' => route('absensi.index')],
                 ['label' => 'Daftar Nama Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'teal', 'href' => route('siswa.index')],
                 ['label' => 'Lapor Kebersihan', 'icon' => 'fas fa-broom', 'color' => 'green', 'href' => route('kebersihan.kelas-grid')],
+                ['label' => 'Foto Siswa', 'icon' => 'fas fa-images', 'color' => 'pink', 'href' => route('foto-siswa.pilih-kelas')],
             ],
         ],
         'walikelas' => [

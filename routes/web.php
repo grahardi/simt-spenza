@@ -15,6 +15,7 @@ use App\Http\Controllers\RppController;
 use App\Http\Controllers\SmartController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\ArsipSuratController;
+use App\Http\Controllers\FotoSiswaController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TatibController;
@@ -91,6 +92,13 @@ Route::middleware('auth:member')->group(function () {
     Route::get('/arsip-surat', [ArsipSuratController::class, 'index'])
         ->name('arsip-surat')
         ->middleware('role:piket,kepsek,admin');
+
+    // Foto Siswa - gallery by kelas + pencarian + upload/ganti foto
+    Route::prefix('foto-siswa')->name('foto-siswa.')->middleware('role:guru,walikelas,kepsek,admin,piket')->group(function () {
+        Route::get('/', [FotoSiswaController::class, 'pilihKelas'])->name('pilih-kelas');
+        Route::get('/kelas/{kelas}', [FotoSiswaController::class, 'kelas'])->name('kelas');
+        Route::post('/upload/{siswa}', [FotoSiswaController::class, 'upload'])->name('upload');
+    });
 
     // Jadwal Mengajar - khusus guru, jadwal hari ini
     Route::get('/jadwal-mengajar', [JadwalGuruController::class, 'index'])

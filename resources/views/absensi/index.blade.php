@@ -88,7 +88,7 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="avatar-inisial">{{ strtoupper(substr($a->siswa->nama_lengkap, 0, 1)) }}</span>
+                                    <span class="avatar-inisial">{{ $a->siswa->initials() }}</span>
                                     <span class="fw-semibold">{{ $a->siswa->nama_lengkap }}</span>
                                 </div>
                             </td>

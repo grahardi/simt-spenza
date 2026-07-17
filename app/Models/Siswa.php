@@ -44,4 +44,16 @@ class Siswa extends Model
 
         return \Illuminate\Support\Facades\Storage::url('siswa/'.$this->foto_profil);
     }
+
+    /** Inisial 2 huruf untuk avatar default kalau belum ada foto, mis. "Ginanjar Rahardi" -> "GR". */
+    public function initials(): string
+    {
+        $bagian = preg_split('/\s+/', trim($this->nama_lengkap));
+        $depan = mb_substr($bagian[0] ?? '', 0, 1);
+        $belakang = count($bagian) > 1 ? mb_substr(end($bagian), 0, 1) : '';
+
+        $hasil = mb_strtoupper($depan.$belakang);
+
+        return $hasil !== '' ? $hasil : '?';
+    }
 }
