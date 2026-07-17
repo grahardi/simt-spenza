@@ -7,6 +7,7 @@ use App\Http\Controllers\AktivitasKelasController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
+use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +66,20 @@ Route::middleware('auth:member')->group(function () {
     Route::get('/aktivitas-kelas', [AktivitasKelasController::class, 'index'])
         ->name('aktivitas-kelas')
         ->middleware('role:walikelas');
+
+    // Kebersihan Kelas - guru (siapa saja yang mengajar) bisa lapor kelas kotor,
+    // role kebersihan yang tindak lanjuti & lihat galeri.
+    Route::prefix('kebersihan')->name('kebersihan.')->group(function () {
+        Route::get('/kelas', [KebersihanController::class, 'kelasGrid'])->name('kelas-grid');
+        Route::get('/lapor/{kelas}', [KebersihanController::class, 'lapor'])->name('lapor');
+        Route::post('/lapor/{kelas}', [KebersihanController::class, 'simpan'])->name('simpan');
+
+        Route::middleware('role:kebersihan,piket,kepsek')->group(function () {
+            Route::get('/', [KebersihanController::class, 'index'])->name('index');
+            Route::post('/{lapor}/tindak', [KebersihanController::class, 'tindak'])->name('tindak');
+            Route::get('/galeri', [KebersihanController::class, 'galeri'])->name('galeri');
+        });
+    });
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.
     // Selama belum di-ACC, siswa dianggap belum tercatat absen (bisa jadi Alpha).
