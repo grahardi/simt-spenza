@@ -92,6 +92,9 @@
 
         @foreach ($pelanggaran as $tahun => $daftar)
             <div class="tab-panel-pelanggaran" id="pelanggaran-{{ \Illuminate\Support\Str::slug($tahun) }}" style="{{ $loop->first ? '' : 'display:none;' }}">
+                @if ($daftar->isEmpty())
+                    <div class="text-muted small py-3">Tidak ada pelanggaran di tahun ajaran {{ $tahun }}.</div>
+                @else
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
@@ -115,6 +118,7 @@
                         </tfoot>
                     </table>
                 </div>
+                @endif
             </div>
         @endforeach
     @endif
