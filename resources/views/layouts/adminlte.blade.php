@@ -72,6 +72,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.akun.index') }}" class="nav-link {{ request()->routeIs('superadmin.akun.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-user-shield"></i>
+                            <p>Kelola Akun</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.absensi.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-clipboard-check"></i>
                             <p>Data Absensi</p>

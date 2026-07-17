@@ -15,6 +15,7 @@ use App\Http\Controllers\KeagamaanController;
 use App\Http\Controllers\RppController;
 use App\Http\Controllers\SmartController;
 use App\Http\Controllers\Superadmin\AbsensiController as SuperadminAbsensiController;
+use App\Http\Controllers\Superadmin\AkunController as SuperadminAkunController;
 use App\Http\Controllers\Superadmin\BkController as SuperadminBkController;
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\GuruController as SuperadminGuruController;
@@ -128,6 +129,13 @@ Route::middleware('auth:member')->group(function () {
         Route::post('/kelas', [SuperadminKelasController::class, 'store'])->name('kelas.store');
         Route::get('/kelas/{kelas}/edit', [SuperadminKelasController::class, 'edit'])->name('kelas.edit');
         Route::put('/kelas/{kelas}', [SuperadminKelasController::class, 'update'])->name('kelas.update');
+
+        Route::get('/akun', [SuperadminAkunController::class, 'index'])->name('akun.index');
+        Route::get('/akun/tambah', [SuperadminAkunController::class, 'create'])->name('akun.create');
+        Route::post('/akun', [SuperadminAkunController::class, 'store'])->name('akun.store');
+        Route::get('/akun/{akun}/edit', [SuperadminAkunController::class, 'edit'])->name('akun.edit');
+        Route::put('/akun/{akun}', [SuperadminAkunController::class, 'update'])->name('akun.update');
+        Route::post('/akun/{akun}/reset-password', [SuperadminAkunController::class, 'resetPassword'])->name('akun.reset-password');
 
         Route::get('/guru', [SuperadminGuruController::class, 'index'])->name('guru.index');
         Route::get('/guru/tambah', [SuperadminGuruController::class, 'create'])->name('guru.create');
