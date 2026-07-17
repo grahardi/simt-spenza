@@ -6,31 +6,30 @@ use App\Models\DataJadwal;
 use App\Models\Guru;
 use App\Models\KodeGuru;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class SinkronJadwalGuru extends Command
 {
     /**
-     * php artisan jadwal:sinkron           -> cuma cocokkan nama & tampilkan laporan (aman, tidak ubah data)
+     * php artisan jadwal:sinkron           -> cocokkan & tampilkan laporan (aman, tidak ubah data)
      * php artisan jadwal:sinkron --apply    -> setelah dicek laporannya, isi tabel datajadwal beneran
+     *
+     * PENTING (revisi): kode di sheet "kodeguru" Excel (02, 03, dst) BUKAN
+     * kode acak yang perlu dicocokkan lewat nama - itu adalah id_guru ASLI
+     * (cuma ditulis 2 digit, "02" = id_guru 2), dikonfirmasi lewat member.sql
+     * asli (id_guru=2 -> Anik Asri Wijayati, cocok persis dengan kode "02").
+     * Versi sebelumnya salah pakai fuzzy-match nama padahal harusnya tinggal
+     * di-cast jadi angka - itu yang bikin sinkronisasi jadwal kemarin meleset.
+     * Sekarang kode dipakai LANGSUNG sebagai id_guru, nama cuma dipakai untuk
+     * verifikasi/peringatan kalau ternyata tidak cocok (bukan basis pencarian).
      */
     protected $signature = 'jadwal:sinkron {--apply : Simpan hasil ke tabel datajadwal, bukan cuma pratinjau}';
 
-    protected $description = 'Cocokkan kode guru dari file Excel jadwal ke tabel guru asli (fuzzy match nama), lalu isi datajadwal';
-
-    // Gelar/title akademik yang dibuang dulu sebelum membandingkan nama,
-    // supaya "Ali Mahfud, M.Pd" bisa cocok dengan "ALI MAHFUD" di database.
-    private array $gelarDibuang = [
-        'drs', 'dra', 'dr', 'prof', 'ir',
-        's.pd', 's.pd.', 's.ag', 's.ag.', 's.kom', 's.kom.', 's.si', 's.si.',
-        's.s', 's.s.', 's.psi', 's.psi.', 's.sn', 's.sn.', 's.pdi', 's.pdi.',
-        'a.ma.pd', 'a.ma.pd.', 'm.pd', 'm.pd.', 'm.psi', 'gr', 'gr.',
-    ];
+    protected $description = 'Kode di Excel = id_guru asli (bukan hasil fuzzy-match). Cek & isi datajadwal.';
 
     public function handle(): int
     {
         $referensi = require database_path('data/kodeguru_reference.php');
-        $daftarGuru = Guru::all(['id_guru', 'nama']);
+        $daftarGuru = Guru::all(['id_guru', 'nama'])->keyBy('id_guru');
 
         if ($daftarGuru->isEmpty()) {
             $this->error('Tabel guru masih kosong - pastikan data guru sudah ada sebelum sinkronisasi jadwal.');
@@ -39,15 +38,21 @@ class SinkronJadwalGuru extends Command
 
         $hasil = [];
         foreach ($referensi as $kode => $data) {
-            [$idGuruCocok, $skor, $namaCocok] = $this->cariGuruPalingCocok($data['nama'], $daftarGuru);
+            $idGuru = (int) $kode; // "02" -> 2, "51" -> 51
+            $guruAsli = $daftarGuru->get($idGuru);
+
+            $namaExcel = $this->normalisasiNama($data['nama']);
+            $namaDb = $guruAsli ? $this->normalisasiNama($guruAsli->nama) : null;
+            similar_text($namaExcel, $namaDb ?? '', $persen);
 
             $hasil[] = [
                 'kode' => $kode,
+                'id_guru' => $idGuru,
                 'nama_excel' => $data['nama'],
                 'mapel' => $data['mapel'],
-                'id_guru' => $idGuruCocok,
-                'nama_guru_db' => $namaCocok,
-                'skor' => $skor,
+                'nama_guru_db' => $guruAsli->nama ?? null,
+                'ditemukan' => (bool) $guruAsli,
+                'skor' => (int) round($persen),
             ];
 
             KodeGuru::updateOrCreate(
@@ -55,27 +60,31 @@ class SinkronJadwalGuru extends Command
                 [
                     'nama_excel' => $data['nama'],
                     'mapel' => $data['mapel'],
-                    'id_guru' => $skor >= 60 ? $idGuruCocok : null,
-                    'skor_kecocokan' => $skor,
+                    // id_guru dipakai langsung dari kode - HANYA null kalau
+                    // id_guru itu memang tidak ada sama sekali di tabel guru.
+                    'id_guru' => $guruAsli ? $idGuru : null,
+                    'skor_kecocokan' => (int) round($persen),
                 ]
             );
         }
 
         $this->table(
-            ['Kode', 'Nama di Excel', 'Nama Tercocok di DB', 'Skor %', 'Status'],
+            ['Kode', 'id_guru', 'Nama di Excel', 'Nama di DB (id_guru ini)', 'Skor Nama %', 'Status'],
             collect($hasil)->map(fn ($h) => [
                 $h['kode'],
+                $h['id_guru'],
                 $h['nama_excel'],
-                $h['nama_guru_db'] ?? '-',
+                $h['nama_guru_db'] ?? '(id_guru tidak ditemukan di tabel guru)',
                 $h['skor'],
-                $h['skor'] >= 60 ? '✅ Cocok' : '⚠️  Perlu cek manual',
+                !$h['ditemukan'] ? '❌ id_guru tidak ada' : ($h['skor'] < 60 ? '⚠️  Nama beda jauh, cek manual' : '✅ Cocok'),
             ])
         );
 
-        $butuhCek = collect($hasil)->where('skor', '<', 60)->count();
+        $tidakDitemukan = collect($hasil)->where('ditemukan', false)->count();
+        $namaMeleset = collect($hasil)->where('ditemukan', true)->where('skor', '<', 60)->count();
+
         $this->newLine();
-        $this->info(count($hasil).' kode diproses, '.($count = count($hasil) - $butuhCek).' cocok otomatis (skor >= 60%), '.$butuhCek.' perlu dicek manual.');
-        $this->line('Hasil pencocokan tersimpan di tabel `kodeguru` - boleh dikoreksi manual (isi kolom id_guru) sebelum lanjut --apply.');
+        $this->info(count($hasil).' kode diproses. '.$tidakDitemukan.' id_guru tidak ditemukan di tabel guru, '.$namaMeleset.' ditemukan tapi namanya beda jauh dari Excel (kemungkinan id_guru sudah dipakai ulang untuk guru baru - cek manual).');
 
         if (!$this->option('apply')) {
             $this->newLine();
@@ -92,13 +101,10 @@ class SinkronJadwalGuru extends Command
         $dilewati = 0;
         $dimasukkan = 0;
 
-        DB::transaction(function () use ($matrix, $peta, &$dilewati, &$dimasukkan) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($matrix, $peta, &$dilewati, &$dimasukkan) {
             foreach ($matrix as $baris) {
                 $idGuru = $peta->get($baris['kode']);
 
-                // Kode yang tidak berhasil dicocokkan ke guru manapun (skor < 60,
-                // atau memang tidak ada di data guru sama sekali) - dilewati saja,
-                // termasuk kode yang ternyata bukan guru sungguhan.
                 if (!$idGuru) {
                     $dilewati++;
                     continue;
@@ -114,7 +120,7 @@ class SinkronJadwalGuru extends Command
             }
         });
 
-        $this->info("Selesai: {$dimasukkan} jadwal masuk, {$dilewati} baris dilewati (kode guru tidak cocok/tidak ditemukan).");
+        $this->info("Selesai: {$dimasukkan} jadwal masuk, {$dilewati} baris dilewati (id_guru tidak ditemukan di tabel guru).");
 
         return self::SUCCESS;
     }
@@ -123,37 +129,11 @@ class SinkronJadwalGuru extends Command
     {
         $nama = strtolower($nama);
         $nama = str_replace(',', ' ', $nama);
-        $nama = preg_replace('/\s+/', ' ', $nama);
-
-        foreach ($this->gelarDibuang as $gelar) {
-            $nama = preg_replace('/\b'.preg_quote($gelar, '/').'\b/i', '', $nama);
+        $gelar = ['drs', 'dra', 'dr', 'prof', 'ir', 's.pd', 's.ag', 's.kom', 's.si', 's.s', 's.psi', 's.sn', 's.pdi', 'a.ma.pd', 'ama.pd', 'm.pd', 'm.psi', 'gr'];
+        foreach ($gelar as $g) {
+            $nama = preg_replace('/\b'.preg_quote($g, '/').'\b/i', '', $nama);
         }
-
         $nama = preg_replace('/[^a-z ]/', '', $nama);
-        $nama = trim(preg_replace('/\s+/', ' ', $nama));
-
-        return $nama;
-    }
-
-    /** @return array{0: ?int, 1: int, 2: ?string} [id_guru, skor 0-100, nama_di_db] */
-    private function cariGuruPalingCocok(string $namaExcel, $daftarGuru): array
-    {
-        $target = $this->normalisasiNama($namaExcel);
-        $terbaikId = null;
-        $terbaikNama = null;
-        $terbaikSkor = 0;
-
-        foreach ($daftarGuru as $guru) {
-            $kandidat = $this->normalisasiNama($guru->nama);
-            similar_text($target, $kandidat, $persen);
-
-            if ($persen > $terbaikSkor) {
-                $terbaikSkor = $persen;
-                $terbaikId = $guru->id_guru;
-                $terbaikNama = $guru->nama;
-            }
-        }
-
-        return [$terbaikId, (int) round($terbaikSkor), $terbaikNama];
+        return trim(preg_replace('/\s+/', ' ', $nama));
     }
 }
