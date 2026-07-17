@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\MemberLoginController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AjuanAbsensiController;
+use App\Http\Controllers\AjuanGuruController;
 use App\Http\Controllers\AktivitasKelasController;
 use App\Http\Controllers\BimbinganController;
 use App\Http\Controllers\GuruController;
@@ -41,6 +42,14 @@ Route::middleware('auth:member')->group(function () {
     })->name('profil');
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
+    Route::post('/notifikasi/{warning}/konfirmasi', [AjuanGuruController::class, 'konfirmasi'])->name('notifikasi.konfirmasi');
+
+    // Ajukan Guru (kepsek lapor kelas kosong, guru wajib konfirmasi alasan lewat Notifikasi)
+    Route::prefix('ajuan-guru')->name('ajuan-guru.')->middleware('role:kepsek')->group(function () {
+        Route::get('/', [AjuanGuruController::class, 'form'])->name('form');
+        Route::post('/{guru}', [AjuanGuruController::class, 'simpan'])->name('simpan');
+        Route::get('/list', [AjuanGuruController::class, 'list'])->name('list');
+    });
 
     // Modul Absensi Siswa - semua role yang dulu bisa akses absenjelas.php
     Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {

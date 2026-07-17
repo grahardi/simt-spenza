@@ -139,7 +139,19 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 - ✅ **Jadwal Mengajar** (guru) — jadwal hari ini dari tabel `datajadwal`, filter otomatis pakai hari & guru yang login
 - ✅ **Aktivitas Kelas** (wali kelas) — rekap absensi hari ini untuk kelas yang diampu (dari kolom `member.walikelas`, isinya nama kelas langsung seperti "7 - A", bukan flag 0/1)
 
-## Sinkronisasi Jadwal Guru dari Excel (`jadwal_jadi__5_.xlsx`)
+## Warning Otomatis untuk Wali Kelas (Siswa Alpha & Sering Tidak Masuk)
+
+Command `warning:cek-otomatis` perlu dijadwalkan jalan otomatis tiap hari.
+Tambahkan 1 baris cron ini di server (`crontab -e`):
+```
+* * * * * cd /path/ke/project && php artisan schedule:run >> /dev/null 2>&1
+```
+Laravel sendiri yang akan menjalankan `warning:cek-otomatis` jam 15:00 tiap
+hari (jadwalnya ada di `routes/console.php`). Bisa dites manual dulu:
+```bash
+php artisan warning:cek-otomatis
+```
+
 
 Kode guru di file Excel (02-51, dari sheet "kodeguru") **beda** dengan `id_guru` asli
 di database - jadi harus dicocokkan dulu lewat nama (fuzzy match), baru bisa dipakai
