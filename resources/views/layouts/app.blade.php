@@ -183,6 +183,9 @@
                 <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}">
                     <i class="fas fa-user-circle"></i><span class="label">Profil</span>
                 </a>
+                <a href="{{ route('jadwal.index') }}" class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt"></i><span class="label">Jadwal</span>
+                </a>
                 <a href="{{ route('modul', 'notifikasi') }}" class="{{ request()->routeIs('modul') && request()->route('slug') === 'notifikasi' ? 'active' : '' }}">
                     <i class="fas fa-bell"></i><span class="label">Notifikasi</span>
                 </a>
