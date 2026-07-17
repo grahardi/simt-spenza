@@ -9,6 +9,7 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\TatibController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,6 +80,15 @@ Route::middleware('auth:member')->group(function () {
             Route::post('/{lapor}/tindak', [KebersihanController::class, 'tindak'])->name('tindak');
             Route::get('/galeri', [KebersihanController::class, 'galeri'])->name('galeri');
         });
+    });
+
+    // Tata Tertib - guru/walikelas/piket bisa lapor, role tatib yang tindak lanjuti
+    Route::prefix('tatib')->name('tatib.')->group(function () {
+        Route::get('/cari', [TatibController::class, 'cari'])->name('cari');
+        Route::get('/lapor/{siswa}', [TatibController::class, 'lapor'])->name('lapor');
+        Route::post('/lapor/{siswa}', [TatibController::class, 'simpan'])->name('simpan');
+        Route::get('/', [TatibController::class, 'index'])->name('index');
+        Route::post('/{pelanggaran}/tindak', [TatibController::class, 'tindak'])->name('tindak');
     });
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.

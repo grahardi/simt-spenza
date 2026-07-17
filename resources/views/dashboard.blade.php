@@ -18,7 +18,7 @@
             'items' => [
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('modul', 'laporan-keagamaan')],
-                ['label' => 'List Pelanggaran', 'icon' => 'fas fa-file-alt', 'color' => 'coral', 'href' => route('modul', 'list-pelanggaran')],
+                ['label' => 'List Pelanggaran', 'icon' => 'fas fa-file-alt', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('modul', 'upload-rpp')],
                 ['label' => 'Smartboard', 'icon' => 'fas fa-chalkboard', 'color' => 'teal', 'href' => route('modul', 'smartboard')],
                 ['label' => 'Nilai PSAJ Tulis', 'icon' => 'fas fa-book-open', 'color' => 'amber', 'href' => route('modul', 'nilai-psaj-tulis')],
@@ -33,7 +33,7 @@
             'items' => [
                 ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('aktivitas-kelas')],
                 ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
-                ['label' => 'Pelanggaran Tatib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-tatib')],
+                ['label' => 'Pelanggaran Tatib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'DKN Kelas', 'icon' => 'fas fa-list-ol', 'color' => 'purple', 'href' => route('modul', 'dkn-kelas')],
             ],
         ],
@@ -43,7 +43,7 @@
             'items' => [
                 ['label' => 'Ajukan Guru', 'icon' => 'fas fa-user-plus', 'color' => 'green', 'href' => route('modul', 'ajukan-guru')],
                 ['label' => 'List Ajuan Guru', 'icon' => 'fas fa-list', 'color' => 'blue', 'href' => route('modul', 'list-ajuan-guru')],
-                ['label' => 'Pelanggaran Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-siswa')],
+                ['label' => 'Pelanggaran Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Kehadiran Guru', 'icon' => 'fas fa-chalkboard-teacher', 'color' => 'green', 'href' => route('guru.index')],
                 ['label' => 'Ketidakhadiran', 'icon' => 'fas fa-user-times', 'color' => 'red', 'href' => route('modul', 'ketidakhadiran')],
                 ['label' => 'Rekap Absen Guru', 'icon' => 'fas fa-chart-bar', 'color' => 'blue', 'href' => route('modul', 'rekap-absen-guru')],
@@ -77,9 +77,8 @@
             'title' => 'Menu Tata Tertib',
             'theme' => 'red',
             'items' => [
-                ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-list', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-absensi')],
-                ['label' => 'Pelanggaran KBM', 'icon' => 'fas fa-chalkboard', 'color' => 'red', 'href' => route('modul', 'pelanggaran-kbm')],
-                ['label' => 'Pelanggaran Tata Tertib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-tata-tertib')],
+                ['label' => 'Lapor Pelanggaran', 'icon' => 'fas fa-plus', 'color' => 'red', 'href' => route('tatib.cari')],
+                ['label' => 'List Pelanggaran', 'icon' => 'fas fa-clipboard-list', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Absensi Bulanan', 'icon' => 'fas fa-calendar-alt', 'color' => 'blue', 'href' => route('modul', 'absensi-bulanan')],
             ],
         ],
