@@ -22,7 +22,7 @@ class SinkronJadwalGuru extends Command
      * Sekarang kode dipakai LANGSUNG sebagai id_guru, nama cuma dipakai untuk
      * verifikasi/peringatan kalau ternyata tidak cocok (bukan basis pencarian).
      */
-    protected $signature = 'jadwal:sinkron {--apply : Simpan hasil ke tabel datajadwal, bukan cuma pratinjau}';
+    protected $signature = 'jadwal:sinkron {--apply : Simpan hasil ke tabel datajadwal, bukan cuma pratinjau} {--reset : Kosongkan dulu tabel datajadwal sebelum diisi ulang (dipakai bareng --apply)}';
 
     protected $description = 'Kode di Excel = id_guru asli (bukan hasil fuzzy-match). Cek & isi datajadwal.';
 
@@ -94,6 +94,11 @@ class SinkronJadwalGuru extends Command
 
         $this->newLine();
         $this->info('Mengisi tabel datajadwal dari jadwal_matrix.php...');
+
+        if ($this->option('reset')) {
+            \App\Models\DataJadwal::truncate();
+            $this->warn('Tabel datajadwal dikosongkan dulu (--reset) sebelum diisi ulang.');
+        }
 
         $matrix = require database_path('data/jadwal_matrix.php');
         $peta = KodeGuru::whereNotNull('id_guru')->pluck('id_guru', 'kode');
