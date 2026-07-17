@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\MemberLoginController;
+use App\Http\Controllers\AbsensiBulananController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AjuanAbsensiController;
 use App\Http\Controllers\AjuanGuruController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\RppController;
 use App\Http\Controllers\SmartController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\ArsipSuratController;
+use App\Http\Controllers\DknKelasController;
 use App\Http\Controllers\FotoSiswaController;
 use App\Http\Controllers\ProfilSiswaController;
 use App\Http\Controllers\KebersihanController;
@@ -97,6 +99,16 @@ Route::middleware('auth:member')->group(function () {
     Route::get('/arsip-surat', [ArsipSuratController::class, 'index'])
         ->name('arsip-surat')
         ->middleware('role:piket,kepsek,admin');
+
+    Route::get('/absensi-bulanan', [AbsensiBulananController::class, 'index'])
+        ->name('absensi-bulanan')
+        ->middleware('role:tatib,kepsek,piket');
+
+    // DKN Kelas - wali kelas upload berkas per mapel
+    Route::prefix('dkn')->name('dkn.')->middleware('role:walikelas')->group(function () {
+        Route::get('/', [DknKelasController::class, 'index'])->name('index');
+        Route::post('/', [DknKelasController::class, 'simpan'])->name('simpan');
+    });
 
     // Foto Siswa - gallery by kelas + pencarian + upload/ganti foto
     Route::prefix('foto-siswa')->name('foto-siswa.')->middleware('role:guru,walikelas,kepsek,admin,piket')->group(function () {

@@ -35,7 +35,7 @@
                 ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('aktivitas-kelas')],
                 ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Pelanggaran Tatib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
-                ['label' => 'DKN Kelas', 'icon' => 'fas fa-list-ol', 'color' => 'purple', 'href' => route('modul', 'dkn-kelas')],
+                ['label' => 'DKN Kelas', 'icon' => 'fas fa-list-ol', 'color' => 'purple', 'href' => route('dkn.index')],
             ],
         ],
         'kepsek' => [
@@ -46,8 +46,8 @@
                 ['label' => 'List Ajuan Guru', 'icon' => 'fas fa-list', 'color' => 'blue', 'href' => route('ajuan-guru.list')],
                 ['label' => 'Pelanggaran Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Kehadiran Guru', 'icon' => 'fas fa-chalkboard-teacher', 'color' => 'green', 'href' => route('guru.index')],
-                ['label' => 'Ketidakhadiran', 'icon' => 'fas fa-user-times', 'color' => 'red', 'href' => route('modul', 'ketidakhadiran')],
-                ['label' => 'Rekap Absen Guru', 'icon' => 'fas fa-chart-bar', 'color' => 'blue', 'href' => route('modul', 'rekap-absen-guru')],
+                ['label' => 'Ketidakhadiran', 'icon' => 'fas fa-user-times', 'color' => 'red', 'href' => route('ajuan-guru.list')],
+                ['label' => 'Rekap Absen Guru', 'icon' => 'fas fa-chart-bar', 'color' => 'blue', 'href' => route('ajuan-guru.list')],
                 ['label' => 'RPP Guru', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.semua')],
             ],
         ],
@@ -71,7 +71,7 @@
                 ['label' => 'Ajuan Absensi Masuk', 'icon' => 'fas fa-door-open', 'color' => 'purple', 'href' => route('ajuan-absensi.index')],
                 ['label' => 'Absensi Guru', 'icon' => 'fas fa-chalkboard-teacher', 'color' => 'green', 'href' => route('guru.absen-list')],
                 // Guru absen -> guru upload tugas -> piket sampaikan ke siswa di kelas
-                ['label' => 'Tugas Guru Absen', 'icon' => 'fas fa-clipboard-list', 'color' => 'pink', 'href' => route('modul', 'tugas-guru-absen')],
+                ['label' => 'Tugas Guru Absen', 'icon' => 'fas fa-clipboard-list', 'color' => 'pink', 'href' => route('guru.absen-list')],
             ],
         ],
         'tatib' => [
@@ -80,7 +80,7 @@
             'items' => [
                 ['label' => 'Lapor Pelanggaran', 'icon' => 'fas fa-plus', 'color' => 'red', 'href' => route('tatib.cari')],
                 ['label' => 'List Pelanggaran', 'icon' => 'fas fa-clipboard-list', 'color' => 'coral', 'href' => route('tatib.index')],
-                ['label' => 'Absensi Bulanan', 'icon' => 'fas fa-calendar-alt', 'color' => 'blue', 'href' => route('modul', 'absensi-bulanan')],
+                ['label' => 'Absensi Bulanan', 'icon' => 'fas fa-calendar-alt', 'color' => 'blue', 'href' => route('absensi-bulanan')],
             ],
         ],
         'bk' => [
