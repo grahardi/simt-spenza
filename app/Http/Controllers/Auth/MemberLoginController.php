@@ -36,7 +36,7 @@ class MemberLoginController extends Controller
         /** @var \App\Models\Member $member */
         $member = Auth::guard('member')->user();
         $member->update(['last_login_at' => now()]);
-        \App\Models\LogAktivitas::catat('sistem', $member->nama.' login ke sistem.');
+        \App\Models\LogAktivitas::catat('login', $member->nama.' ('.$member->user.') login ke sistem.');
 
         return redirect()->intended(route('dashboard'));
     }

@@ -22,6 +22,7 @@ use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardCo
 use App\Http\Controllers\Superadmin\GuruController as SuperadminGuruController;
 use App\Http\Controllers\Superadmin\KelasController as SuperadminKelasController;
 use App\Http\Controllers\Superadmin\LogAktivitasController as SuperadminLogAktivitasController;
+use App\Http\Controllers\Superadmin\LogLoginController as SuperadminLogLoginController;
 use App\Http\Controllers\Superadmin\PelanggaranController as SuperadminPelanggaranController;
 use App\Http\Controllers\Superadmin\SiswaController as SuperadminSiswaController;
 use App\Http\Controllers\TugasController;
@@ -178,6 +179,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::delete('/bk/{bkItem}', [SuperadminBkController::class, 'destroy'])->name('bk.destroy');
 
         Route::get('/log', [SuperadminLogAktivitasController::class, 'index'])->name('log.index');
+        Route::get('/log-login', [SuperadminLogLoginController::class, 'index'])->name('log-login.index');
     });
 
     // DKN Kelas - wali kelas upload berkas per mapel

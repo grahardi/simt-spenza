@@ -101,6 +101,12 @@
                             <p>Log Aktivitas</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('superadmin.log-login.index') }}" class="nav-link {{ request()->routeIs('superadmin.log-login.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-sign-in-alt"></i>
+                            <p>Log Login</p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
