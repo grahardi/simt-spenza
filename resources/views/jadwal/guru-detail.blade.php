@@ -42,6 +42,7 @@
                     @php $warna = $palet[$i % count($palet)]; @endphp
                     <div class="jadwal-baris bg-{{ $warna }}">
                         <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
+                        <span class="jadwal-waktu-kecil">{{ $j->waktu ?? '-' }}</span>
                         <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
                         <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
                         @if ($hari === $hariIni && $prefix === 'jadwal.')
