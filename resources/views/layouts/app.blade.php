@@ -186,7 +186,7 @@
                 <a href="{{ route('jadwal.index') }}" class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-alt"></i><span class="label">Jadwal</span>
                 </a>
-                <a href="{{ route('modul', 'notifikasi') }}" class="{{ request()->routeIs('modul') && request()->route('slug') === 'notifikasi' ? 'active' : '' }}">
+                <a href="{{ route('notifikasi') }}" class="{{ request()->routeIs('notifikasi') ? 'active' : '' }}">
                     <i class="fas fa-bell"></i><span class="label">Notifikasi</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="m-0">

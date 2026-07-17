@@ -8,6 +8,7 @@ use App\Http\Controllers\BimbinganController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\KeagamaanController;
 use App\Http\Controllers\RppController;
 use App\Http\Controllers\SmartController;
@@ -38,6 +39,8 @@ Route::middleware('auth:member')->group(function () {
     Route::get('/profil', function () {
         return view('profil');
     })->name('profil');
+
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
 
     // Modul Absensi Siswa - semua role yang dulu bisa akses absenjelas.php
     Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {
