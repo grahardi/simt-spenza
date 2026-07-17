@@ -2,6 +2,11 @@
 
 @section('title', 'Jadwal Kelas ' . $kelas)
 
+@php
+    $palet = ['blue', 'teal', 'amber', 'coral', 'pink', 'green', 'purple'];
+    $hariIni = \App\Models\Member::namaHariJakartaHuruBesar();
+@endphp
+
 @section('content')
 <div class="d-flex flex-column flex-md-row px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <div class="d-flex align-items-center me-md-auto">
@@ -21,26 +26,20 @@
     @else
         @foreach ($urutanHari as $hari)
             @continue(!isset($jadwalPerHari[$hari]))
-            <h3 class="h6 text-uppercase text-muted mt-4 mb-2">{{ $hari }}</h3>
-            <div class="table-responsive mb-2">
-                <table class="table table-sm table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th style="width:70px">Jam</th>
-                            <th>Mapel</th>
-                            <th>Guru</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $j)
-                            <tr>
-                                <td>{{ $j->jamhari }}</td>
-                                <td>{{ $j->mapel }}</td>
-                                <td>{{ $j->namaGuru() }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <h3 class="h6 text-uppercase text-muted mt-4 mb-2">
+                {{ $hari }}
+                @if ($hari === $hariIni) <span class="badge-status" style="background:#eaf3de;color:#3b6d11;">Hari ini</span> @endif
+            </h3>
+
+            <div class="d-flex flex-column gap-2 mb-2">
+                @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $i => $j)
+                    @php $warna = $palet[$i % count($palet)]; @endphp
+                    <div class="jadwal-baris bg-{{ $warna }}">
+                        <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
+                        <span class="jadwal-mapel-kecil" style="flex:1;">{{ $j->mapelLengkap() }}</span>
+                        <span class="jadwal-mapel-kecil" style="flex:1;">{{ $j->namaGuru() }}</span>
+                    </div>
+                @endforeach
             </div>
         @endforeach
     @endif
