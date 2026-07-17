@@ -100,20 +100,27 @@
                         <thead><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Poin</th><th>Penanganan</th></tr></thead>
                         <tbody>
                             @foreach ($daftar as $i => $p)
+                                @php $belumDitangani = $p->penanganan === null || strtolower($p->penanganan) === 'belum'; @endphp
                                 <tr>
                                     <td>{{ $i + 1 }}</td>
                                     <td>{{ $p->tgl_pelanggaran->translatedFormat('d F Y') }}</td>
                                     <td>{{ $p->kategori }}</td>
                                     <td>{{ $p->keterangan }}</td>
-                                    <td>{{ $p->poin }}</td>
-                                    <td>{{ $p->penanganan }}</td>
+                                    <td>{{ $belumDitangani ? '-' : $p->poin }}</td>
+                                    <td>
+                                        @if ($belumDitangani)
+                                            <span class="badge-status" style="background:#fcebeb;color:#a32d2d;">Belum ditangani</span>
+                                        @else
+                                            {{ $p->penanganan }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr class="fw-bold">
-                                <td colspan="4" class="text-end">Total Poin {{ $tahun }}</td>
-                                <td colspan="2">{{ $daftar->sum('poin') }}</td>
+                                <td colspan="4" class="text-end">Total Poin {{ $tahun }} <span class="fw-normal text-muted">(hanya yang sudah ditangani)</span></td>
+                                <td colspan="2">{{ $daftar->sum(fn ($p) => is_numeric($p->poin) ? (int) $p->poin : 0) }}</td>
                             </tr>
                         </tfoot>
                     </table>

@@ -54,6 +54,7 @@
                 </thead>
                 <tbody>
                     @foreach ($pelanggaran as $p)
+                        @php $belumDitangani = $p->penanganan === null || strtolower($p->penanganan) === 'belum'; @endphp
                         <tr>
                             <td class="small">{{ $p->tgl_pelanggaran->translatedFormat('d M Y') }}</td>
                             <td>{{ $p->siswa->nama_lengkap ?? '-' }}</td>
@@ -63,18 +64,18 @@
                                 @endphp
                                 <span class="badge-status {{ $warnaKat }}">{{ $p->kategori }}</span>
                             </td>
-                            <td>{{ $p->poin }}</td>
+                            <td>{{ $belumDitangani ? '-' : $p->poin }}</td>
                             <td class="small">{{ $p->keterangan }}</td>
                             <td>{{ $p->pelapor->nama ?? '-' }}</td>
                             <td>
-                                @if ($p->sudahDitangani())
-                                    <span class="badge-status" style="background:#eaf3de;color:#3b6d11;">{{ $p->penanganan }}</span>
+                                @if ($belumDitangani)
+                                    <span class="badge-status" style="background:#fcebeb;color:#a32d2d;">Belum ditangani</span>
                                 @else
-                                    <span class="badge-status" style="background:#fcebeb;color:#a32d2d;">Belum</span>
+                                    <span class="badge-status" style="background:#eaf3de;color:#3b6d11;">{{ $p->penanganan }}</span>
                                 @endif
                             </td>
                             <td class="text-end">
-                                @if (!$p->sudahDitangani())
+                                @if ($belumDitangani)
                                     <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalTindak{{ $p->id_langgar }}">
                                         <i class="fas fa-check me-1"></i> Tindak
                                     </button>
