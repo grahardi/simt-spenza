@@ -74,7 +74,7 @@
                         <tr>
                             <td>{{ $i + 1 }}</td>
                             <td>{{ $s->id_member }}</td>
-                            <td>{{ $s->nama_lengkap }}</td>
+                            <td><a href="{{ route('siswa.profil', $s) }}">{{ $s->nama_lengkap }}</a></td>
                             <td>
                                 @if ($s->absenHariIni)
                                     <span class="badge-status badge-{{ $s->absenHariIni->keterangan }}">

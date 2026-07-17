@@ -58,7 +58,7 @@
                         <tr>
                             <td>{{ $siswa->firstItem() + $i }}</td>
                             <td>{{ $s->id_member }}</td>
-                            <td>{{ $s->nama_lengkap }}</td>
+                            <td><a href="{{ route('siswa.profil', $s) }}">{{ $s->nama_lengkap }}</a></td>
                             <td>{{ $s->kelas }}</td>
                             <td>{{ $s->jenis_kelamin }}</td>
                         </tr>

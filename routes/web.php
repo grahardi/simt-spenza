@@ -16,6 +16,7 @@ use App\Http\Controllers\SmartController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\ArsipSuratController;
 use App\Http\Controllers\FotoSiswaController;
+use App\Http\Controllers\ProfilSiswaController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TatibController;
@@ -71,6 +72,10 @@ Route::middleware('auth:member')->group(function () {
 
     // Data Master Siswa - pengganti daftarnama.php, siswatambah.php, prosessiswa.php
     Route::resource('siswa', SiswaController::class)
+        ->middleware('role:guru,walikelas,kepsek,admin,piket');
+
+    Route::get('/siswa/{siswa}/profil', [ProfilSiswaController::class, 'show'])
+        ->name('siswa.profil')
         ->middleware('role:guru,walikelas,kepsek,admin,piket');
 
     // Data Master Guru - pengganti gurutambah.php, arsipguru.php
