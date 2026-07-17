@@ -20,6 +20,20 @@ class GuruController extends Controller
         return view('guru.index', compact('guru'));
     }
 
+    /** Pengganti panel "Absen Guru" piket - list guru, link ke jadwal masing-masing (bukan CRUD). */
+    public function absenList(Request $request)
+    {
+        $guru = Guru::query()
+            ->when($request->filled('cari'), function ($query) use ($request) {
+                $query->where('nama', 'like', '%'.$request->input('cari').'%');
+            })
+            ->orderBy('nama')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('guru.absen-list', compact('guru'));
+    }
+
     public function create()
     {
         return view('guru.form', ['guru' => new Guru()]);

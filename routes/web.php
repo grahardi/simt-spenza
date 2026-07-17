@@ -13,6 +13,8 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\KeagamaanController;
 use App\Http\Controllers\RppController;
 use App\Http\Controllers\SmartController;
+use App\Http\Controllers\TugasController;
+use App\Http\Controllers\ArsipSuratController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TatibController;
@@ -73,6 +75,22 @@ Route::middleware('auth:member')->group(function () {
     // Data Master Guru - pengganti gurutambah.php, arsipguru.php
     Route::resource('guru', GuruController::class)
         ->middleware('role:kepsek,admin,piket');
+
+    // Absen Guru (piket) - list guru, link ke jadwal (bukan CRUD)
+    Route::get('/absen-guru', [GuruController::class, 'absenList'])
+        ->name('guru.absen-list')
+        ->middleware('role:piket,kepsek');
+
+    // Upload Tugas untuk kelas (guru absen) - dari halaman detail jadwal guru
+    Route::prefix('tugas')->name('tugas.')->group(function () {
+        Route::get('/upload/{guru}/{kelas}', [TugasController::class, 'upload'])->name('upload');
+        Route::post('/upload/{guru}/{kelas}', [TugasController::class, 'simpan'])->name('simpan');
+    });
+
+    // Arsip Surat - berkas/foto bukti absensi yang sudah terupload
+    Route::get('/arsip-surat', [ArsipSuratController::class, 'index'])
+        ->name('arsip-surat')
+        ->middleware('role:piket,kepsek,admin');
 
     // Jadwal Mengajar - khusus guru, jadwal hari ini
     Route::get('/jadwal-mengajar', [JadwalGuruController::class, 'index'])

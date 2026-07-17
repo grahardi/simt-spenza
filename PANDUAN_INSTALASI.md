@@ -126,13 +126,14 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 10. ✅ RPP — guru upload PDF per bulan, kepala sekolah setujui
 11. ✅ Peminjaman Ruang Serbaguna (dulu salah label "Smartboard") — kalender 5 hari x jam, booking
 12. ✅ Notifikasi — guru lihat warning/ajuan yang ditujukan ke dirinya dari tabel `warning`
+13. ✅ Warning Guru otomatis (Alpha, sering tidak masuk) + Ajukan Guru (kelas kosong, wajib konfirmasi)
+14. ✅ Tugas Guru Absen — upload tugas dari halaman detail Jadwal Guru (khusus baris hari ini)
+15. ✅ Absen Guru (piket) — list guru dengan link ke Jadwal, bukan CRUD
+16. ✅ Arsip Surat — galeri foto bukti absensi (sakit/ijin) yang sudah terupload, filter tanggal
 
-### Belum dimigrasi (butuh info lebih dalam / scope terpisah)
-- **Surat/Arsip** — arsip surat masuk/keluar sekolah
-- **Tugas Guru Absen (piket)** — guru absen upload tugas, piket sampaikan ke kelas
+### Belum dimigrasi
 - **DKN Kelas** (walikelas) — daftar kumpulan nilai per kelas
 - **Nilai PSAJ Tulis** (guru) — input nilai ujian
-- **Kehadiran Guru/Ketidakhadiran** (kepsek) — terkait tabel `warning`/GTK, laporan piket soal guru tidak hadir
 - **E-rapor** — terintegrasi sistem RADIG 2.0 eksternal, di luar cakupan migrasi ini
 
 ### Modul kecil yang baru ditambahkan

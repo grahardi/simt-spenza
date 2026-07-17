@@ -12,6 +12,9 @@
         <i class="fas fa-list fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Data Absensi Siswa</h1>
     </div>
+    <a href="{{ route('absensi.telat.list') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+        <i class="fas fa-clock me-1"></i> Data Terlambat
+    </a>
 </div>
 
 @if (session('status'))
