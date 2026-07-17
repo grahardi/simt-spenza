@@ -154,6 +154,37 @@
             .kelas-grid { gap: 8px 4px; }
             .kelas-btn { width: 56px; height: 56px; font-size: 16px; border-radius: 10px; }
         }
+
+        /* Panel dashboard - tema warna light beda per role, biar gampang dibedakan */
+        .panel-section {
+            border-radius: 18px; padding: 16px 16px 18px; margin-bottom: 18px;
+            border: 1px solid rgba(0,0,0,.04);
+        }
+        .panel-title {
+            font-weight: 700; font-size: 14px; text-align: center;
+            border-radius: 10px; padding: 8px 12px; margin-bottom: 14px;
+        }
+        .panel-theme-blue   { background: #eef6fd; } .panel-theme-blue .panel-title   { background: #d3e9fb; color: #185fa5; }
+        .panel-theme-teal   { background: #eafaf5; } .panel-theme-teal .panel-title   { background: #cdf1e5; color: #0f6e56; }
+        .panel-theme-amber  { background: #fef8ec; } .panel-theme-amber .panel-title  { background: #faedc9; color: #854f0b; }
+        .panel-theme-coral  { background: #fdf2ee; } .panel-theme-coral .panel-title  { background: #f8ddd1; color: #993c1d; }
+        .panel-theme-pink   { background: #fdeff4; } .panel-theme-pink .panel-title   { background: #f9d9e5; color: #993556; }
+        .panel-theme-green  { background: #f2f8ea; } .panel-theme-green .panel-title  { background: #ddedc8; color: #3b6d11; }
+        .panel-theme-purple { background: #f3f1fe; } .panel-theme-purple .panel-title { background: #e0dbfc; color: #534ab7; }
+        .panel-theme-red    { background: #fdedec; } .panel-theme-red .panel-title    { background: #f9d4d2; color: #a32d2d; }
+        .panel-section .menu-card { background: rgba(255,255,255,.85); }
+
+        /* Avatar inisial di tabel Absensi Siswa */
+        .avatar-inisial {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #eeedfe; color: #534ab7;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px; flex-shrink: 0;
+        }
+        .absensi-table thead th {
+            font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+            color: #888; font-weight: 700; border-bottom-width: 2px;
+        }
     </style>
 </head>
 <body>

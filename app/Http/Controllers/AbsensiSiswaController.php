@@ -31,6 +31,11 @@ class AbsensiSiswaController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        $rekap = AbsenSiswa::whereDate('tgl_absen', $tanggal)
+            ->selectRaw('keterangan, count(*) as jumlah')
+            ->groupBy('keterangan')
+            ->pluck('jumlah', 'keterangan');
+
         $siswaIds = $absensi->pluck('id_siswa');
         $absenSebelumnya = AbsenSiswa::whereIn('id_siswa', $siswaIds)
             ->whereDate('tgl_absen', $tanggalSebelumnya)
@@ -41,6 +46,7 @@ class AbsensiSiswaController extends Controller
             'absensi' => $absensi,
             'tanggal' => $tanggal,
             'absenSebelumnya' => $absenSebelumnya,
+            'rekap' => $rekap,
         ]);
     }
 

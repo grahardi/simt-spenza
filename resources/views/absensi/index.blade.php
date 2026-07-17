@@ -20,59 +20,93 @@
 
 <div class="px-4 py-3 mb-3 bg-white rounded shadow">
     <form method="GET" class="d-flex gap-2 align-items-center">
-        <label for="tgl" class="form-label mb-0">Tanggal</label>
+        <label for="tgl" class="form-label mb-0"><i class="fas fa-calendar-alt me-1"></i> Tanggal</label>
         <input type="date" id="tgl" name="tgl" class="form-control" style="max-width:200px"
                value="{{ $tanggal->format('Y-m-d') }}" onchange="this.form.submit()">
     </form>
 </div>
 
+@if (!$absensi->isEmpty())
+    <div class="row g-2 mb-3">
+        <div class="col-3">
+            <div class="bg-white rounded shadow-sm p-3 text-center">
+                <div class="h5 mb-0" style="color:#854f0b">{{ $rekap['s'] ?? 0 }}</div>
+                <small class="text-muted">Sakit</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="bg-white rounded shadow-sm p-3 text-center">
+                <div class="h5 mb-0" style="color:#3b6d11">{{ $rekap['i'] ?? 0 }}</div>
+                <small class="text-muted">Ijin</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="bg-white rounded shadow-sm p-3 text-center">
+                <div class="h5 mb-0" style="color:#a32d2d">{{ $rekap['a'] ?? 0 }}</div>
+                <small class="text-muted">Alfa</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="bg-white rounded shadow-sm p-3 text-center">
+                <div class="h5 mb-0" style="color:#185fa5">{{ $rekap['d'] ?? 0 }}</div>
+                <small class="text-muted">Dispensasi</small>
+            </div>
+        </div>
+    </div>
+@endif
+
 <div class="p-4 bg-white rounded shadow">
-    <h3 class="h5 mb-3">
+    <h3 class="h6 mb-3 text-muted">
         <i class="fas fa-clone me-2"></i>
-        Data Absensi {{ $tanggal->translatedFormat('d F Y') }}
+        {{ $tanggal->translatedFormat('l, d F Y') }}
     </h3>
 
     @if ($absensi->isEmpty())
-        <div class="text-muted">
+        <div class="text-muted text-center py-4">
             <i class="far fa-question-circle me-1"></i>
             Data Absensi <span class="text-primary fst-italic">{{ $tanggal->translatedFormat('d F Y') }}</span> tidak ada.
         </div>
     @else
         <div class="table-responsive">
-            <table class="table table-striped align-middle">
+            <table class="table table-hover align-middle absensi-table">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
+                        <th>Siswa</th>
                         <th>Kelas</th>
-                        <th>Absensi</th>
-                        <th>Absensi Sebelumnya</th>
+                        <th>Status</th>
+                        <th>Kemarin</th>
                         @if ($bisaUbah)
                             <th></th>
                         @endif
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($absensi as $i => $a)
+                    @foreach ($absensi as $a)
                         <tr>
-                            <td>{{ $absensi->firstItem() + $i }}</td>
-                            <td>{{ $a->siswa->nama_lengkap }}</td>
-                            <td>{{ $a->siswa->kelas }}</td>
                             <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-inisial">{{ strtoupper(substr($a->siswa->nama_lengkap, 0, 1)) }}</span>
+                                    <span class="fw-semibold">{{ $a->siswa->nama_lengkap }}</span>
+                                </div>
+                            </td>
+                            <td><span class="text-muted">{{ $a->siswa->kelas }}</span></td>
+                            <td>
+                                <span class="badge-status badge-{{ $a->keterangan }}">{{ $a->labelKeterangan() }}</span>
                                 @if (in_array($a->keterangan, ['s', 'i']) && $a->gambar)
-                                    <a href="{{ route('absensi.foto', $a) }}" target="_blank"
-                                       class="btn btn-sm {{ $a->keterangan === 's' ? 'btn-warning' : 'btn-success' }}">
-                                        {{ $a->labelKeterangan() }}
+                                    <a href="{{ route('absensi.foto', $a) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1 py-0 px-2">
+                                        <i class="fas fa-image"></i>
                                     </a>
-                                @else
-                                    <strong>{{ $a->labelKeterangan() }}</strong>
-                                    @if (in_array($a->keterangan, ['s', 'i']))
-                                        <span class="text-muted small"> - Tanpa Foto</span>
-                                    @endif
+                                @elseif (in_array($a->keterangan, ['s', 'i']))
+                                    <span class="text-muted small d-block">Tanpa foto</span>
                                 @endif
                             </td>
                             <td>
-                                {{ ($absenSebelumnya[$a->id_siswa] ?? null)?->labelKeterangan() ?? '-' }}
+                                @php $keb = $absenSebelumnya[$a->id_siswa] ?? null; @endphp
+                                @if ($keb)
+                                    <span class="badge-status badge-{{ $keb->keterangan }}">{{ $keb->labelKeterangan() }}</span>
+                                @else
+                                    <span class="text-muted small">Hadir</span>
+                                @endif
                             </td>
                             @if ($bisaUbah)
                                 <td class="text-end">

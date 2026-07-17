@@ -14,6 +14,7 @@
     $panels = [
         'guru' => [
             'title' => 'Menu Jabatan Guru',
+            'theme' => 'blue',
             'items' => [
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('modul', 'laporan-keagamaan')],
@@ -27,6 +28,7 @@
         ],
         'walikelas' => [
             'title' => 'Menu Wali Kelas',
+            'theme' => 'pink',
             'items' => [
                 ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('aktivitas-kelas')],
                 ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
@@ -36,6 +38,7 @@
         ],
         'kepsek' => [
             'title' => 'Menu Kepala Sekolah',
+            'theme' => 'amber',
             'items' => [
                 ['label' => 'Ajukan Guru', 'icon' => 'fas fa-user-plus', 'color' => 'green', 'href' => route('modul', 'ajukan-guru')],
                 ['label' => 'List Ajuan Guru', 'icon' => 'fas fa-list', 'color' => 'blue', 'href' => route('modul', 'list-ajuan-guru')],
@@ -48,6 +51,7 @@
         ],
         'admin' => [
             'title' => 'Menu Admin Absensi',
+            'theme' => 'purple',
             'items' => [
                 ['label' => 'Ajukan Absensi', 'icon' => 'fas fa-inbox', 'color' => 'purple', 'href' => route('ajuan-absensi.pilih-kelas')],
                 ['label' => 'List Ajuan', 'icon' => 'fas fa-list', 'color' => 'teal', 'href' => route('ajuan-absensi.list')],
@@ -56,6 +60,7 @@
         ],
         'piket' => [
             'title' => 'Menu Piket',
+            'theme' => 'teal',
             'items' => [
                 ['label' => 'Isi Absensi', 'icon' => 'fas fa-pen', 'color' => 'blue', 'href' => route('absensi.isi')],
                 ['label' => 'Siswa Terlambat', 'icon' => 'fas fa-clock', 'color' => 'red', 'href' => route('absensi.telat.list')],
@@ -69,6 +74,7 @@
         ],
         'tatib' => [
             'title' => 'Menu Tata Tertib',
+            'theme' => 'red',
             'items' => [
                 ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-list', 'color' => 'coral', 'href' => route('modul', 'pelanggaran-absensi')],
                 ['label' => 'Pelanggaran KBM', 'icon' => 'fas fa-chalkboard', 'color' => 'red', 'href' => route('modul', 'pelanggaran-kbm')],
@@ -78,6 +84,7 @@
         ],
         'bk' => [
             'title' => 'Menu Bimbingan Konseling',
+            'theme' => 'green',
             'items' => [
                 ['label' => 'Pelanggaran Kedisiplinan', 'icon' => 'fas fa-exclamation-triangle', 'color' => 'red', 'href' => route('modul', 'pelanggaran-kedisiplinan')],
                 ['label' => 'Pendampingan', 'icon' => 'fas fa-hands-helping', 'color' => 'pink', 'href' => route('modul', 'pendampingan')],
@@ -86,6 +93,7 @@
         ],
         'keagamaan' => [
             'title' => 'Menu Keagamaan',
+            'theme' => 'coral',
             'items' => [
                 ['label' => 'Laporan Hari Ini', 'icon' => 'fas fa-calendar-day', 'color' => 'purple', 'href' => route('modul', 'laporan-hari-ini')],
                 ['label' => 'Rekap Pelanggar', 'icon' => 'fas fa-list', 'color' => 'coral', 'href' => route('modul', 'rekap-pelanggar')],
@@ -94,6 +102,7 @@
         ],
         'kebersihan' => [
             'title' => 'Menu Kebersihan',
+            'theme' => 'teal',
             'items' => [
                 ['label' => 'List Laporan', 'icon' => 'fas fa-list', 'color' => 'teal', 'href' => route('modul', 'list-laporan-kebersihan')],
                 ['label' => 'Entry Laporan', 'icon' => 'fas fa-pen', 'color' => 'green', 'href' => route('modul', 'entry-laporan-kebersihan')],
@@ -111,7 +120,7 @@
 
 @foreach ($panels as $role => $panel)
     @if ($member->hasRole($role))
-        <x-menu-section :title="$panel['title']" :items="$panel['items']" />
+        <x-menu-section :title="$panel['title']" :items="$panel['items']" :theme="$panel['theme']" />
     @endif
 @endforeach
 @endsection
