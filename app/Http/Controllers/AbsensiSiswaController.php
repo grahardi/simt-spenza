@@ -119,6 +119,13 @@ class AbsensiSiswaController extends Controller
             $atribut
         );
 
+        \App\Models\LogAktivitas::catat(
+            'absensi',
+            (\Illuminate\Support\Facades\Auth::guard('member')->user()->nama ?? 'Seseorang').' mencatat absen '.$siswa->nama_lengkap.' jadi '.match ($data['keterangan']) {
+                's' => 'Sakit', 'i' => 'Ijin', 'a' => 'Alfa', 'd' => 'Dispensasi', default => 'Hadir',
+            }
+        );
+
         return back()->with('status', 'Absensi '.$siswa->nama_lengkap.' berhasil dicatat.');
     }
 
@@ -129,6 +136,11 @@ class AbsensiSiswaController extends Controller
     {
         $nama = $absen->siswa->nama_lengkap ?? 'siswa';
         $absen->delete();
+
+        \App\Models\LogAktivitas::catat(
+            'absensi',
+            (\Illuminate\Support\Facades\Auth::guard('member')->user()->nama ?? 'Seseorang').' menghapus absensi '.$nama.'.'
+        );
 
         return back()->with('status', 'Absensi '.$nama.' berhasil dihapus.');
     }
@@ -153,6 +165,11 @@ class AbsensiSiswaController extends Controller
             'tgl_absen' => Carbon::today()->toDateString(),
             'keterangan' => 't',
         ]);
+
+        \App\Models\LogAktivitas::catat(
+            'keterlambatan',
+            (\Illuminate\Support\Facades\Auth::guard('member')->user()->nama ?? 'Seseorang').' mencatat '.$siswa->nama_lengkap.' terlambat.'
+        );
 
         return back()->with('status', $siswa->nama_lengkap.' dicatat terlambat hari ini.');
     }

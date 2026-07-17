@@ -95,6 +95,12 @@
                             <p>Data Bimbingan Konseling</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('superadmin.log.index') }}" class="nav-link {{ request()->routeIs('superadmin.log.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-history"></i>
+                            <p>Log Aktivitas</p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>

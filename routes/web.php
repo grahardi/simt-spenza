@@ -7,6 +7,7 @@ use App\Http\Controllers\AjuanAbsensiController;
 use App\Http\Controllers\AjuanGuruController;
 use App\Http\Controllers\AktivitasKelasController;
 use App\Http\Controllers\BimbinganController;
+use App\Http\Controllers\GantiPasswordController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Superadmin\BkController as SuperadminBkController;
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\GuruController as SuperadminGuruController;
 use App\Http\Controllers\Superadmin\KelasController as SuperadminKelasController;
+use App\Http\Controllers\Superadmin\LogAktivitasController as SuperadminLogAktivitasController;
 use App\Http\Controllers\Superadmin\PelanggaranController as SuperadminPelanggaranController;
 use App\Http\Controllers\Superadmin\SiswaController as SuperadminSiswaController;
 use App\Http\Controllers\TugasController;
@@ -54,7 +56,10 @@ Route::prefix('jadwal-publik')->name('jadwal-publik.')->group(function () {
 });
 Route::post('/logout', [MemberLoginController::class, 'destroy'])->name('logout');
 
-Route::middleware('auth:member')->group(function () {
+Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::class])->group(function () {
+
+    Route::get('/ganti-password', [GantiPasswordController::class, 'form'])->name('ganti-password');
+    Route::post('/ganti-password', [GantiPasswordController::class, 'simpan'])->name('ganti-password.simpan');
 
     Route::get('/', function () {
         return view('dashboard');
@@ -171,6 +176,8 @@ Route::middleware('auth:member')->group(function () {
         Route::get('/bk/{bkItem}/edit', [SuperadminBkController::class, 'edit'])->name('bk.edit');
         Route::put('/bk/{bkItem}', [SuperadminBkController::class, 'update'])->name('bk.update');
         Route::delete('/bk/{bkItem}', [SuperadminBkController::class, 'destroy'])->name('bk.destroy');
+
+        Route::get('/log', [SuperadminLogAktivitasController::class, 'index'])->name('log.index');
     });
 
     // DKN Kelas - wali kelas upload berkas per mapel

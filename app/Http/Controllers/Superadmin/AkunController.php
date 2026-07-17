@@ -38,14 +38,18 @@ class AkunController extends Controller
     {
         $data = $request->validate([
             'user' => ['required', 'string', 'max:20', 'unique:member,user'],
-            'password' => ['required', 'string', 'min:4'],
+            'password' => ['required', 'string', 'min:6'],
             'nama' => ['required', 'string', 'max:70'],
             'id_guru' => ['nullable', 'integer'],
         ]);
 
+        $data['id'] = Member::idBerikutnya();
         $data['password'] = Hash::make($data['password']);
+        $data['wajib_ganti_password'] = true;
 
         Member::create($data);
+
+        \App\Models\LogAktivitas::catat('sistem', 'Superadmin membuat akun baru: '.$data['nama'].' ('.$data['user'].').');
 
         return redirect()->route('superadmin.akun.index')->with('status', 'Akun baru berhasil dibuat.');
     }
@@ -76,9 +80,9 @@ class AkunController extends Controller
 
     public function resetPassword(Request $request, Member $akun)
     {
-        $data = $request->validate(['password_baru' => ['required', 'string', 'min:4']]);
+        $data = $request->validate(['password_baru' => ['required', 'string', 'min:6']]);
 
-        $akun->update(['password' => Hash::make($data['password_baru'])]);
+        $akun->update(['password' => Hash::make($data['password_baru']), 'wajib_ganti_password' => true]);
 
         return back()->with('status', 'Password berhasil direset.');
     }

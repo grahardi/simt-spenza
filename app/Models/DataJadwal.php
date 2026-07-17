@@ -9,7 +9,7 @@ class DataJadwal extends Model
 {
     protected $table = 'datajadwal';
     protected $primaryKey = 'id';
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = ['id', 'kodejam', 'jamhari', 'hari', 'waktu', 'kodeguru', 'mapel', 'kodekelas', 'kelas'];

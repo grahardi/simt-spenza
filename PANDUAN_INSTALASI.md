@@ -262,3 +262,38 @@ Ini menambah kolom `aktif` (boolean, default 1) di tabel `guru` - dipakai fitur
   (misal akun piket/admin murni). Bisa buat akun baru, atur roles, reset password.
 - Panel Guru: menu "Rekap Kehadiran" dan "List Pelanggaran" dihapus (duplikat
   dengan menu Absensi Siswa panel lain dan tidak relevan untuk guru mapel biasa).
+
+## Fitur Keamanan: Wajib Ganti Password & Log Aktivitas
+
+Karena situs sekarang bisa diakses publik (ada halaman Jadwal tanpa login),
+2 fitur keamanan tambahan:
+
+### 1. Wajib Ganti Password
+Migration baru menambah kolom `wajib_ganti_password` (default `true` untuk
+SEMUA akun yang sudah ada) dan `last_login_at` di tabel `member`. Begitu
+akun dengan flag ini login, langsung diarahkan ke halaman Ganti Password
+(minimal 6 karakter) sebelum bisa akses menu lain manapun. Setelah ganti,
+flag otomatis jadi `false`.
+
+Akun baru yang dibuat lewat Superadmin (buat akun / buat akun guru / reset
+password) otomatis di-set `wajib_ganti_password = true` juga.
+
+```bash
+php artisan migrate
+```
+
+**Penting:** kolom `id` di tabel `member` (sama seperti `datajadwal` sebelumnya)
+ternyata BUKAN auto-increment - sudah diperbaiki juga di kode (Model
+`Member` sekarang generate ID manual lewat `Member::idBerikutnya()`).
+
+### 2. Log Aktivitas (Superadmin)
+Menu baru "Log Aktivitas" di panel Superadmin, dikelompokkan per tab:
+Absensi, Pelanggaran, Keterlambatan, Sistem, Lainnya - supaya tidak jadi
+1 daftar campur aduk. Contoh isi: "Ginanjar Rahardi mencatat absen Fania
+Zahra jadi Sakit".
+
+Sudah tercatat otomatis untuk: isi/ubah/hapus absensi, catat terlambat,
+lapor & tindak lanjut pelanggaran, login ke sistem, buat akun baru lewat
+Superadmin. Kalau mau tambah pencatatan di modul lain, tinggal panggil
+`\App\Models\LogAktivitas::catat('kategori', 'deskripsi kegiatan');` di
+controller terkait.

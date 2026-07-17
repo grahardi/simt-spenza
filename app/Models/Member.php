@@ -24,16 +24,22 @@ class Member extends Authenticatable
 {
     protected $table = 'member';
     protected $primaryKey = 'id';
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = [
-        'user', 'password', 'nama', 'jabatan', 'admin', 'walikelas',
+        'id', 'user', 'password', 'nama', 'jabatan', 'admin', 'walikelas',
         'tatib', 'bk', 'piket', 'guru', 'keagamaan', 'kebersihan',
         'kepsek', 'id_guru', 'foto', 'panggilan', 'adminsoal',
+        'wajib_ganti_password', 'last_login_at',
     ];
 
     protected $hidden = ['password'];
+
+    protected $casts = [
+        'wajib_ganti_password' => 'boolean',
+        'last_login_at' => 'datetime',
+    ];
 
     /** Field yang dipakai sebagai "username" saat login (nomor ID, bukan email). */
     public function username(): string
@@ -126,5 +132,14 @@ class Member extends Authenticatable
         }
 
         return in_array($role, $this->roles(), true);
+    }
+
+    /**
+     * Kolom `id` di tabel member BUKAN auto-increment (sama seperti
+     * datajadwal) - harus diisi manual tiap kali bikin akun baru.
+     */
+    public static function idBerikutnya(): int
+    {
+        return (int) (static::max('id') ?? 0) + 1;
     }
 }

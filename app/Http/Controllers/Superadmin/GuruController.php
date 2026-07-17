@@ -69,14 +69,16 @@ class GuruController extends Controller
     {
         $data = $request->validate([
             'user' => ['required', 'string', 'max:20', 'unique:member,user'],
-            'password' => ['required', 'string', 'min:4'],
+            'password' => ['required', 'string', 'min:6'],
         ]);
 
         Member::create([
+            'id' => Member::idBerikutnya(),
             'user' => $data['user'],
             'password' => Hash::make($data['password']),
             'nama' => $guru->nama,
             'id_guru' => $guru->id_guru,
+            'wajib_ganti_password' => true,
         ]);
 
         return redirect()->route('superadmin.guru.roles', $guru)->with('status', 'Akun login berhasil dibuat.');
@@ -106,10 +108,10 @@ class GuruController extends Controller
     /** Reset password akun guru ini. */
     public function resetPassword(Request $request, Guru $guru)
     {
-        $data = $request->validate(['password_baru' => ['required', 'string', 'min:4']]);
+        $data = $request->validate(['password_baru' => ['required', 'string', 'min:6']]);
 
         $member = Member::where('id_guru', $guru->id_guru)->firstOrFail();
-        $member->update(['password' => Hash::make($data['password_baru'])]);
+        $member->update(['password' => Hash::make($data['password_baru']), 'wajib_ganti_password' => true]);
 
         return back()->with('status', 'Password berhasil direset.');
     }

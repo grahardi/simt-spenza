@@ -59,6 +59,11 @@ class TatibController extends Controller
             'id_entry' => $member->id,
         ]);
 
+        \App\Models\LogAktivitas::catat(
+            'pelanggaran',
+            $member->nama.' melaporkan pelanggaran '.$data['kategori'].' untuk '.$siswa->nama_lengkap.'.'
+        );
+
         return redirect()->route('tatib.index')->with('status', 'Laporan pelanggaran '.$siswa->nama_lengkap.' berhasil disimpan.');
     }
 
@@ -112,6 +117,11 @@ class TatibController extends Controller
             'penanganan' => $data['penanganan'],
             'tgl_action' => Carbon::today()->toDateString(),
         ]);
+
+        \App\Models\LogAktivitas::catat(
+            'pelanggaran',
+            (Auth::guard('member')->user()->nama ?? 'Seseorang').' menindaklanjuti pelanggaran '.($pelanggaran->siswa->nama_lengkap ?? '').' ('.$data['penanganan'].').'
+        );
 
         return back()->with('status', 'Penanganan pelanggaran '.($pelanggaran->siswa->nama_lengkap ?? '').' berhasil disimpan.');
     }

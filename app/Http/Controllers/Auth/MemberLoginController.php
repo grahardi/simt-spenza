@@ -33,6 +33,11 @@ class MemberLoginController extends Controller
 
         $request->session()->regenerate();
 
+        /** @var \App\Models\Member $member */
+        $member = Auth::guard('member')->user();
+        $member->update(['last_login_at' => now()]);
+        \App\Models\LogAktivitas::catat('sistem', $member->nama.' login ke sistem.');
+
         return redirect()->intended(route('dashboard'));
     }
 
