@@ -101,20 +101,18 @@ class SinkronJadwalGuru extends Command
         }
 
         $matrix = require database_path('data/jadwal_matrix.php');
-        $peta = KodeGuru::whereNotNull('id_guru')->pluck('id_guru', 'kode');
 
-        $dilewati = 0;
         $dimasukkan = 0;
         $idBerikutnya = (int) (DataJadwal::max('id') ?? 0) + 1;
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($matrix, $peta, &$dilewati, &$dimasukkan, &$idBerikutnya) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($matrix, &$dimasukkan, &$idBerikutnya) {
             foreach ($matrix as $baris) {
-                $idGuru = $peta->get($baris['kode']);
-
-                if (!$idGuru) {
-                    $dilewati++;
-                    continue;
-                }
+                // Kode di Excel SELALU dipakai langsung sebagai kodeguru, walau
+                // id_guru itu belum/tidak ada di tabel `guru` master - baris
+                // jadwal tetap masuk supaya jadwalnya lengkap. Nama guru yang
+                // belum ada di tabel `guru` akan tampil '-' di halaman Jadwal
+                // sampai datanya dilengkapi di Data Guru.
+                $idGuru = (int) $baris['kode'];
 
                 $mapel = KodeGuru::where('kode', $baris['kode'])->value('mapel');
 
@@ -142,7 +140,7 @@ class SinkronJadwalGuru extends Command
             }
         });
 
-        $this->info("Selesai: {$dimasukkan} jadwal masuk, {$dilewati} baris dilewati (id_guru tidak ditemukan di tabel guru).");
+        $this->info("Selesai: {$dimasukkan} jadwal masuk (semua baris dimasukkan, termasuk yang id_guru-nya belum ada di tabel guru).");
 
         return self::SUCCESS;
     }
