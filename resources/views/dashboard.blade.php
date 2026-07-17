@@ -17,7 +17,7 @@
             'theme' => 'blue',
             'items' => [
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
-                ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('modul', 'laporan-keagamaan')],
+                ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
                 ['label' => 'List Pelanggaran', 'icon' => 'fas fa-file-alt', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('modul', 'upload-rpp')],
                 ['label' => 'Smartboard', 'icon' => 'fas fa-chalkboard', 'color' => 'teal', 'href' => route('modul', 'smartboard')],
@@ -95,9 +95,8 @@
             'title' => 'Menu Keagamaan',
             'theme' => 'coral',
             'items' => [
-                ['label' => 'Laporan Hari Ini', 'icon' => 'fas fa-calendar-day', 'color' => 'purple', 'href' => route('modul', 'laporan-hari-ini')],
-                ['label' => 'Rekap Pelanggar', 'icon' => 'fas fa-list', 'color' => 'coral', 'href' => route('modul', 'rekap-pelanggar')],
-                ['label' => 'Tindakan', 'icon' => 'fas fa-gavel', 'color' => 'red', 'href' => route('modul', 'tindakan')],
+                ['label' => 'Laporan Hari Ini', 'icon' => 'fas fa-calendar-day', 'color' => 'purple', 'href' => route('keagamaan.rekap')],
+                ['label' => 'Rekap Pelanggar', 'icon' => 'fas fa-list', 'color' => 'coral', 'href' => route('keagamaan.rekap')],
             ],
         ],
         'kebersihan' => [

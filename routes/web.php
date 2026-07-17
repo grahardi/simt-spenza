@@ -8,6 +8,7 @@ use App\Http\Controllers\BimbinganController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JadwalGuruController;
+use App\Http\Controllers\KeagamaanController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TatibController;
@@ -98,6 +99,13 @@ Route::middleware('auth:member')->group(function () {
         Route::get('/lapor/{siswa}', [BimbinganController::class, 'lapor'])->name('lapor');
         Route::post('/lapor/{siswa}', [BimbinganController::class, 'simpan'])->name('simpan');
         Route::get('/', [BimbinganController::class, 'index'])->name('index');
+    });
+
+    // Keagamaan - guru yang punya jadwal jam sholat lapor, role keagamaan lihat rekap
+    Route::prefix('keagamaan')->name('keagamaan.')->group(function () {
+        Route::get('/', [KeagamaanController::class, 'index'])->name('index')->middleware('role:guru');
+        Route::post('/lapor/{siswa}', [KeagamaanController::class, 'simpan'])->name('simpan')->middleware('role:guru');
+        Route::get('/rekap', [KeagamaanController::class, 'rekap'])->name('rekap')->middleware('role:keagamaan,piket,kepsek');
     });
 
     // Ajuan Absensi - Admin Absensi ajukan (keliling kelas), Piket yang ACC/Tolak.

@@ -120,9 +120,9 @@ Buka `/absensi` untuk lihat modul yang sudah jadi.
 4. ✅ Absensi Piket — isi absensi manual (Sakit/Ijin/Alfa/Dispensasi), catat & lihat siswa terlambat
 5. ✅ Ajuan Absensi — Admin Absensi keliling kelas ajukan (belum resmi), Piket ACC/Tolak (baru resmi masuk absen_siswa)
 6. ✅ Kebersihan Kelas — lapor kelas kotor (guru manapun, foto), tindak lanjut + galeri sebelum/sesudah (role kebersihan) - termasuk melengkapi fitur "upload aksi" yang di kode lama filenya kosong/belum jadi
-7. Tata Tertib (Tatib) — dari `tatibentry.php`, `tindakan.php` dkk
-8. Bimbingan Konseling — dari `bimbingan.php` dkk
-9. Keagamaan — dari `agamalistall.php` dkk
+7. ✅ Tata Tertib (Tatib) — lapor pelanggaran siswa (kategori/poin), list + tindak lanjut
+8. ✅ Bimbingan Konseling — entry catatan bimbingan (kategori/keterangan/tindakan/foto), list
+9. ✅ Keagamaan — guru berjadwal jam sholat (jamhari 'x') lapor Halangan/Bolos/Ijin, rekap semua
 10. RPP, Peminjaman Alat (Smart), Surat/Arsip, Tugas Guru Absen (piket), Notifikasi, DKN Kelas, Nilai PSAJ
 
 ### Modul kecil yang baru ditambahkan
