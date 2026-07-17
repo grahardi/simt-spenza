@@ -26,6 +26,8 @@ use App\Http\Controllers\Superadmin\LogLoginController as SuperadminLogLoginCont
 use App\Http\Controllers\Superadmin\PelanggaranController as SuperadminPelanggaranController;
 use App\Http\Controllers\Superadmin\SiswaController as SuperadminSiswaController;
 use App\Http\Controllers\TugasController;
+use App\Http\Controllers\AjuanWhatsappController;
+use App\Http\Controllers\WhatsappWebhookController;
 use App\Http\Controllers\ArsipSuratController;
 use App\Http\Controllers\DknKelasController;
 use App\Http\Controllers\FotoSiswaController;
@@ -46,6 +48,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [MemberLoginController::class, 'create'])->name('login');
 Route::post('/login', [MemberLoginController::class, 'store'])->name('login.store');
+
+// Webhook WhatsApp - dipanggil bot Node.js (Baileys), otentikasi pakai token rahasia
+// di header X-Bot-Secret (BUKAN session member), makanya di luar grup auth:member.
+Route::post('/api/whatsapp/masuk', [WhatsappWebhookController::class, 'masuk'])->name('whatsapp.masuk');
 
 // Jadwal Pelajaran versi PUBLIK - bisa diakses & dibagikan tanpa perlu login
 Route::prefix('jadwal-publik')->name('jadwal-publik.')->group(function () {
@@ -273,6 +279,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
             Route::post('/{ajuan}/acc', [AjuanAbsensiController::class, 'acc'])->name('acc');
             Route::post('/{ajuan}/tolak', [AjuanAbsensiController::class, 'tolak'])->name('tolak');
         });
+    });
+
+    // Ajuan WhatsApp - dari bot, khusus piket yang ACC/Tolak
+    Route::prefix('ajuan-whatsapp')->name('ajuan-whatsapp.')->middleware('role:piket')->group(function () {
+        Route::get('/', [AjuanWhatsappController::class, 'index'])->name('index');
+        Route::post('/{ajuan}/acc', [AjuanWhatsappController::class, 'acc'])->name('acc');
+        Route::post('/{ajuan}/tolak', [AjuanWhatsappController::class, 'tolak'])->name('tolak');
     });
 
     // Placeholder modul lain, supaya link di bottom-nav tidak 404 dulu.

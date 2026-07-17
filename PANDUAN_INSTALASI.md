@@ -297,3 +297,78 @@ lapor & tindak lanjut pelanggaran, login ke sistem, buat akun baru lewat
 Superadmin. Kalau mau tambah pencatatan di modul lain, tinggal panggil
 `\App\Models\LogAktivitas::catat('kategori', 'deskripsi kegiatan');` di
 controller terkait.
+
+## Fitur Bot WhatsApp - Ajuan Absensi Wali Murid
+
+Pakai **Baileys** (library open-source, gratis, self-hosted - BUKAN API resmi
+Meta). Ada 2 bagian yang perlu di-setup terpisah: bot Node.js dan sisi Laravel.
+
+### PENTING - baca dulu sebelum setup
+- Sebaiknya pakai **nomor WhatsApp terpisah** (bukan nomor pribadi utama), karena
+  ini metode tidak resmi dan ada risiko kecil nomor bisa di-banned kalau
+  pemakaiannya dianggap tidak wajar oleh WhatsApp.
+- Proses bot harus **jalan terus-menerus** di server (pakai PM2), bukan sekadar
+  dijalankan sekali lalu ditinggal.
+
+### 1. Setup bot Node.js
+```bash
+cd whatsapp-bot
+npm install
+cp .env.example .env
+```
+Edit `.env`:
+```
+LARAVEL_WEBHOOK_URL=https://simt.sekolah.co.id/api/whatsapp/masuk
+SHARED_SECRET=isi-dengan-token-acak-yang-panjang-dan-rahasia
+PORT=3300
+```
+
+Jalankan sekali dulu untuk scan QR:
+```bash
+node index.js
+```
+Scan QR yang muncul di terminal pakai WhatsApp di HP (nomor yang sudah disiapkan
+khusus untuk bot). Setelah tersambung ("✅ Bot WhatsApp terhubung"), matikan
+(Ctrl+C), lalu jalankan permanen pakai PM2:
+```bash
+npm install -g pm2
+pm2 start index.js --name simt-wa-bot
+pm2 save
+pm2 startup
+```
+
+### 2. Setup sisi Laravel
+Tambahkan ke `.env` Laravel (SHARED_SECRET **harus sama persis** dengan punya bot):
+```
+WA_BOT_URL=http://127.0.0.1:3300
+WA_BOT_SECRET=isi-dengan-token-acak-yang-panjang-dan-rahasia
+```
+
+```bash
+php artisan migrate
+```
+
+**Kecualikan webhook dari proteksi CSRF** - tambahkan di `bootstrap/app.php`,
+di dalam `->withMiddleware(function (Middleware $middleware) { ... })`:
+```php
+$middleware->validateCsrfTokens(except: [
+    'api/whatsapp/masuk',
+]);
+```
+(Wajib, karena bot Node.js kirim POST tanpa token CSRF - tanpa ini akan kena
+error 419.)
+
+### 3. Cara kerja alurnya
+1. Wali murid kirim pesan apa saja ke nomor bot → bot balas menu, minta ketik "Absen"
+2. Bot cocokkan nomor WA pengirim ke kolom `whatsapp` di tabel `datasiswa` -
+   kalau nomor itu belum terhubung ke siswa manapun, wali diberi tahu untuk
+   hubungi sekolah dulu (tambahkan/perbaiki nomor di Data Siswa)
+3. Kalau 1 nomor = 2+ anak, bot tanya pilih yang mana dulu
+4. Pilih Sakit/Ijin → bot minta foto surat → tersimpan ke `ajuan_whatsapp`
+5. Piket buka menu **"Ajuan WhatsApp"**, ACC atau Tolak
+6. Begitu di-ACC/ditolak, bot otomatis kirim pesan balasan ke wali murid
+
+**Catatan:** supaya bot bisa mengenali wali murid, kolom `whatsapp` di tabel
+siswa harus terisi nomor yang BENAR-BENAR dipakai wali untuk chat (format
+angka saja, boleh pakai/tanpa awalan 62 - pencocokan pakai 10 digit terakhir
+supaya fleksibel).
