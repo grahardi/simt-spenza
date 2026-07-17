@@ -18,4 +18,31 @@ class DataJadwal extends Model
     {
         return $this->belongsTo(Guru::class, 'kodeguru', 'id_guru');
     }
+
+    /**
+     * Nama lengkap mata pelajaran dari singkatannya. Kalau kodenya tidak
+     * dikenali, tampilkan apa adanya (bukan tebak-tebakan yang salah).
+     */
+    public function mapelLengkap(): string
+    {
+        $peta = [
+            'MTK' => 'Matematika', 'MAT' => 'Matematika',
+            'BIN' => 'Bahasa Indonesia',
+            'BIG' => 'Bahasa Inggris',
+            'IPA' => 'Ilmu Pengetahuan Alam',
+            'IPS' => 'Ilmu Pengetahuan Sosial',
+            'PAI' => 'Pendidikan Agama Islam',
+            'PKN' => 'Pendidikan Pancasila dan Kewarganegaraan',
+            'SEN' => 'Seni Budaya', 'SBD' => 'Seni Budaya',
+            'PJO' => 'Pendidikan Jasmani, Olahraga, dan Kesehatan',
+            'PRA' => 'Prakarya',
+            'TIK' => 'Informatika',
+            'BDR' => 'Bahasa Daerah', 'BD' => 'Bahasa Daerah',
+            'BK' => 'Bimbingan Konseling',
+        ];
+
+        $kode = strtoupper(trim((string) $this->mapel));
+
+        return $peta[$kode] ?? $this->mapel;
+    }
 }

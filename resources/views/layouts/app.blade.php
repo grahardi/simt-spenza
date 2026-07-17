@@ -141,28 +141,25 @@
         }
         .tab-tahun.active { background: #4b0082; color: #fff; }
 
-        /* Jadwal Mengajar - 1 baris ringkas per pelajaran */
+        /* Jadwal Mengajar - 1 baris ringkas per pelajaran, warna beda tiap baris (zebra) */
         .jadwal-baris {
             display: flex; align-items: center; gap: 12px;
-            background: #f9f9fb; border-radius: 10px; padding: 10px 14px;
-            border-left: 4px solid #d8d3ec;
+            border-radius: 10px; padding: 10px 14px;
+            color: inherit;
         }
         .jadwal-jam-kecil {
             width: 26px; height: 26px; border-radius: 50%;
-            background: #eeedfe; color: #534ab7; font-weight: 700; font-size: 13px;
+            background: rgba(255,255,255,.6); color: inherit; font-weight: 700; font-size: 13px;
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .jadwal-waktu-kecil { color: #999; font-size: 12px; width: 105px; flex-shrink: 0; }
+        .jadwal-waktu-kecil { font-size: 12px; width: 105px; flex-shrink: 0; font-weight: 600; opacity: .85; }
         .jadwal-kelas-kecil { font-weight: 700; width: 70px; flex-shrink: 0; }
-        .jadwal-mapel-kecil { color: #555; flex: 1; }
+        .jadwal-mapel-kecil { flex: 1; font-weight: 600; }
         .jadwal-live-dot {
-            width: 9px; height: 9px; border-radius: 50%; background: #3b6d11;
-            flex-shrink: 0; box-shadow: 0 0 0 3px rgba(59,109,17,.15);
+            width: 9px; height: 9px; border-radius: 50%; background: currentColor;
+            flex-shrink: 0; box-shadow: 0 0 0 3px rgba(0,0,0,.1);
         }
-        .jadwal-baris-aktif {
-            background: #f2edfa; border-left-color: #4b0082;
-        }
-        .jadwal-baris-aktif .jadwal-jam-kecil { background: #4b0082; color: #fff; }
+        .jadwal-baris-aktif { box-shadow: inset 0 0 0 2px currentColor; }
         @media (max-width: 576px) {
             .jadwal-baris { flex-wrap: wrap; }
             .jadwal-waktu-kecil { width: auto; order: 3; font-size: 11px; }

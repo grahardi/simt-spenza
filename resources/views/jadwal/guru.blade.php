@@ -17,18 +17,20 @@
         </div>
     @else
         <div class="d-flex flex-column gap-2">
-            @foreach ($jadwal as $j)
+            @php $palet = ['blue', 'teal', 'amber', 'coral', 'pink', 'green', 'purple']; @endphp
+            @foreach ($jadwal as $i => $j)
                 @php
                     $parts = $j->waktu ? array_map('trim', explode('-', $j->waktu)) : [];
                     $mulai = $parts[0] ?? null;
                     $selesai = $parts[1] ?? null;
                     $sedangBerlangsung = $mulai && $selesai && $sekarang >= $mulai && $sekarang <= $selesai;
+                    $warna = $palet[$i % count($palet)];
                 @endphp
-                <div class="jadwal-baris {{ $sedangBerlangsung ? 'jadwal-baris-aktif' : '' }}">
+                <div class="jadwal-baris bg-{{ $warna }} {{ $sedangBerlangsung ? 'jadwal-baris-aktif' : '' }}">
                     <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
                     <span class="jadwal-waktu-kecil">{{ $j->waktu ?? '-' }}</span>
                     <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
-                    <span class="jadwal-mapel-kecil">{{ $j->mapel }}</span>
+                    <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
                     @if ($sedangBerlangsung)
                         <span class="jadwal-live-dot" title="Sedang berlangsung"></span>
                     @endif
