@@ -253,3 +253,12 @@ Ini menambah kolom `aktif` (boolean, default 1) di tabel `guru` - dipakai fitur
 - **Data Bimbingan Konseling**: edit/hapus semua catatan BK.
 - **Dashboard**: kartu statistik Absensi hari ini/bulan ini, Keterlambatan,
   Pelanggaran bulan ini, dan Notifikasi belum diaksi guru.
+
+### Update Superadmin - tambahan
+- **Data Kelas**: Tambah/Edit master data kelas (nama + kapasitas). Tanpa hapus,
+  sama alasannya dengan Siswa/Guru.
+- **Kelola Akun**: halaman terpisah dari "Roles" di Data Guru - untuk mengatur
+  SEMUA akun login termasuk yang **tidak terhubung ke data guru manapun**
+  (misal akun piket/admin murni). Bisa buat akun baru, atur roles, reset password.
+- Panel Guru: menu "Rekap Kehadiran" dan "List Pelanggaran" dihapus (duplikat
+  dengan menu Absensi Siswa panel lain dan tidak relevan untuk guru mapel biasa).
