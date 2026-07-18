@@ -26,16 +26,42 @@
         }
 
         /* Sidebar */
-        .main-sidebar, .sidebar-dark-primary { background: #fff !important; }
+        .main-sidebar, .sidebar-dark-primary, .os-theme-light > .os-scrollbar-vertical { background: #fff !important; }
         .brand-link { border-bottom: 1px solid var(--border-lembut) !important; }
-        .sidebar .nav-link { color: #4b5563; border-radius: 10px; margin: 2px 8px; padding: .6rem .8rem; }
-        .sidebar .nav-link:hover { background: #f3f4f6; }
-        .sidebar .nav-link.active, .sidebar .nav-treeview .nav-link.active {
-            background: var(--aksen) !important; color: #fff !important;
+        .brand-link, .brand-text { color: #1f2937 !important; }
+
+        .sidebar .nav-sidebar > .nav-item > .nav-link,
+        .sidebar .nav-treeview > .nav-item > .nav-link {
+            border-radius: 10px; margin: 2px 8px; padding: .6rem .8rem;
+            color: #374151 !important;
+            background: transparent !important;
+        }
+        .sidebar .nav-link p,
+        .sidebar .nav-link .nav-icon,
+        .sidebar .nav-link .right {
+            color: #374151 !important;
+        }
+        .sidebar .nav-link:hover {
+            background: #eef0f4 !important;
+        }
+        .sidebar .nav-link:hover p,
+        .sidebar .nav-link:hover .nav-icon {
+            color: #111827 !important;
+        }
+
+        /* Menu aktif: biru solid + teks putih, kontras tegas */
+        .sidebar .nav-link.active,
+        .sidebar .nav-treeview .nav-link.active {
+            background: var(--aksen) !important;
             box-shadow: 0 4px 10px rgba(99,102,241,.35);
         }
-        .sidebar .nav-icon, .brand-text { color: inherit; }
-        .nav-sidebar > .nav-item > .nav-link.active > .nav-icon { color: #fff; }
+        .sidebar .nav-link.active p,
+        .sidebar .nav-link.active .nav-icon,
+        .sidebar .nav-link.active .right,
+        .sidebar .nav-treeview .nav-link.active p,
+        .sidebar .nav-treeview .nav-link.active .nav-icon {
+            color: #fff !important;
+        }
 
         /* Kartu */
         .card {
