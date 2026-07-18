@@ -11,7 +11,7 @@ class SuratKeluar extends Model
     protected $table = 'surat_keluar';
 
     protected $fillable = [
-        'kode_surat', 'id_kategori_surat', 'nomor_urut', 'tahun', 'tanggal_surat',
+        'kode_surat', 'id_kategori_surat', 'kode_umum', 'nomor_urut', 'tahun', 'tanggal_surat',
         'tujuan_surat', 'perihal', 'lampiran', 'dibuat_oleh',
     ];
 
@@ -36,15 +36,17 @@ class SuratKeluar extends Model
     /**
      * Susun kode surat lengkap: {kode_umum}/{nomor_urut}/{kode_baku}/{tahun}
      * Contoh: 400/123/35.07.301.09.43/2026
+     * $kodeUmum diketik bebas (bisa beda dari kode master kategorinya - misal
+     * ditambah sub-kode "400.1"), bukan otomatis diambil dari kategori.
      */
-    public static function susunKode(KategoriSurat $kategori, int $nomorUrut, ?\DateTimeInterface $tanggal = null): array
+    public static function susunKode(string $kodeUmum, int $nomorUrut, ?\DateTimeInterface $tanggal = null): array
     {
         $tanggal = $tanggal ?? now();
         $tahun = (int) $tanggal->format('Y');
         $kodeBaku = PengaturanSurat::ambil()->kode_baku;
 
-        $kodeSurat = "{$kategori->kode}/{$nomorUrut}/{$kodeBaku}/{$tahun}";
+        $kodeSurat = "{$kodeUmum}/{$nomorUrut}/{$kodeBaku}/{$tahun}";
 
-        return ['kode_surat' => $kodeSurat, 'nomor_urut' => $nomorUrut, 'tahun' => $tahun];
+        return ['kode_surat' => $kodeSurat, 'kode_umum' => $kodeUmum, 'nomor_urut' => $nomorUrut, 'tahun' => $tahun];
     }
 }

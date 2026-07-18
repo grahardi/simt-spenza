@@ -32,16 +32,20 @@
         <div class="row g-3">
             @if (! $item->exists)
                 <div class="col-md-6">
-                    <label class="form-label">Kategori Surat (Kode Umum)</label>
-                    <select name="id_kategori_surat" class="form-select" required>
-                        <option value="">- Pilih kategori -</option>
+                    <label class="form-label">Kategori Surat</label>
+                    <select name="id_kategori_surat" id="pilihKategori" class="form-select" onchange="isiKodeUmum()">
+                        <option value="">- Pilih kategori (opsional, buat isi otomatis) -</option>
                         @foreach ($daftarKategori as $k)
-                            <option value="{{ $k->id }}" @selected(old('id_kategori_surat') == $k->id)>{{ $k->kode }} - {{ $k->nama }}</option>
+                            <option value="{{ $k->id }}" data-kode="{{ $k->kode }}" @selected(old('id_kategori_surat') == $k->id)>{{ $k->kode }} - {{ $k->nama }}</option>
                         @endforeach
                     </select>
                     @if ($daftarKategori->isEmpty())
                         <small class="text-danger">Belum ada kategori surat - <a href="{{ route('kategori-surat.create') }}">buat dulu di sini</a>.</small>
                     @endif
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kode Umum <span class="text-muted small">(otomatis terisi, bisa ditambah sub-kode manual)</span></label>
+                    <input type="text" name="kode_umum" id="kodeUmum" class="form-control" value="{{ old('kode_umum') }}" placeholder="contoh: 400 atau 400.1" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Nomor Urut</label>
@@ -85,4 +89,15 @@
         </div>
     </form>
 </div>
+
+<script>
+    function isiKodeUmum() {
+        const select = document.getElementById('pilihKategori');
+        const input = document.getElementById('kodeUmum');
+        const kode = select.options[select.selectedIndex]?.dataset.kode;
+        if (kode) {
+            input.value = kode; // tetap bisa diedit manual setelah ini (misal tambah sub-kode)
+        }
+    }
+</script>
 @endsection

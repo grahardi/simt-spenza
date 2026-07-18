@@ -42,20 +42,16 @@ class SuratKeluarController extends Controller
         $data = $this->validated($request);
 
         $request->validate([
+            'kode_umum' => ['required', 'string', 'max:30'],
             'mode_nomor' => ['required', 'in:auto,manual'],
             'nomor_urut_manual' => ['required_if:mode_nomor,manual', 'nullable', 'integer', 'min:1', 'unique:surat_keluar,nomor_urut'],
         ]);
 
-        $kategori = KategoriSurat::findOrFail($data['id_kategori_surat']);
-
-        // Mode nomor urut: 'auto' pakai terbesar+1 (dihitung ULANG saat submit,
-        // bukan pakai preview lama - mencegah dobel kalau 2 orang buat surat
-        // bersamaan), atau 'manual' pakai angka yang diketik sendiri.
         $nomorUrut = $request->input('mode_nomor') === 'manual'
             ? (int) $request->input('nomor_urut_manual')
             : SuratKeluar::nomorUrutTerbesar() + 1;
 
-        $susunan = SuratKeluar::susunKode($kategori, $nomorUrut, $data['tanggal_surat']);
+        $susunan = SuratKeluar::susunKode($request->input('kode_umum'), $nomorUrut, $data['tanggal_surat']);
         $data = array_merge($data, $susunan);
 
         if ($request->hasFile('lampiran')) {
@@ -103,7 +99,7 @@ class SuratKeluarController extends Controller
     private function validated(Request $request): array
     {
         return $request->validate([
-            'id_kategori_surat' => ['required', 'exists:kategori_surat,id'],
+            'id_kategori_surat' => ['nullable', 'exists:kategori_surat,id'],
             'tanggal_surat' => ['required', 'date'],
             'tujuan_surat' => ['required', 'string', 'max:150'],
             'perihal' => ['required', 'string', 'max:200'],
