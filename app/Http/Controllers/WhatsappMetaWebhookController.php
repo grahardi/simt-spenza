@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\WhatsappConversationService;
+use App\Services\WhatsappMetaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Webhook untuk WhatsApp Cloud API RESMI (Meta) - terpisah total dari
- * WhatsappWebhookController yang dipakai bot Baileys. Dua-duanya bisa
- * jalan berdampingan (nomor beda) selama masa transisi/percobaan.
+ * WhatsappWebhookController yang dipakai bot Baileys. Dua-duanya pakai
+ * "otak" yang sama (WhatsappConversationService), cuma beda cara terima
+ * & kirim pesannya.
  */
 class WhatsappMetaWebhookController extends Controller
 {
@@ -31,14 +34,37 @@ class WhatsappMetaWebhookController extends Controller
     }
 
     /**
-     * Terima pesan/status masuk dari Meta. Untuk sekarang baru dicatat ke
-     * log dulu supaya bisa dites koneksinya - alur registrasi/absen yang
-     * sudah ada di WhatsappWebhookController (Baileys) bisa disambungkan
-     * ke sini belakangan begitu koneksi Meta-nya sudah pasti jalan.
+     * Terima pesan masuk dari Meta. Beda dari Baileys: balasannya TIDAK
+     * dikembalikan lewat response body (Meta cuma butuh 200 OK), tapi
+     * harus dikirim AKTIF lewat WhatsappMetaService::kirimPesan().
      */
-    public function masuk(Request $request)
+    public function masuk(Request $request, WhatsappConversationService $percakapan, WhatsappMetaService $metaBot)
     {
-        Log::info('Webhook WhatsApp Meta diterima', $request->all());
+        $pesan = $request->input('entry.0.changes.0.value.messages.0');
+
+        // Bisa juga webhook status update (delivered/read) yang tidak ada
+        // 'messages', cuma 'statuses' - abaikan saja, bukan pesan masuk.
+        if (!$pesan) {
+            return response()->json(['status' => 'ok']);
+        }
+
+        $nomor = preg_replace('/\D/', '', (string) ($pesan['from'] ?? ''));
+        $teks = trim((string) ($pesan['text']['body'] ?? ''));
+        $gambarBase64 = null;
+
+        if (isset($pesan['image']['id'])) {
+            $gambarBase64 = $metaBot->ambilMediaBase64($pesan['image']['id']);
+        }
+
+        if ($nomor === '') {
+            Log::warning('Webhook WhatsApp Meta: nomor pengirim kosong', $request->all());
+
+            return response()->json(['status' => 'ok']);
+        }
+
+        $balasan = $percakapan->balas($nomor, $teks, $gambarBase64);
+
+        $metaBot->kirimPesan($nomor, $balasan);
 
         return response()->json(['status' => 'ok']);
     }
