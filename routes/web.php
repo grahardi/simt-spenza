@@ -202,6 +202,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/whatsapp-nomor/tambah', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'create'])->name('whatsapp-nomor.create');
         Route::post('/whatsapp-nomor', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'store'])->name('whatsapp-nomor.store');
         Route::post('/whatsapp-nomor/hapus-massal-kelas', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'hapusMassalKelas'])->name('whatsapp-nomor.hapus-massal-kelas');
+        Route::post('/whatsapp-nomor/hapus-semua', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'hapusSemua'])->name('whatsapp-nomor.hapus-semua');
         Route::delete('/whatsapp-nomor/{siswaWhatsapp}', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'putuskan'])->name('whatsapp-nomor.putuskan');
     });
 

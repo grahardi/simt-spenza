@@ -42,6 +42,16 @@ class WhatsappNomorController extends Controller
             ->with('status', $jumlah.' nomor WhatsApp untuk kelas '.$data['kelas'].' berhasil dihapus.');
     }
 
+    /** Hapus SEMUA nomor WA terdaftar, semua kelas sekaligus - dipakai buat bersihkan total data uji coba. */
+    public function hapusSemua()
+    {
+        $jumlah = SiswaWhatsapp::count();
+        SiswaWhatsapp::query()->delete();
+
+        return redirect()->route('superadmin.whatsapp-nomor.index')
+            ->with('status', 'Semua nomor WhatsApp ('.$jumlah.' nomor) berhasil dihapus dari seluruh siswa.');
+    }
+
     public function create()
     {
         return view('superadmin.whatsapp-nomor.form');
