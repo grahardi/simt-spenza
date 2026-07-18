@@ -204,6 +204,9 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/whatsapp-nomor/hapus-massal-kelas', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'hapusMassalKelas'])->name('whatsapp-nomor.hapus-massal-kelas');
         Route::post('/whatsapp-nomor/hapus-semua', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'hapusSemua'])->name('whatsapp-nomor.hapus-semua');
         Route::delete('/whatsapp-nomor/{siswaWhatsapp}', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'putuskan'])->name('whatsapp-nomor.putuskan');
+
+        Route::get('/whatsapp-guru', [\App\Http\Controllers\Superadmin\WhatsappGuruController::class, 'index'])->name('whatsapp-guru.index');
+        Route::delete('/whatsapp-guru/{guruWhatsapp}', [\App\Http\Controllers\Superadmin\WhatsappGuruController::class, 'putuskan'])->name('whatsapp-guru.putuskan');
     });
 
     // DKN Kelas - wali kelas upload berkas per mapel
