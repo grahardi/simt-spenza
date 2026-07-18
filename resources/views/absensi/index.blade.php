@@ -102,6 +102,38 @@
                                 @elseif (in_array($a->keterangan, ['s', 'i']))
                                     <span class="text-muted small d-block">Tanpa foto</span>
                                 @endif
+
+                                @if ($a->keterangan === 'a')
+                                    @php $nomorWali = $a->siswa->nomorWhatsapp; @endphp
+                                    @if ($nomorWali->isEmpty())
+                                        <span class="text-muted small d-block">Wali belum registrasi WA</span>
+                                    @elseif ($nomorWali->count() === 1)
+                                        @php
+                                            $pesan = rawurlencode("Assalamu'alaikum, kami informasikan bahwa ananda {$a->siswa->nama_lengkap} tercatat *Alfa* (tidak ada keterangan) pada {$tanggal->translatedFormat('d F Y')}. Mohon konfirmasi ke pihak sekolah. Terima kasih - SMP Negeri 1 Turen");
+                                        @endphp
+                                        <a href="https://wa.me/{{ $nomorWali->first()->nomor }}?text={{ $pesan }}" target="_blank" class="btn btn-sm btn-success mt-1">
+                                            <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
+                                        </a>
+                                    @else
+                                        <div class="dropdown d-inline-block mt-1">
+                                            <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                @foreach ($nomorWali as $nw)
+                                                    @php
+                                                        $pesan = rawurlencode("Assalamu'alaikum, kami informasikan bahwa ananda {$a->siswa->nama_lengkap} tercatat *Alfa* (tidak ada keterangan) pada {$tanggal->translatedFormat('d F Y')}. Mohon konfirmasi ke pihak sekolah. Terima kasih - SMP Negeri 1 Turen");
+                                                    @endphp
+                                                    <li>
+                                                        <a class="dropdown-item" href="https://wa.me/{{ $nw->nomor }}?text={{ $pesan }}" target="_blank">
+                                                            {{ $nw->nomor }}{{ $nw->label ? ' ('.$nw->label.')' : '' }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @endif
                             </td>
                             <td>
                                 @php $keb = $absenSebelumnya[$a->id_siswa] ?? null; @endphp

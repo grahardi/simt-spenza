@@ -22,7 +22,7 @@ class AbsensiSiswaController extends Controller
             ? $tanggal->copy()->subDays(2)
             : $tanggal->copy()->subDay();
 
-        $absensi = AbsenSiswa::with('siswa')
+        $absensi = AbsenSiswa::with('siswa.nomorWhatsapp')
             ->whereDate('tgl_absen', $tanggal)
             ->orderBy(
                 Siswa::select('kelas')
