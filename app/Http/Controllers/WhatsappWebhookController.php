@@ -6,6 +6,7 @@ use App\Models\AjuanWhatsapp;
 use App\Models\Siswa;
 use App\Models\WhatsappMenu;
 use App\Models\WhatsappSesi;
+use App\Models\WhatsappTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,6 +17,11 @@ class WhatsappWebhookController extends Controller
      * Balasannya dikirim lewat field 'balasan' di response JSON, bot yang
      * meneruskan ke WhatsApp - Laravel tidak pernah kirim langsung ke bot
      * kecuali lewat WhatsappBotService (dipakai pas notif "sudah di-ACC").
+     *
+     * SEMUA teks balasan diambil lewat WhatsappTemplate::get() dari tabel
+     * whatsapp_template - bisa diedit di Superadmin > Template Balasan Bot,
+     * tanpa perlu ubah kode. Menu utama (registrasi/absen/info dkk) diambil
+     * dari whatsapp_menu, lihat Superadmin > Menu Bot WhatsApp.
      */
     public function masuk(Request $request)
     {
@@ -45,19 +51,16 @@ class WhatsappWebhookController extends Controller
     private function teksMenu(): string
     {
         $daftar = WhatsappMenu::where('aktif', true)->orderBy('urutan')->get();
-
         $baris = $daftar->map(fn ($m) => "*{$m->kode}* - {$m->label}")->implode("\n");
 
-        return "Assalamu'alaikum, Bapak/Ibu Wali Murid \xF0\x9F\x99\x8F\n\n"
-            ."*SIMT SMP Negeri 1 Turen*\n\n"
-            ."Ketik salah satu:\n{$baris}";
+        return WhatsappTemplate::get('menu_utama', ['daftar_menu' => $baris]);
     }
 
     /**
      * Menu utama - hanya bereaksi kalau teksnya PERSIS sama dengan salah satu
      * kode menu yang aktif (case-insensitive), sesuai arahan. Kode 'registrasi'
      * dan 'absen' menjalankan alur terprogram, kode lain (tipe 'info') balas
-     * teks statis yang sudah diatur superadmin.
+     * teks statis yang sudah diatur superadmin lewat Menu Bot WhatsApp.
      */
     private function prosesMenuUtama(WhatsappSesi $sesi, string $nomor, string $teks): string
     {
@@ -74,15 +77,14 @@ class WhatsappWebhookController extends Controller
         if ($item->kode === 'registrasi') {
             $sesi->update(['langkah' => 'registrasi_input_induk']);
 
-            return "Silakan ketik *Nomor Induk* siswa yang mau dihubungkan dengan nomor WhatsApp ini.\n\n"
-                ."Ketik *batal* untuk kembali ke menu.";
+            return WhatsappTemplate::get('registrasi_prompt');
         }
 
         if ($item->kode === 'absen') {
             return $this->mulaiAbsen($sesi, $nomor);
         }
 
-        // Tipe 'info' - balasan teks statis, bebas diatur lewat Superadmin > Menu Bot WhatsApp
+        // Tipe 'info' - balasan teks statis, diatur lewat Superadmin > Menu Bot WhatsApp
         return $item->balasan ?? $this->teksMenu();
     }
 
@@ -91,21 +93,22 @@ class WhatsappWebhookController extends Controller
         $daftarSiswa = Siswa::where('whatsapp', 'like', '%'.substr($nomor, -10).'%')->get();
 
         if ($daftarSiswa->isEmpty()) {
-            return "Mohon maaf, nomor ini belum terhubung dengan data siswa manapun.\n\n"
-                ."Ketik *registrasi* dulu untuk menghubungkan nomor ini dengan data anak Bapak/Ibu.";
+            return WhatsappTemplate::get('absen_belum_terdaftar');
         }
 
         if ($daftarSiswa->count() === 1) {
             $sesi->update(['langkah' => 'pilih_jenis', 'id_siswa_dipilih' => $daftarSiswa->first()->id_member]);
 
-            return "Ananda *{$daftarSiswa->first()->nama_lengkap}* ({$daftarSiswa->first()->kelas})\n\n"
-                ."Ajukan apa hari ini?\nBalas *1* untuk Sakit\nBalas *2* untuk Ijin";
+            return WhatsappTemplate::get('absen_pilih_jenis', [
+                'nama' => $daftarSiswa->first()->nama_lengkap,
+                'kelas' => $daftarSiswa->first()->kelas,
+            ]);
         }
 
         $sesi->update(['langkah' => 'pilih_siswa']);
         $daftar = $daftarSiswa->values()->map(fn ($s, $i) => ($i + 1).'. '.$s->nama_lengkap.' ('.$s->kelas.')')->implode("\n");
 
-        return "Nomor ini terhubung dengan beberapa siswa:\n\n{$daftar}\n\nBalas dengan angka pilihan Bapak/Ibu.";
+        return WhatsappTemplate::get('absen_pilih_siswa', ['daftar' => $daftar]);
     }
 
     /**
@@ -125,13 +128,12 @@ class WhatsappWebhookController extends Controller
         $siswa = $noInduk !== '' ? Siswa::find($noInduk) : null;
 
         if (!$siswa) {
-            return "Nomor Induk *{$teks}* tidak ditemukan. Coba periksa lagi ya, atau ketik *batal* untuk kembali ke menu.";
+            return WhatsappTemplate::get('registrasi_tidak_ditemukan', ['induk' => $teks]);
         }
 
         $sesi->update(['langkah' => 'registrasi_konfirmasi', 'id_siswa_calon_registrasi' => $siswa->id_member]);
 
-        return "Ditemukan: *{$siswa->nama_lengkap}* ({$siswa->kelas})\n\n"
-            ."Apakah benar ini anak Bapak/Ibu? Balas *YA* untuk menghubungkan nomor ini, atau *TIDAK* untuk batal.";
+        return WhatsappTemplate::get('registrasi_konfirmasi', ['nama' => $siswa->nama_lengkap, 'kelas' => $siswa->kelas]);
     }
 
     /** Registrasi langkah 2: konfirmasi, baru benar-benar simpan ke data siswa. */
@@ -144,17 +146,16 @@ class WhatsappWebhookController extends Controller
             $siswa?->update(['whatsapp' => $sesi->nomor]);
             $sesi->reset();
 
-            return "\xE2\x9C\x85 Berhasil! Nomor WhatsApp ini sekarang terhubung dengan *{$siswa?->nama_lengkap}*.\n\n"
-                ."Ketik *absen* kapan saja untuk mengajukan Sakit/Ijin.";
+            return WhatsappTemplate::get('registrasi_berhasil', ['nama' => $siswa?->nama_lengkap]);
         }
 
         if (str_contains($jawaban, 'tidak') || $jawaban === 'batal') {
             $sesi->reset();
 
-            return "Registrasi dibatalkan.\n\n".$this->teksMenu();
+            return WhatsappTemplate::get('registrasi_dibatalkan')."\n\n".$this->teksMenu();
         }
 
-        return "Mohon balas *YA* atau *TIDAK* saja.";
+        return WhatsappTemplate::get('registrasi_konfirmasi_invalid');
     }
 
     private function prosesPilihSiswa(WhatsappSesi $sesi, string $teks): string
@@ -164,14 +165,13 @@ class WhatsappWebhookController extends Controller
 
         $pilihan = (int) trim($teks) - 1;
         if (!isset($daftarSiswa[$pilihan])) {
-            return "Pilihan tidak dikenali. Balas dengan angka sesuai daftar yang sudah dikirim.";
+            return WhatsappTemplate::get('pilih_siswa_invalid');
         }
 
         $siswa = $daftarSiswa[$pilihan];
         $sesi->update(['langkah' => 'pilih_jenis', 'id_siswa_dipilih' => $siswa->id_member]);
 
-        return "Ananda *{$siswa->nama_lengkap}* ({$siswa->kelas})\n\n"
-            ."Ajukan apa hari ini?\nBalas *1* untuk Sakit\nBalas *2* untuk Ijin";
+        return WhatsappTemplate::get('absen_pilih_jenis', ['nama' => $siswa->nama_lengkap, 'kelas' => $siswa->kelas]);
     }
 
     private function prosesPilihJenis(WhatsappSesi $sesi, string $teks): string
@@ -184,21 +184,20 @@ class WhatsappWebhookController extends Controller
         };
 
         if (!$jenis) {
-            return "Balas *1* untuk Sakit atau *2* untuk Ijin.";
+            return WhatsappTemplate::get('pilih_jenis_invalid');
         }
 
         $sesi->update(['langkah' => 'tunggu_selfie', 'jenis_dipilih' => $jenis]);
         $labelJenis = $jenis === 's' ? 'Sakit' : 'Ijin';
 
-        return "Baik, diajukan *{$labelJenis}*.\n\n"
-            ."Langkah 1/2: kirim *foto selfie wajah* Ananda sekarang (untuk verifikasi).";
+        return WhatsappTemplate::get('minta_selfie', ['jenis' => $labelJenis]);
     }
 
     /** Langkah 1/2: minta & simpan foto selfie dulu, baru lanjut minta foto surat. */
     private function prosesTungguSelfie(WhatsappSesi $sesi, ?string $gambarBase64): string
     {
         if (!$gambarBase64) {
-            return "Mohon kirim *foto selfie* dulu ya (bukan teks).";
+            return WhatsappTemplate::get('selfie_invalid');
         }
 
         try {
@@ -208,8 +207,7 @@ class WhatsappWebhookController extends Controller
 
             $sesi->update(['langkah' => 'tunggu_surat', 'foto_sementara' => 'ajuan-whatsapp/'.$namaFile]);
 
-            return "Foto selfie diterima \xE2\x9C\x85\n\n"
-                ."Langkah 2/2: kirim *foto surat keterangan* (surat dokter/surat orang tua) sekarang.";
+            return WhatsappTemplate::get('selfie_diterima_minta_surat');
         } catch (\Throwable $e) {
             return "Maaf, terjadi kendala menyimpan foto selfie. Silakan kirim ulang.";
         }
@@ -219,7 +217,7 @@ class WhatsappWebhookController extends Controller
     private function prosesTungguSurat(WhatsappSesi $sesi, ?string $gambarBase64): string
     {
         if (!$gambarBase64) {
-            return "Mohon kirim *foto surat keterangan* ya (bukan teks).";
+            return WhatsappTemplate::get('surat_invalid');
         }
 
         try {
@@ -240,8 +238,7 @@ class WhatsappWebhookController extends Controller
             $siswa = Siswa::find($sesi->id_siswa_dipilih);
             $sesi->reset();
 
-            return "\xE2\x9C\x85 Ajuan untuk *{$siswa?->nama_lengkap}* berhasil diterima (selfie + surat lengkap).\n\n"
-                ."Menunggu diproses petugas piket. Kami akan kirim kabar begitu sudah diproses. Terima kasih \xF0\x9F\x99\x8F";
+            return WhatsappTemplate::get('ajuan_berhasil', ['nama' => $siswa?->nama_lengkap]);
         } catch (\Throwable $e) {
             return "Maaf, terjadi kendala menyimpan foto surat. Silakan kirim ulang fotonya.";
         }

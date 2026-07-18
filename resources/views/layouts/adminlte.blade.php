@@ -113,6 +113,18 @@
                             <p>Menu Bot WhatsApp</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('superadmin.whatsapp-template.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-template.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-comment-dots"></i>
+                            <p>Template Balasan Bot</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('superadmin.whatsapp-nomor.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-nomor.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-address-book"></i>
+                            <p>Nomor WA Terdaftar</p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
