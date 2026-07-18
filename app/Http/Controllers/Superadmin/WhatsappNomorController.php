@@ -18,11 +18,28 @@ class WhatsappNomorController extends Controller
                 $q->where('nomor', 'like', '%'.$cari.'%')
                     ->orWhereHas('siswa', fn ($qq) => $qq->where('nama_lengkap', 'like', '%'.$cari.'%'));
             })
+            ->when($request->filled('kelas'), function ($q) use ($request) {
+                $q->whereHas('siswa', fn ($qq) => $qq->where('kelas', $request->input('kelas')));
+            })
             ->orderByDesc('id')
             ->paginate(20)
             ->withQueryString();
 
-        return view('superadmin.whatsapp-nomor.index', compact('nomor'));
+        $daftarKelas = \App\Models\Kelas::orderBy('nama_kelas')->pluck('nama_kelas');
+
+        return view('superadmin.whatsapp-nomor.index', compact('nomor', 'daftarKelas'));
+    }
+
+    /** Hapus massal SEMUA nomor WA untuk 1 kelas sekaligus - dipakai kalau perlu bersihkan data uji coba. */
+    public function hapusMassalKelas(Request $request)
+    {
+        $data = $request->validate(['kelas' => ['required', 'string']]);
+
+        $jumlah = SiswaWhatsapp::whereHas('siswa', fn ($q) => $q->where('kelas', $data['kelas']))->count();
+        SiswaWhatsapp::whereHas('siswa', fn ($q) => $q->where('kelas', $data['kelas']))->delete();
+
+        return redirect()->route('superadmin.whatsapp-nomor.index')
+            ->with('status', $jumlah.' nomor WhatsApp untuk kelas '.$data['kelas'].' berhasil dihapus.');
     }
 
     public function create()

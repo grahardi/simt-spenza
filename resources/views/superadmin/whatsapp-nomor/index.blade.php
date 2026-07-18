@@ -19,8 +19,25 @@
 
         <form method="GET" class="form-inline mb-3">
             <input type="text" name="cari" class="form-control mr-2" placeholder="Cari nama siswa atau nomor..." value="{{ request('cari') }}" style="max-width:300px">
+            <select name="kelas" class="form-control mr-2" onchange="this.form.submit()">
+                <option value="">Semua kelas</option>
+                @foreach ($daftarKelas as $k)
+                    <option value="{{ $k }}" @selected(request('kelas') === $k)>{{ $k }}</option>
+                @endforeach
+            </select>
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
         </form>
+
+        @if (request('kelas'))
+            <form method="POST" action="{{ route('superadmin.whatsapp-nomor.hapus-massal-kelas') }}" class="mb-3"
+                  onsubmit="return confirm('Yakin hapus SEMUA nomor WA untuk kelas {{ request('kelas') }}? Tidak bisa dibatalkan.')">
+                @csrf
+                <input type="hidden" name="kelas" value="{{ request('kelas') }}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash me-1"></i> Hapus Semua Nomor Kelas {{ request('kelas') }}
+                </button>
+            </form>
+        @endif
 
         <table class="table table-bordered table-striped">
             <thead><tr><th>No. Induk</th><th>Nama Siswa</th><th>Kelas</th><th>Nomor WhatsApp</th><th>Label</th><th style="width:120px">Aksi</th></tr></thead>
