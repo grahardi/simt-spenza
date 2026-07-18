@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Guru extends Model
 {
@@ -20,4 +21,9 @@ class Guru extends Model
         'tgl_lahir' => 'date',
         'aktif' => 'boolean',
     ];
+
+    public function nomorWhatsapp(): HasMany
+    {
+        return $this->hasMany(GuruWhatsapp::class, 'id_guru', 'id_guru');
+    }
 }

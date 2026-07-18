@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\AjuanWhatsapp;
+use App\Models\Guru;
+use App\Models\GuruWhatsapp;
+use App\Models\KodeGuru;
+use App\Models\Member;
 use App\Models\Siswa;
 use App\Models\SiswaWhatsapp;
 use App\Models\WhatsappMenu;
@@ -39,6 +43,8 @@ class WhatsappWebhookController extends Controller
         $balasan = match ($sesi->langkah) {
             'registrasi_input_induk' => $this->prosesRegistrasiInputInduk($sesi, $teks),
             'registrasi_konfirmasi' => $this->prosesRegistrasiKonfirmasi($sesi, $teks),
+            'registrasi_guru_input_kode' => $this->prosesRegistrasiGuruInputKode($sesi, $teks),
+            'registrasi_guru_konfirmasi' => $this->prosesRegistrasiGuruKonfirmasi($sesi, $teks),
             'pilih_siswa' => $this->prosesPilihSiswa($sesi, $teks),
             'pilih_jenis' => $this->prosesPilihJenis($sesi, $teks),
             'tunggu_selfie' => $this->prosesTungguSelfie($sesi, $gambarBase64),
@@ -67,6 +73,18 @@ class WhatsappWebhookController extends Controller
     {
         $pilihan = strtolower(trim($teks));
 
+        // Fitur tersembunyi guru - SENGAJA tidak masuk daftar whatsapp_menu
+        // (tidak tampil di teks menu), cuma bisa dipakai kalau tahu kodenya.
+        if ($pilihan === 'regis-guru') {
+            $sesi->update(['langkah' => 'registrasi_guru_input_kode']);
+
+            return WhatsappTemplate::get('registrasi_guru_prompt');
+        }
+
+        if ($pilihan === 'jadwal') {
+            return $this->jadwalMengajarHariIni($nomor);
+        }
+
         $item = WhatsappMenu::where('aktif', true)
             ->whereRaw('LOWER(kode) = ?', [$pilihan])
             ->first();
@@ -87,6 +105,96 @@ class WhatsappWebhookController extends Controller
 
         // Tipe 'info' - balasan teks statis, diatur lewat Superadmin > Menu Bot WhatsApp
         return $item->balasan ?? $this->teksMenu();
+    }
+
+    /**
+     * Fitur tersembunyi - jadwal mengajar guru HARI INI (waktu Jakarta),
+     * cuma jalan kalau nomor ini sudah terhubung ke data guru lewat 'regis-guru'.
+     */
+    private function jadwalMengajarHariIni(string $nomor): string
+    {
+        $sepuluhDigit = substr($nomor, -10);
+        $guru = Guru::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {
+            $q->where('nomor', 'like', '%'.$sepuluhDigit);
+        })->first();
+
+        if (!$guru) {
+            return WhatsappTemplate::get('jadwal_guru_belum_registrasi');
+        }
+
+        $hari = Member::namaHariJakartaHuruBesar();
+
+        $jadwal = \App\Models\DataJadwal::where('kodeguru', $guru->id_guru)
+            ->where('hari', $hari)
+            ->orderBy('jamhari')
+            ->get();
+
+        if ($jadwal->isEmpty()) {
+            return WhatsappTemplate::get('jadwal_guru_kosong', ['hari' => $hari]);
+        }
+
+        $baris = $jadwal->map(function ($j) {
+            $waktu = $j->waktu ? $j->waktu.' - ' : '';
+            return "{$waktu}{$j->kelas}: {$j->mapelLengkap()}";
+        })->implode("\n");
+
+        return "*Jadwal Mengajar {$guru->nama} - {$hari}*\n\n{$baris}";
+    }
+
+    /** Registrasi guru langkah 1: input Kode Guru, cari lewat tabel kodeguru. */
+    private function prosesRegistrasiGuruInputKode(WhatsappSesi $sesi, string $teks): string
+    {
+        if (strtolower(trim($teks)) === 'batal') {
+            $sesi->reset();
+
+            return $this->teksMenu();
+        }
+
+        $kode = preg_replace('/\D/', '', $teks);
+        $refGuru = $kode !== '' ? KodeGuru::where('kode', $kode)->whereNotNull('id_guru')->first() : null;
+
+        if (!$refGuru) {
+            return WhatsappTemplate::get('registrasi_guru_tidak_ditemukan', ['kode' => $teks]);
+        }
+
+        $sesi->update(['langkah' => 'registrasi_guru_konfirmasi', 'id_guru_calon_registrasi' => $refGuru->id_guru]);
+
+        return WhatsappTemplate::get('registrasi_guru_konfirmasi', [
+            'nama' => $refGuru->guru->nama ?? $refGuru->nama_excel,
+            'mapel' => $refGuru->mapel ?? '-',
+        ]);
+    }
+
+    /** Registrasi guru langkah 2: konfirmasi, baru simpan ke guru_whatsapp. */
+    private function prosesRegistrasiGuruKonfirmasi(WhatsappSesi $sesi, string $teks): string
+    {
+        $jawaban = strtolower(trim($teks));
+
+        if (str_contains($jawaban, 'ya')) {
+            $guru = Guru::find($sesi->id_guru_calon_registrasi);
+
+            if (!$guru) {
+                $sesi->reset();
+
+                return $this->teksMenu();
+            }
+
+            if (!$guru->nomorWhatsapp()->where('nomor', $sesi->nomor)->exists()) {
+                $guru->nomorWhatsapp()->create(['nomor' => $sesi->nomor]);
+            }
+
+            $sesi->reset();
+
+            return WhatsappTemplate::get('registrasi_guru_berhasil', ['nama' => $guru->nama]);
+        }
+
+        if (str_contains($jawaban, 'tidak') || $jawaban === 'batal') {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('registrasi_dibatalkan')."\n\n".$this->teksMenu();
+        }
+
+        return WhatsappTemplate::get('registrasi_konfirmasi_invalid');
     }
 
     private function mulaiAbsen(WhatsappSesi $sesi, string $nomor): string
