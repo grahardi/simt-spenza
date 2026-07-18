@@ -30,7 +30,7 @@ class Member extends Authenticatable
     protected $fillable = [
         'id', 'user', 'password', 'nama', 'jabatan', 'admin', 'walikelas',
         'tatib', 'bk', 'piket', 'guru', 'keagamaan', 'kebersihan',
-        'kepsek', 'id_guru', 'foto', 'panggilan', 'adminsoal', 'tata_usaha',
+        'kepsek', 'id_guru', 'id_karyawan', 'foto', 'panggilan', 'adminsoal', 'tata_usaha',
         'wajib_ganti_password', 'last_login_at',
     ];
 
@@ -50,6 +50,11 @@ class Member extends Authenticatable
     public function guru(): BelongsTo
     {
         return $this->belongsTo(Guru::class, 'id_guru', 'id_guru');
+    }
+
+    public function karyawan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Karyawan::class, 'id_karyawan', 'id_karyawan');
     }
 
     /**

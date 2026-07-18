@@ -30,8 +30,9 @@ class AkunController extends Controller
     public function create()
     {
         $daftarGuru = Guru::orderBy('nama')->get();
+        $daftarKaryawan = \App\Models\Karyawan::orderBy('nama')->get();
 
-        return view('superadmin.akun.form', ['member' => new Member(), 'daftarGuru' => $daftarGuru]);
+        return view('superadmin.akun.form', compact('daftarGuru', 'daftarKaryawan') + ['member' => new Member()]);
     }
 
     public function store(Request $request)
@@ -41,6 +42,7 @@ class AkunController extends Controller
             'password' => ['required', 'string', 'min:6'],
             'nama' => ['required', 'string', 'max:70'],
             'id_guru' => ['nullable', 'integer'],
+            'id_karyawan' => ['nullable', 'integer'],
         ]);
 
         $data['id'] = Member::idBerikutnya();

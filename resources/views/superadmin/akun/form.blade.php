@@ -29,6 +29,15 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group">
+                <label>Atau hubungkan ke Data Karyawan (Tata Usaha, dll - opsional)</label>
+                <select name="id_karyawan" class="form-control">
+                    <option value="">- Tidak terhubung karyawan manapun -</option>
+                    @foreach ($daftarKaryawan as $k)
+                        <option value="{{ $k->id_karyawan }}">{{ $k->nama }} @if($k->jabatan) ({{ $k->jabatan }}) @endif</option>
+                    @endforeach
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i> Buat Akun</button>
             <a href="{{ route('superadmin.akun.index') }}" class="btn btn-outline-secondary">Batal</a>
         </form>

@@ -59,11 +59,28 @@
                             <p>Data Siswa</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.guru.index') }}" class="nav-link {{ request()->routeIs('superadmin.guru.*') ? 'active' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chalkboard-teacher"></i>
-                            <p>Data Guru &amp; Roles</p>
+                            <p>
+                                Guru dan Karyawan
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.guru.index') }}" class="nav-link {{ request()->routeIs('superadmin.guru.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Guru</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.karyawan.index') }}" class="nav-link {{ request()->routeIs('superadmin.karyawan.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Karyawan</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('superadmin.kelas.index') }}" class="nav-link {{ request()->routeIs('superadmin.kelas.*') ? 'active' : '' }}">

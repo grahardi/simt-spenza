@@ -20,6 +20,7 @@ use App\Http\Controllers\Superadmin\AkunController as SuperadminAkunController;
 use App\Http\Controllers\Superadmin\BkController as SuperadminBkController;
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\GuruController as SuperadminGuruController;
+use App\Http\Controllers\Superadmin\KaryawanController as SuperadminKaryawanController;
 use App\Http\Controllers\Superadmin\KelasController as SuperadminKelasController;
 use App\Http\Controllers\Superadmin\LogAktivitasController as SuperadminLogAktivitasController;
 use App\Http\Controllers\Superadmin\LogLoginController as SuperadminLogLoginController;
@@ -183,6 +184,17 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/guru/{guru}/roles', [SuperadminGuruController::class, 'simpanRoles'])->name('guru.roles.simpan');
         Route::post('/guru/{guru}/buat-akun', [SuperadminGuruController::class, 'buatAkun'])->name('guru.buat-akun');
         Route::post('/guru/{guru}/reset-password', [SuperadminGuruController::class, 'resetPassword'])->name('guru.reset-password');
+
+        Route::get('/karyawan', [SuperadminKaryawanController::class, 'index'])->name('karyawan.index');
+        Route::get('/karyawan/tambah', [SuperadminKaryawanController::class, 'create'])->name('karyawan.create');
+        Route::post('/karyawan', [SuperadminKaryawanController::class, 'store'])->name('karyawan.store');
+        Route::get('/karyawan/{karyawan}/edit', [SuperadminKaryawanController::class, 'edit'])->name('karyawan.edit');
+        Route::put('/karyawan/{karyawan}', [SuperadminKaryawanController::class, 'update'])->name('karyawan.update');
+        Route::post('/karyawan/{karyawan}/toggle-aktif', [SuperadminKaryawanController::class, 'toggleAktif'])->name('karyawan.toggle-aktif');
+        Route::get('/karyawan/{karyawan}/roles', [SuperadminKaryawanController::class, 'roles'])->name('karyawan.roles');
+        Route::post('/karyawan/{karyawan}/roles', [SuperadminKaryawanController::class, 'simpanRoles'])->name('karyawan.roles.simpan');
+        Route::post('/karyawan/{karyawan}/buat-akun', [SuperadminKaryawanController::class, 'buatAkun'])->name('karyawan.buat-akun');
+        Route::post('/karyawan/{karyawan}/reset-password', [SuperadminKaryawanController::class, 'resetPassword'])->name('karyawan.reset-password');
 
         Route::get('/absensi', [SuperadminAbsensiController::class, 'index'])->name('absensi.index');
         Route::get('/absensi/{absen}/edit', [SuperadminAbsensiController::class, 'edit'])->name('absensi.edit');
