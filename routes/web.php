@@ -53,6 +53,10 @@ Route::post('/login', [MemberLoginController::class, 'store'])->name('login.stor
 // di header X-Bot-Secret (BUKAN session member), makanya di luar grup auth:member.
 Route::post('/api/whatsapp/masuk', [WhatsappWebhookController::class, 'masuk'])->name('whatsapp.masuk');
 
+// Webhook WhatsApp Cloud API RESMI (Meta) - terpisah dari Baileys di atas.
+Route::get('/api/whatsapp-meta/webhook', [\App\Http\Controllers\WhatsappMetaWebhookController::class, 'verify'])->name('whatsapp-meta.verify');
+Route::post('/api/whatsapp-meta/webhook', [\App\Http\Controllers\WhatsappMetaWebhookController::class, 'masuk'])->name('whatsapp-meta.masuk');
+
 // Jadwal Pelajaran versi PUBLIK - bisa diakses & dibagikan tanpa perlu login
 Route::prefix('jadwal-publik')->name('jadwal-publik.')->group(function () {
     Route::get('/', [JadwalController::class, 'index'])->name('index');
