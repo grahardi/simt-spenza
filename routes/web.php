@@ -37,6 +37,7 @@ use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
+use App\Http\Controllers\KategoriSuratController;
 use App\Http\Controllers\TatibController;
 use Illuminate\Support\Facades\Route;
 
@@ -127,6 +128,14 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         ->middleware('role:tata_usaha,kepsek');
     Route::resource('surat-keluar', SuratKeluarController::class)
         ->except(['show'])
+        ->middleware('role:tata_usaha,kepsek');
+
+    // Kategori Surat & pengaturan kode baku - buat kelola format nomor surat keluar
+    Route::resource('kategori-surat', KategoriSuratController::class)
+        ->except(['show'])
+        ->middleware('role:tata_usaha,kepsek');
+    Route::post('/kategori-surat-pengaturan', [KategoriSuratController::class, 'updatePengaturan'])
+        ->name('kategori-surat.pengaturan')
         ->middleware('role:tata_usaha,kepsek');
 
     // Absen Guru (piket) - list guru, link ke jadwal (bukan CRUD)

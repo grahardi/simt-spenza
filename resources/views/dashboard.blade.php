@@ -114,6 +114,7 @@
             'items' => [
                 ['label' => 'Surat Masuk', 'icon' => 'fas fa-inbox', 'color' => 'blue', 'href' => route('surat-masuk.index')],
                 ['label' => 'Surat Keluar', 'icon' => 'fas fa-paper-plane', 'color' => 'purple', 'href' => route('surat-keluar.index')],
+                ['label' => 'Kategori Surat', 'icon' => 'fas fa-tags', 'color' => 'teal', 'href' => route('kategori-surat.index')],
             ],
         ],
     ];

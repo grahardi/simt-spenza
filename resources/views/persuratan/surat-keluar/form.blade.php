@@ -18,13 +18,7 @@
         </div>
     @endif
 
-    @if (!$item->exists)
-        <div class="alert alert-info small">
-            <i class="fas fa-info-circle me-1"></i>
-            Nomor surat otomatis (perkiraan): <strong>{{ $preview['kode_surat'] }}</strong> — nomor pasti dihitung
-            ulang saat disimpan (supaya tidak dobel kalau ada yang buat surat bersamaan).
-        </div>
-    @else
+    @if ($item->exists)
         <div class="alert alert-secondary small">
             Kode Surat: <strong>{{ $item->kode_surat }}</strong> (tidak berubah setelah dibuat)
         </div>
@@ -35,6 +29,34 @@
         @if ($item->exists) @method('PUT') @endif
 
         <div class="row g-3">
+            @if (! $item->exists)
+                <div class="col-md-6">
+                    <label class="form-label">Kategori Surat (Kode Umum)</label>
+                    <select name="id_kategori_surat" class="form-select" required>
+                        <option value="">- Pilih kategori -</option>
+                        @foreach ($daftarKategori as $k)
+                            <option value="{{ $k->id }}" @selected(old('id_kategori_surat') == $k->id)>{{ $k->kode }} - {{ $k->nama }}</option>
+                        @endforeach
+                    </select>
+                    @if ($daftarKategori->isEmpty())
+                        <small class="text-danger">Belum ada kategori surat - <a href="{{ route('kategori-surat.create') }}">buat dulu di sini</a>.</small>
+                    @endif
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nomor Urut</label>
+                    <div class="d-flex gap-3 mb-2">
+                        <div class="form-check">
+                            <input type="radio" name="mode_nomor" value="auto" class="form-check-input" id="modeAuto" checked onchange="document.getElementById('nomorManual').disabled = true">
+                            <label class="form-check-label" for="modeAuto">Otomatis (nomor berikutnya: <strong>{{ $nomorUrutBerikutnya }}</strong>)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="mode_nomor" value="manual" class="form-check-input" id="modeManual" onchange="document.getElementById('nomorManual').disabled = false">
+                            <label class="form-check-label" for="modeManual">Manual</label>
+                        </div>
+                    </div>
+                    <input type="number" name="nomor_urut_manual" id="nomorManual" class="form-control" placeholder="Isi nomor urut manual" disabled value="{{ old('nomor_urut_manual') }}">
+                </div>
+            @endif
             <div class="col-md-6">
                 <label class="form-label">Tanggal Surat</label>
                 <input type="date" name="tanggal_surat" class="form-control" value="{{ old('tanggal_surat', optional($item->tanggal_surat)->format('Y-m-d') ?? date('Y-m-d')) }}" required>

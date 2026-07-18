@@ -40,6 +40,7 @@
                     <tr>
                         <th>No</th>
                         <th>Kode Surat</th>
+                        <th>Kategori</th>
                         <th>Tanggal</th>
                         <th>Tujuan</th>
                         <th>Perihal</th>
@@ -51,6 +52,7 @@
                         <tr>
                             <td>{{ $surat->firstItem() + $i }}</td>
                             <td><code>{{ $s->kode_surat }}</code></td>
+                            <td>{{ $s->kategori->nama ?? '-' }}</td>
                             <td>{{ $s->tanggal_surat->format('d/m/Y') }}</td>
                             <td>{{ $s->tujuan_surat }}</td>
                             <td>{{ $s->perihal }}</td>

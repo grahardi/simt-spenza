@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriSurat;
 use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,7 @@ class SuratKeluarController extends Controller
 {
     public function index(Request $request)
     {
-        $surat = SuratKeluar::query()
+        $surat = SuratKeluar::with('kategori')
             ->when($request->filled('cari'), function ($q) use ($request) {
                 $cari = $request->input('cari');
                 $q->where('perihal', 'like', '%'.$cari.'%')
@@ -24,22 +25,38 @@ class SuratKeluarController extends Controller
         return view('persuratan.surat-keluar.index', compact('surat'));
     }
 
-    /** Nomor surat berikutnya sudah dihitung & ditampilkan di form (preview), belum tersimpan sampai submit. */
     public function create()
     {
-        $preview = SuratKeluar::nomorBerikutnya();
+        $daftarKategori = KategoriSurat::orderBy('nama')->get();
+        $nomorUrutBerikutnya = SuratKeluar::nomorUrutTerbesar() + 1;
 
-        return view('persuratan.surat-keluar.form', ['item' => new SuratKeluar(), 'preview' => $preview]);
+        return view('persuratan.surat-keluar.form', [
+            'item' => new SuratKeluar(),
+            'daftarKategori' => $daftarKategori,
+            'nomorUrutBerikutnya' => $nomorUrutBerikutnya,
+        ]);
     }
 
     public function store(Request $request)
     {
         $data = $this->validated($request);
 
-        // Hitung ulang nomor PAS SEBELUM simpan (bukan pakai preview lama) - mencegah
-        // nomor dobel kalau ada 2 orang buka form Tambah Surat bersamaan.
-        $nomor = SuratKeluar::nomorBerikutnya($data['tanggal_surat']);
-        $data = array_merge($data, $nomor);
+        $request->validate([
+            'mode_nomor' => ['required', 'in:auto,manual'],
+            'nomor_urut_manual' => ['required_if:mode_nomor,manual', 'nullable', 'integer', 'min:1', 'unique:surat_keluar,nomor_urut'],
+        ]);
+
+        $kategori = KategoriSurat::findOrFail($data['id_kategori_surat']);
+
+        // Mode nomor urut: 'auto' pakai terbesar+1 (dihitung ULANG saat submit,
+        // bukan pakai preview lama - mencegah dobel kalau 2 orang buat surat
+        // bersamaan), atau 'manual' pakai angka yang diketik sendiri.
+        $nomorUrut = $request->input('mode_nomor') === 'manual'
+            ? (int) $request->input('nomor_urut_manual')
+            : SuratKeluar::nomorUrutTerbesar() + 1;
+
+        $susunan = SuratKeluar::susunKode($kategori, $nomorUrut, $data['tanggal_surat']);
+        $data = array_merge($data, $susunan);
 
         if ($request->hasFile('lampiran')) {
             $data['lampiran'] = $request->file('lampiran')->store('surat-keluar', 'public');
@@ -54,7 +71,13 @@ class SuratKeluarController extends Controller
 
     public function edit(SuratKeluar $suratKeluar)
     {
-        return view('persuratan.surat-keluar.form', ['item' => $suratKeluar, 'preview' => null]);
+        $daftarKategori = KategoriSurat::orderBy('nama')->get();
+
+        return view('persuratan.surat-keluar.form', [
+            'item' => $suratKeluar,
+            'daftarKategori' => $daftarKategori,
+            'nomorUrutBerikutnya' => null,
+        ]);
     }
 
     public function update(Request $request, SuratKeluar $suratKeluar)
@@ -80,6 +103,7 @@ class SuratKeluarController extends Controller
     private function validated(Request $request): array
     {
         return $request->validate([
+            'id_kategori_surat' => ['required', 'exists:kategori_surat,id'],
             'tanggal_surat' => ['required', 'date'],
             'tujuan_surat' => ['required', 'string', 'max:150'],
             'perihal' => ['required', 'string', 'max:200'],
