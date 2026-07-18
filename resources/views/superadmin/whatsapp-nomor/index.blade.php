@@ -44,14 +44,6 @@
             </form>
         @endif
 
-        <form method="POST" action="{{ route('superadmin.whatsapp-nomor.hapus-semua') }}" class="mb-3 d-inline"
-              onsubmit="return confirm('YAKIN hapus SEMUA nomor WA dari SELURUH kelas? Ini tidak bisa dibatalkan.')">
-            @csrf
-            <button type="submit" class="btn btn-outline-danger btn-sm">
-                <i class="fas fa-trash-alt me-1"></i> Hapus Semua Nomor (Semua Kelas)
-            </button>
-        </form>
-
         <table class="table table-bordered table-striped">
             <thead><tr><th>No. Induk</th><th>Nama Siswa</th><th>Kelas</th><th>Nomor WhatsApp</th><th>Label</th><th style="width:120px">Aksi</th></tr></thead>
             <tbody>
