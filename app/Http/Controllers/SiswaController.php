@@ -75,7 +75,6 @@ class SiswaController extends Controller
             'jenis_kelamin' => ['required', 'in:L,P'],
             'alamat' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'max:100'],
-            'whatsapp' => ['nullable', 'string', 'max:20'],
             'nomer_bangku' => ['nullable', 'integer'],
         ]);
     }

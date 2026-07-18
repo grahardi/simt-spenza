@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AjuanWhatsapp;
 use App\Models\Siswa;
+use App\Models\SiswaWhatsapp;
 use App\Models\WhatsappMenu;
 use App\Models\WhatsappSesi;
 use App\Models\WhatsappTemplate;
@@ -90,7 +91,10 @@ class WhatsappWebhookController extends Controller
 
     private function mulaiAbsen(WhatsappSesi $sesi, string $nomor): string
     {
-        $daftarSiswa = Siswa::where('whatsapp', 'like', '%'.substr($nomor, -10).'%')->get();
+        $sepuluhDigit = substr($nomor, -10);
+        $daftarSiswa = Siswa::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {
+            $q->where('nomor', 'like', '%'.$sepuluhDigit);
+        })->get();
 
         if ($daftarSiswa->isEmpty()) {
             return WhatsappTemplate::get('absen_belum_terdaftar');
@@ -136,17 +140,43 @@ class WhatsappWebhookController extends Controller
         return WhatsappTemplate::get('registrasi_konfirmasi', ['nama' => $siswa->nama_lengkap, 'kelas' => $siswa->kelas]);
     }
 
-    /** Registrasi langkah 2: konfirmasi, baru benar-benar simpan ke data siswa. */
+    /** Registrasi langkah 2: konfirmasi, baru benar-benar simpan ke data siswa (maks 3 nomor per siswa). */
     private function prosesRegistrasiKonfirmasi(WhatsappSesi $sesi, string $teks): string
     {
         $jawaban = strtolower(trim($teks));
 
         if (str_contains($jawaban, 'ya')) {
             $siswa = Siswa::find($sesi->id_siswa_calon_registrasi);
-            $siswa?->update(['whatsapp' => $sesi->nomor]);
+
+            if (!$siswa) {
+                $sesi->reset();
+
+                return $this->teksMenu();
+            }
+
+            $sudahAda = $siswa->nomorWhatsapp()->where('nomor', $sesi->nomor)->exists();
+
+            if ($sudahAda) {
+                $sesi->reset();
+
+                return WhatsappTemplate::get('registrasi_sudah_ada', ['nama' => $siswa->nama_lengkap]);
+            }
+
+            $jumlahSaatIni = $siswa->nomorWhatsapp()->count();
+
+            if ($jumlahSaatIni >= \App\Models\SiswaWhatsapp::MAKSIMAL_PER_SISWA) {
+                $sesi->reset();
+
+                return WhatsappTemplate::get('registrasi_maksimal', [
+                    'nama' => $siswa->nama_lengkap,
+                    'maksimal' => \App\Models\SiswaWhatsapp::MAKSIMAL_PER_SISWA,
+                ]);
+            }
+
+            $siswa->nomorWhatsapp()->create(['nomor' => $sesi->nomor]);
             $sesi->reset();
 
-            return WhatsappTemplate::get('registrasi_berhasil', ['nama' => $siswa?->nama_lengkap]);
+            return WhatsappTemplate::get('registrasi_berhasil', ['nama' => $siswa->nama_lengkap]);
         }
 
         if (str_contains($jawaban, 'tidak') || $jawaban === 'batal') {
@@ -160,8 +190,10 @@ class WhatsappWebhookController extends Controller
 
     private function prosesPilihSiswa(WhatsappSesi $sesi, string $teks): string
     {
-        $nomor = $sesi->nomor;
-        $daftarSiswa = Siswa::where('whatsapp', 'like', '%'.substr($nomor, -10).'%')->get()->values();
+        $sepuluhDigit = substr($sesi->nomor, -10);
+        $daftarSiswa = Siswa::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {
+            $q->where('nomor', 'like', '%'.$sepuluhDigit);
+        })->get()->values();
 
         $pilihan = (int) trim($teks) - 1;
         if (!isset($daftarSiswa[$pilihan])) {

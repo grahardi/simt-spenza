@@ -27,6 +27,12 @@ class Siswa extends Model
         return $this->hasMany(AbsenSiswa::class, 'id_siswa', 'id_member');
     }
 
+    /** Nomor WA yang terhubung ke siswa ini - bisa lebih dari 1 (Ayah/Ibu/Wali), maks 3. */
+    public function nomorWhatsapp(): HasMany
+    {
+        return $this->hasMany(SiswaWhatsapp::class, 'id_siswa', 'id_member');
+    }
+
     public function absenPadaTanggal(string $tanggal): ?AbsenSiswa
     {
         return $this->absensi()->whereDate('tgl_absen', $tanggal)->first();

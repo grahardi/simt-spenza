@@ -48,7 +48,11 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">WhatsApp</label>
-                <input type="text" name="whatsapp" class="form-control" value="{{ old('whatsapp', $siswa->whatsapp) }}">
+                <p class="form-control-plaintext text-muted small mb-0">
+                    Sistem sekarang mendukung lebih dari 1 nomor per siswa (Ayah/Ibu/Wali).
+                    Kelola di menu <strong>Nomor WA Terdaftar</strong> (Superadmin) atau minta wali murid
+                    registrasi sendiri lewat bot WhatsApp.
+                </p>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Email</label>

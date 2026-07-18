@@ -40,7 +40,10 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label>WhatsApp</label>
-                    <input type="text" name="whatsapp" class="form-control" value="{{ old('whatsapp', $siswa->whatsapp) }}">
+                    <p class="text-muted small mb-0">
+                        Kelola nomor WA (bisa lebih dari 1: Ayah/Ibu/Wali) di menu
+                        <a href="{{ route('superadmin.whatsapp-nomor.index') }}">Nomor WA Terdaftar</a>.
+                    </p>
                 </div>
                 <div class="form-group col-md-6">
                     <label>Email / TTL</label>

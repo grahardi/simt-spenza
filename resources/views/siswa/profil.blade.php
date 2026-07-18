@@ -26,7 +26,16 @@
                     <tr><td>Jenis Kelamin</td><td>:</td><td>{{ $siswa->jenis_kelamin }}</td></tr>
                     <tr><td>Alamat</td><td>:</td><td>{{ $siswa->alamat }}</td></tr>
                     <tr><td>TTL</td><td>:</td><td>{{ $siswa->email }}</td></tr>
-                    <tr><td>WhatsApp</td><td>:</td><td>{{ $siswa->whatsapp }}</td></tr>
+                    <tr>
+                        <td>WhatsApp</td><td>:</td>
+                        <td>
+                            @forelse ($siswa->nomorWhatsapp as $n)
+                                {{ $n->nomor }}{{ $n->label ? ' ('.$n->label.')' : '' }}@if (!$loop->last), @endif
+                            @empty
+                                <span class="text-muted">Belum ada nomor terdaftar</span>
+                            @endforelse
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>
