@@ -6,9 +6,67 @@
     <title>@yield('title', 'Superadmin') - SIMT</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .small-box .icon { opacity: .35; }
-        .content-wrapper { background: #f4f6f9; }
+        /* ===== Reskin gaya modern flat (mirip dashboard Tailwind) di atas AdminLTE ===== */
+        :root {
+            --aksen: #6366f1;      /* indigo */
+            --aksen-gelap: #4f46e5;
+            --bg-halaman: #f5f6fa;
+            --border-lembut: #eef0f4;
+        }
+        body, .content-wrapper { font-family: 'Inter', -apple-system, sans-serif; }
+        .content-wrapper { background: var(--bg-halaman); }
+
+        /* Navbar atas */
+        .main-header.navbar {
+            background: #fff; border-bottom: 1px solid var(--border-lembut);
+            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        }
+
+        /* Sidebar */
+        .main-sidebar, .sidebar-dark-primary { background: #fff !important; }
+        .brand-link { border-bottom: 1px solid var(--border-lembut) !important; }
+        .sidebar .nav-link { color: #4b5563; border-radius: 10px; margin: 2px 8px; padding: .6rem .8rem; }
+        .sidebar .nav-link:hover { background: #f3f4f6; }
+        .sidebar .nav-link.active, .sidebar .nav-treeview .nav-link.active {
+            background: var(--aksen) !important; color: #fff !important;
+            box-shadow: 0 4px 10px rgba(99,102,241,.35);
+        }
+        .sidebar .nav-icon, .brand-text { color: inherit; }
+        .nav-sidebar > .nav-item > .nav-link.active > .nav-icon { color: #fff; }
+
+        /* Kartu */
+        .card {
+            border: none; border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        .card-header {
+            background: transparent; border-bottom: 1px solid var(--border-lembut);
+            border-radius: 16px 16px 0 0 !important; padding: 1rem 1.25rem;
+        }
+        .card-title { font-weight: 600; color: #1f2937; }
+
+        /* Stat box (small-box) */
+        .small-box {
+            border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+        .small-box .icon { opacity: .18; top: 10px; right: 10px; font-size: 60px; }
+
+        /* Tombol */
+        .btn { border-radius: 10px; font-weight: 500; }
+        .btn-primary { background: var(--aksen); border-color: var(--aksen); }
+        .btn-primary:hover { background: var(--aksen-gelap); border-color: var(--aksen-gelap); }
+        .btn-xs { border-radius: 8px; }
+
+        /* Tabel */
+        .table thead th { border-top: none; color: #6b7280; font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+        .table td, .table th { border-color: var(--border-lembut); }
+
+        /* Badge */
+        .badge { border-radius: 999px; padding: .35em .8em; font-weight: 500; }
     </style>
     @stack('styles')
 </head>
