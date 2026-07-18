@@ -30,7 +30,7 @@ class Member extends Authenticatable
     protected $fillable = [
         'id', 'user', 'password', 'nama', 'jabatan', 'admin', 'walikelas',
         'tatib', 'bk', 'piket', 'guru', 'keagamaan', 'kebersihan',
-        'kepsek', 'id_guru', 'foto', 'panggilan', 'adminsoal',
+        'kepsek', 'id_guru', 'foto', 'panggilan', 'adminsoal', 'tata_usaha',
         'wajib_ganti_password', 'last_login_at',
     ];
 
@@ -105,6 +105,7 @@ class Member extends Authenticatable
             'kebersihan' => 'kebersihan',
             'kepsek' => 'kepsek',
             'adminsoal' => 'adminsoal',
+            'tata_usaha' => 'tata_usaha',
         ];
 
         $roles = [];

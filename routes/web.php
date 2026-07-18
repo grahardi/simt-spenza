@@ -34,6 +34,8 @@ use App\Http\Controllers\FotoSiswaController;
 use App\Http\Controllers\ProfilSiswaController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\TatibController;
 use Illuminate\Support\Facades\Route;
 
@@ -117,6 +119,14 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Data Master Guru - pengganti gurutambah.php, arsipguru.php
     Route::resource('guru', GuruController::class)
         ->middleware('role:kepsek,admin,piket');
+
+    // Persuratan (Tata Usaha) - Surat Masuk & Surat Keluar
+    Route::resource('surat-masuk', SuratMasukController::class)
+        ->except(['show'])
+        ->middleware('role:tata_usaha,kepsek');
+    Route::resource('surat-keluar', SuratKeluarController::class)
+        ->except(['show'])
+        ->middleware('role:tata_usaha,kepsek');
 
     // Absen Guru (piket) - list guru, link ke jadwal (bukan CRUD)
     Route::get('/absen-guru', [GuruController::class, 'absenList'])

@@ -32,6 +32,7 @@
                     'kebersihan' => 'Kebersihan',
                     'kepsek' => 'Kepala Sekolah',
                     'adminsoal' => 'Admin Soal',
+                    'tata_usaha' => 'Tata Usaha',
                 ] as $flag => $label)
                     <div class="col-md-3 mb-2">
                         <div class="custom-control custom-checkbox">
