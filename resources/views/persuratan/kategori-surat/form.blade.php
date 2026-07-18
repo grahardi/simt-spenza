@@ -3,6 +3,7 @@
 @section('title', $item->exists ? 'Ubah Kategori' : 'Tambah Kategori')
 
 @section('content')
+@include('persuratan._menu')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <h1 class="h5 pt-2 mb-0">{{ $item->exists ? 'Ubah Kategori Surat' : 'Tambah Kategori Surat' }}</h1>
 </div>
