@@ -52,6 +52,39 @@ class WhatsappNomorController extends Controller
             ->with('status', 'Semua nomor WhatsApp ('.$jumlah.' nomor) berhasil dihapus dari seluruh siswa.');
     }
 
+    /**
+     * Export semua nomor jadi file vCard (.vcf) - untuk di-import manual ke
+     * kontak HP yang dipakai bot (Baileys tidak bisa simpan kontak otomatis,
+     * ini batasan teknis, bukan belum diprogram). Format nama:
+     * nomor pertama per siswa -> "Wali {nama} {kelas}"
+     * nomor ke-2/3 -> "{nama} {kelas} 2" / "{nama} {kelas} 3"
+     */
+    public function exportVcf()
+    {
+        $semua = SiswaWhatsapp::with('siswa')->orderBy('id_siswa')->orderBy('id')->get()->groupBy('id_siswa');
+
+        $vcf = '';
+        foreach ($semua as $daftarNomor) {
+            $siswa = $daftarNomor->first()->siswa;
+            if (!$siswa) {
+                continue;
+            }
+
+            foreach ($daftarNomor->values() as $i => $n) {
+                $nama = $i === 0
+                    ? "Wali {$siswa->nama_lengkap} {$siswa->kelas}"
+                    : "{$siswa->nama_lengkap} {$siswa->kelas} ".($i + 1);
+
+                $vcf .= "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:{$nama}\r\nTEL;TYPE=CELL:+{$n->nomor}\r\nEND:VCARD\r\n";
+            }
+        }
+
+        return response($vcf, 200, [
+            'Content-Type' => 'text/vcard',
+            'Content-Disposition' => 'attachment; filename="kontak-wali-murid.vcf"',
+        ]);
+    }
+
     public function create()
     {
         return view('superadmin.whatsapp-nomor.form');

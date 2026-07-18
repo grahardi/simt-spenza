@@ -31,4 +31,23 @@ class WhatsappGuruController extends Controller
 
         return back()->with('status', 'Nomor WhatsApp berhasil diputuskan dari '.$nama.'.');
     }
+
+    /** Export nomor guru jadi file vCard (.vcf), format nama "Guru {nama}". */
+    public function exportVcf()
+    {
+        $semua = GuruWhatsapp::with('guru')->get();
+
+        $vcf = '';
+        foreach ($semua as $n) {
+            if (!$n->guru) {
+                continue;
+            }
+            $vcf .= "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Guru {$n->guru->nama}\r\nTEL;TYPE=CELL:+{$n->nomor}\r\nEND:VCARD\r\n";
+        }
+
+        return response($vcf, 200, [
+            'Content-Type' => 'text/vcard',
+            'Content-Disposition' => 'attachment; filename="kontak-guru.vcf"',
+        ]);
+    }
 }

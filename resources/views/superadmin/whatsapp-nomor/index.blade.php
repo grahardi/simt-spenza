@@ -10,9 +10,14 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title">Nomor WhatsApp Terdaftar</h3>
-        <a href="{{ route('superadmin.whatsapp-nomor.create') }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Nomor
-        </a>
+        <div>
+            <a href="{{ route('superadmin.whatsapp-nomor.export-vcf') }}" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-address-card me-1"></i> Export Kontak (VCF)
+            </a>
+            <a href="{{ route('superadmin.whatsapp-nomor.create') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus me-1"></i> Tambah Nomor
+            </a>
+        </div>
     </div>
     <div class="card-body">
         <p class="text-muted small">1 siswa bisa punya sampai {{ \App\Models\SiswaWhatsapp::MAKSIMAL_PER_SISWA }} nomor (misal Ayah/Ibu/Wali).</p>

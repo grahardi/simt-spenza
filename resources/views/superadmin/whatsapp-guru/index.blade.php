@@ -8,7 +8,12 @@
 @endif
 
 <div class="card">
-    <div class="card-header"><h3 class="card-title">Nomor WhatsApp Guru Terdaftar</h3></div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Nomor WhatsApp Guru Terdaftar</h3>
+        <a href="{{ route('superadmin.whatsapp-guru.export-vcf') }}" class="btn btn-outline-success btn-sm">
+            <i class="fas fa-address-card me-1"></i> Export Kontak (VCF)
+        </a>
+    </div>
     <div class="card-body">
         <p class="text-muted small">
             Hasil registrasi lewat fitur tersembunyi <code>regis-guru</code> di bot WhatsApp.
