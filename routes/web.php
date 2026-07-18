@@ -90,6 +90,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
         Route::get('/foto/{absen}', [AbsensiSiswaController::class, 'foto'])->name('foto');
+        Route::post('/kirim-wa-alfa/{absen}', [AbsensiSiswaController::class, 'kirimWaAlfa'])->name('kirim-wa-alfa');
 
         // Isi absensi manual & catat terlambat - KHUSUS piket (admin tidak boleh ubah absensi resmi)
         Route::middleware('role:piket')->group(function () {

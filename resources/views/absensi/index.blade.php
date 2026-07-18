@@ -108,12 +108,13 @@
                                     @if ($nomorWali->isEmpty())
                                         <span class="text-muted small d-block">Wali belum registrasi WA</span>
                                     @elseif ($nomorWali->count() === 1)
-                                        @php
-                                            $pesan = rawurlencode("Assalamu'alaikum, kami informasikan bahwa ananda {$a->siswa->nama_lengkap} tercatat *Alfa* (tidak ada keterangan) pada {$tanggal->translatedFormat('d F Y')}. Mohon konfirmasi ke pihak sekolah. Terima kasih - SMP Negeri 1 Turen");
-                                        @endphp
-                                        <a href="https://wa.me/{{ $nomorWali->first()->nomor }}?text={{ $pesan }}" target="_blank" class="btn btn-sm btn-success mt-1">
-                                            <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
-                                        </a>
+                                        <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="d-inline mt-1">
+                                            @csrf
+                                            <input type="hidden" name="nomor" value="{{ $nomorWali->first()->nomor }}">
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
+                                            </button>
+                                        </form>
                                     @else
                                         <div class="dropdown d-inline-block mt-1">
                                             <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -121,13 +122,14 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 @foreach ($nomorWali as $nw)
-                                                    @php
-                                                        $pesan = rawurlencode("Assalamu'alaikum, kami informasikan bahwa ananda {$a->siswa->nama_lengkap} tercatat *Alfa* (tidak ada keterangan) pada {$tanggal->translatedFormat('d F Y')}. Mohon konfirmasi ke pihak sekolah. Terima kasih - SMP Negeri 1 Turen");
-                                                    @endphp
                                                     <li>
-                                                        <a class="dropdown-item" href="https://wa.me/{{ $nw->nomor }}?text={{ $pesan }}" target="_blank">
-                                                            {{ $nw->nomor }}{{ $nw->label ? ' ('.$nw->label.')' : '' }}
-                                                        </a>
+                                                        <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="px-2">
+                                                            @csrf
+                                                            <input type="hidden" name="nomor" value="{{ $nw->nomor }}">
+                                                            <button type="submit" class="dropdown-item">
+                                                                {{ $nw->nomor }}{{ $nw->label ? ' ('.$nw->label.')' : '' }}
+                                                            </button>
+                                                        </form>
                                                     </li>
                                                 @endforeach
                                             </ul>

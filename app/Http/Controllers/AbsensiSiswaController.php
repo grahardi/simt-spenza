@@ -146,6 +146,31 @@ class AbsensiSiswaController extends Controller
     }
 
     /**
+     * Kirim notifikasi Alfa ke wali murid LEWAT BOT (nomor sekolah), bukan
+     * wa.me yang buka WhatsApp pribadi staf.
+     */
+    public function kirimWaAlfa(Request $request, AbsenSiswa $absen, \App\Services\WhatsappBotService $bot)
+    {
+        $data = $request->validate(['nomor' => ['required', 'string']]);
+
+        $tanggal = \Illuminate\Support\Carbon::parse($absen->tgl_absen);
+        $pesan = "Assalamu'alaikum, kami informasikan bahwa ananda *{$absen->siswa->nama_lengkap}* tercatat *Alfa* (tidak ada keterangan) pada {$tanggal->translatedFormat('d F Y')}. Mohon konfirmasi ke pihak sekolah. Terima kasih - SMP Negeri 1 Turen";
+
+        $terkirim = $bot->kirimPesan($data['nomor'], $pesan);
+
+        if ($terkirim) {
+            \App\Models\LogAktivitas::catat(
+                'absensi',
+                (\Illuminate\Support\Facades\Auth::guard('member')->user()->nama ?? 'Seseorang').' kirim WA notifikasi Alfa untuk '.$absen->siswa->nama_lengkap.' ke '.$data['nomor'].'.'
+            );
+        }
+
+        return back()->with('status', $terkirim
+            ? 'Pesan WA berhasil dikirim ke wali murid.'
+            : 'Gagal kirim WA - cek apakah bot sedang online (cek pengaturan WA_BOT_URL/.env atau status bot).');
+    }
+
+    /**
      * Pengganti caritelat.php + telat.php - catat siswa terlambat hari ini.
      * Ditolak kalau siswa sudah tercatat absen (sakit/ijin/alfa/dispensasi) hari ini -
      * tidak masuk akal berstatus 2 hal sekaligus.
