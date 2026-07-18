@@ -10,7 +10,7 @@ class AjuanWhatsapp extends Model
     protected $table = 'ajuan_whatsapp';
     public $timestamps = false;
 
-    protected $fillable = ['nomor_wa', 'id_siswa', 'jenis', 'foto_surat', 'status', 'diproses_at', 'diproses_oleh'];
+    protected $fillable = ['nomor_wa', 'id_siswa', 'jenis', 'foto_surat', 'foto_selfie', 'status', 'diproses_at', 'diproses_oleh'];
 
     protected $casts = [
         'created_at' => 'datetime',

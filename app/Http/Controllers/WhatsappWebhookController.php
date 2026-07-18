@@ -34,7 +34,8 @@ class WhatsappWebhookController extends Controller
             'registrasi_konfirmasi' => $this->prosesRegistrasiKonfirmasi($sesi, $teks),
             'pilih_siswa' => $this->prosesPilihSiswa($sesi, $teks),
             'pilih_jenis' => $this->prosesPilihJenis($sesi, $teks),
-            'tunggu_foto' => $this->prosesTungguFoto($sesi, $gambarBase64),
+            'tunggu_selfie' => $this->prosesTungguSelfie($sesi, $gambarBase64),
+            'tunggu_surat' => $this->prosesTungguSurat($sesi, $gambarBase64),
             default => $this->prosesMenuUtama($sesi, $nomor, $teks),
         };
 
@@ -186,22 +187,44 @@ class WhatsappWebhookController extends Controller
             return "Balas *1* untuk Sakit atau *2* untuk Ijin.";
         }
 
-        $sesi->update(['langkah' => 'tunggu_foto', 'jenis_dipilih' => $jenis]);
+        $sesi->update(['langkah' => 'tunggu_selfie', 'jenis_dipilih' => $jenis]);
         $labelJenis = $jenis === 's' ? 'Sakit' : 'Ijin';
 
         return "Baik, diajukan *{$labelJenis}*.\n\n"
-            ."Silakan kirim *foto surat keterangan* (surat dokter/surat orang tua) sekarang.";
+            ."Langkah 1/2: kirim *foto selfie wajah* Ananda sekarang (untuk verifikasi).";
     }
 
-    private function prosesTungguFoto(WhatsappSesi $sesi, ?string $gambarBase64): string
+    /** Langkah 1/2: minta & simpan foto selfie dulu, baru lanjut minta foto surat. */
+    private function prosesTungguSelfie(WhatsappSesi $sesi, ?string $gambarBase64): string
     {
         if (!$gambarBase64) {
-            return "Mohon kirim *foto* surat keterangan ya, bukan teks.";
+            return "Mohon kirim *foto selfie* dulu ya (bukan teks).";
         }
 
         try {
             $binary = base64_decode($gambarBase64);
-            $namaFile = 'wa-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
+            $namaFile = 'selfie-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
+            Storage::disk('public')->put('ajuan-whatsapp/'.$namaFile, $binary);
+
+            $sesi->update(['langkah' => 'tunggu_surat', 'foto_sementara' => 'ajuan-whatsapp/'.$namaFile]);
+
+            return "Foto selfie diterima \xE2\x9C\x85\n\n"
+                ."Langkah 2/2: kirim *foto surat keterangan* (surat dokter/surat orang tua) sekarang.";
+        } catch (\Throwable $e) {
+            return "Maaf, terjadi kendala menyimpan foto selfie. Silakan kirim ulang.";
+        }
+    }
+
+    /** Langkah 2/2: foto surat, baru setelah ini ajuan benar-benar disimpan (selfie + surat lengkap). */
+    private function prosesTungguSurat(WhatsappSesi $sesi, ?string $gambarBase64): string
+    {
+        if (!$gambarBase64) {
+            return "Mohon kirim *foto surat keterangan* ya (bukan teks).";
+        }
+
+        try {
+            $binary = base64_decode($gambarBase64);
+            $namaFile = 'surat-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
             Storage::disk('public')->put('ajuan-whatsapp/'.$namaFile, $binary);
 
             AjuanWhatsapp::create([
@@ -209,6 +232,7 @@ class WhatsappWebhookController extends Controller
                 'id_siswa' => $sesi->id_siswa_dipilih,
                 'jenis' => $sesi->jenis_dipilih,
                 'foto_surat' => 'ajuan-whatsapp/'.$namaFile,
+                'foto_selfie' => $sesi->foto_sementara,
                 'status' => 'menunggu',
                 'created_at' => now(),
             ]);
@@ -216,10 +240,10 @@ class WhatsappWebhookController extends Controller
             $siswa = Siswa::find($sesi->id_siswa_dipilih);
             $sesi->reset();
 
-            return "\xE2\x9C\x85 Ajuan untuk *{$siswa?->nama_lengkap}* berhasil diterima.\n\n"
+            return "\xE2\x9C\x85 Ajuan untuk *{$siswa?->nama_lengkap}* berhasil diterima (selfie + surat lengkap).\n\n"
                 ."Menunggu diproses petugas piket. Kami akan kirim kabar begitu sudah diproses. Terima kasih \xF0\x9F\x99\x8F";
         } catch (\Throwable $e) {
-            return "Maaf, terjadi kendala menyimpan foto. Silakan kirim ulang fotonya.";
+            return "Maaf, terjadi kendala menyimpan foto surat. Silakan kirim ulang fotonya.";
         }
     }
 }

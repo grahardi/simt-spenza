@@ -34,6 +34,11 @@
                     <a href="{{ Storage::url($a->foto_surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">
                         <i class="fas fa-image me-1"></i> Lihat Surat
                     </a>
+                    @if ($a->foto_selfie)
+                        <a href="{{ Storage::url($a->foto_selfie) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">
+                            <i class="fas fa-user me-1"></i> Lihat Selfie
+                        </a>
+                    @endif
                 </div>
 
                 @if ($status === 'menunggu')
