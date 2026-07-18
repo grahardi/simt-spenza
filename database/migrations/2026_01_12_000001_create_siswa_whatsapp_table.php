@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('siswa_whatsapp', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('id_siswa');
+            $table->integer('id_siswa');
             $table->string('nomor', 20);
             $table->string('label', 20)->nullable(); // Ayah/Ibu/Wali, opsional
             $table->timestamps();
