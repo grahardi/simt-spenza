@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AjuanWhatsapp;
 use App\Models\Siswa;
+use App\Models\WhatsappMenu;
 use App\Models\WhatsappSesi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -42,42 +43,46 @@ class WhatsappWebhookController extends Controller
 
     private function teksMenu(): string
     {
+        $daftar = WhatsappMenu::where('aktif', true)->orderBy('urutan')->get();
+
+        $baris = $daftar->map(fn ($m) => "*{$m->kode}* - {$m->label}")->implode("\n");
+
         return "Assalamu'alaikum, Bapak/Ibu Wali Murid \xF0\x9F\x99\x8F\n\n"
             ."*SIMT SMP Negeri 1 Turen*\n\n"
-            ."Ketik salah satu:\n"
-            ."*registrasi* - hubungkan nomor ini dengan data anak\n"
-            ."*absen* - ajukan Sakit/Ijin\n"
-            ."*info* - info seputar bot ini";
+            ."Ketik salah satu:\n{$baris}";
     }
 
     /**
-     * Menu utama - hanya bereaksi kalau teksnya PERSIS salah satu dari 3
-     * pilihan (registrasi/absen/info), sesuai arahan. Selain itu, tampilkan
-     * menu lagi supaya user tahu pilihan yang benar.
+     * Menu utama - hanya bereaksi kalau teksnya PERSIS sama dengan salah satu
+     * kode menu yang aktif (case-insensitive), sesuai arahan. Kode 'registrasi'
+     * dan 'absen' menjalankan alur terprogram, kode lain (tipe 'info') balas
+     * teks statis yang sudah diatur superadmin.
      */
     private function prosesMenuUtama(WhatsappSesi $sesi, string $nomor, string $teks): string
     {
         $pilihan = strtolower(trim($teks));
 
-        if ($pilihan === 'registrasi') {
+        $item = WhatsappMenu::where('aktif', true)
+            ->whereRaw('LOWER(kode) = ?', [$pilihan])
+            ->first();
+
+        if (!$item) {
+            return $this->teksMenu();
+        }
+
+        if ($item->kode === 'registrasi') {
             $sesi->update(['langkah' => 'registrasi_input_induk']);
 
             return "Silakan ketik *Nomor Induk* siswa yang mau dihubungkan dengan nomor WhatsApp ini.\n\n"
                 ."Ketik *batal* untuk kembali ke menu.";
         }
 
-        if ($pilihan === 'absen') {
+        if ($item->kode === 'absen') {
             return $this->mulaiAbsen($sesi, $nomor);
         }
 
-        if ($pilihan === 'info') {
-            return "Bot ini dipakai untuk:\n"
-                ."1. *Registrasi* - menghubungkan nomor WhatsApp Bapak/Ibu dengan data anak di sekolah (pakai Nomor Induk siswa)\n"
-                ."2. *Absen* - mengajukan Sakit/Ijin untuk anak yang sudah terhubung, lengkap dengan foto surat keterangan\n\n"
-                ."Ketik *registrasi* atau *absen* untuk mulai.";
-        }
-
-        return $this->teksMenu();
+        // Tipe 'info' - balasan teks statis, bebas diatur lewat Superadmin > Menu Bot WhatsApp
+        return $item->balasan ?? $this->teksMenu();
     }
 
     private function mulaiAbsen(WhatsappSesi $sesi, string $nomor): string

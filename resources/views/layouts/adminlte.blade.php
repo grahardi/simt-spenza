@@ -107,6 +107,12 @@
                             <p>Log Login</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('superadmin.whatsapp-menu.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-menu.*') ? 'active' : '' }}">
+                            <i class="nav-icon fab fa-whatsapp"></i>
+                            <p>Menu Bot WhatsApp</p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>

@@ -186,6 +186,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
         Route::get('/log', [SuperadminLogAktivitasController::class, 'index'])->name('log.index');
         Route::get('/log-login', [SuperadminLogLoginController::class, 'index'])->name('log-login.index');
+
+        Route::get('/whatsapp-menu', [\App\Http\Controllers\Superadmin\WhatsappMenuController::class, 'index'])->name('whatsapp-menu.index');
+        Route::get('/whatsapp-menu/tambah', [\App\Http\Controllers\Superadmin\WhatsappMenuController::class, 'create'])->name('whatsapp-menu.create');
+        Route::post('/whatsapp-menu', [\App\Http\Controllers\Superadmin\WhatsappMenuController::class, 'store'])->name('whatsapp-menu.store');
+        Route::get('/whatsapp-menu/{whatsappMenu}/edit', [\App\Http\Controllers\Superadmin\WhatsappMenuController::class, 'edit'])->name('whatsapp-menu.edit');
+        Route::put('/whatsapp-menu/{whatsappMenu}', [\App\Http\Controllers\Superadmin\WhatsappMenuController::class, 'update'])->name('whatsapp-menu.update');
+        Route::delete('/whatsapp-menu/{whatsappMenu}', [\App\Http\Controllers\Superadmin\WhatsappMenuController::class, 'destroy'])->name('whatsapp-menu.destroy');
     });
 
     // DKN Kelas - wali kelas upload berkas per mapel
