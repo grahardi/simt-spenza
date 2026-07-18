@@ -42,12 +42,14 @@ class AjuanWhatsappController extends Controller
         );
 
         $labelJenis = $ajuan->labelJenis();
-        $bot->kirimPesan(
+        $terkirim = $bot->kirimPesan(
             $ajuan->nomor_wa,
             "\xE2\x9C\x85 Ajuan *{$labelJenis}* untuk ananda *{$ajuan->siswa->nama_lengkap}* pada {$ajuan->created_at->translatedFormat('d F Y')} sudah *diproses/disetujui*. Terima kasih."
         );
 
-        return back()->with('status', 'Ajuan berhasil disetujui dan notifikasi sudah dikirim ke wali murid.');
+        return back()->with('status', $terkirim
+            ? 'Ajuan berhasil disetujui dan notifikasi sudah dikirim ke wali murid.'
+            : 'Ajuan berhasil disetujui, TAPI notifikasi WhatsApp ke wali murid GAGAL terkirim (cek pengaturan bot / log sistem).');
     }
 
     public function tolak(Request $request, AjuanWhatsapp $ajuan, WhatsappBotService $bot)
@@ -59,11 +61,13 @@ class AjuanWhatsappController extends Controller
         ]);
 
         $labelJenis = $ajuan->labelJenis();
-        $bot->kirimPesan(
+        $terkirim = $bot->kirimPesan(
             $ajuan->nomor_wa,
             "Mohon maaf, ajuan *{$labelJenis}* untuk ananda *{$ajuan->siswa->nama_lengkap}* pada {$ajuan->created_at->translatedFormat('d F Y')} *belum bisa disetujui*. Silakan hubungi pihak sekolah untuk info lebih lanjut."
         );
 
-        return back()->with('status', 'Ajuan ditolak dan notifikasi sudah dikirim ke wali murid.');
+        return back()->with('status', $terkirim
+            ? 'Ajuan ditolak dan notifikasi sudah dikirim ke wali murid.'
+            : 'Ajuan ditolak, TAPI notifikasi WhatsApp ke wali murid GAGAL terkirim (cek pengaturan bot / log sistem).');
     }
 }
