@@ -57,6 +57,11 @@
                             </a>
                         @endif
                     </div>
+                    @if ($a->status === 'ditolak' && $a->alasan_tolak)
+                        <div class="text-muted small mt-1">
+                            <i class="fas fa-comment-dots me-1"></i> Alasan ditolak: <em>{{ $a->alasan_tolak }}</em>
+                        </div>
+                    @endif
                 </div>
 
                 @if ($status === 'menunggu')
@@ -65,16 +70,41 @@
                             @csrf
                             <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i> ACC</button>
                         </form>
-                        <form method="POST" action="{{ route('ajuan-whatsapp.tolak', $a) }}" class="d-inline" onsubmit="return confirm('Yakin tolak ajuan ini?')">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-times me-1"></i> Tolak</button>
-                        </form>
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalTolak{{ $a->id }}">
+                            <i class="fas fa-times me-1"></i> Tolak
+                        </button>
                     </div>
                 @endif
             </div>
         @endforeach
+
+        @foreach ($ajuan as $a)
+            @if ($status === 'menunggu')
+                <div class="modal fade" id="modalTolak{{ $a->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form method="POST" action="{{ route('ajuan-whatsapp.tolak', $a) }}" class="modal-content">
+                            @csrf
+                            <div class="modal-header">
+                                <h5 class="modal-title">Tolak Ajuan - {{ $a->siswa->nama_lengkap ?? '-' }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label class="form-label">Alasan Penolakan (opsional, akan dikirim ke wali murid)</label>
+                                <textarea name="alasan_tolak" class="form-control" rows="3" placeholder="contoh: surat kurang jelas, silakan datang langsung ke sekolah"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-danger"><i class="fas fa-times me-1"></i> Tolak</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endif
+        @endforeach
     @endif
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 {{ $ajuan->onEachSide(1)->links() }}
 @endsection

@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\DB;
 class KesiswaanController extends Controller
 {
     /**
-     * List siswa yang Alfa (tidak masuk tanpa keterangan) 3 hari atau lebih
-     * dalam MINGGU INI (Senin-Minggu berjalan).
+     * List siswa yang Sakit ATAU Alfa (gabungan) 3 hari atau lebih dalam
+     * MINGGU INI (Senin-Minggu berjalan). READ-ONLY - tidak ada aksi ubah
+     * data apapun di fitur ini, cuma laporan buat dilihat.
      */
     public function tidakMasuk(Request $request)
     {
@@ -20,13 +21,19 @@ class KesiswaanController extends Controller
         $akhirMinggu = $awalMinggu->copy()->endOfWeek(Carbon::SUNDAY);
 
         $daftar = AbsenSiswa::with('siswa')
-            ->where('keterangan', 'a')
+            ->whereIn('keterangan', ['a', 's'])
             ->whereBetween('tgl_absen', [$awalMinggu->format('Y-m-d'), $akhirMinggu->format('Y-m-d')])
-            ->select('id_siswa', DB::raw('count(*) as jumlah_alfa'))
+            ->orderBy('tgl_absen')
+            ->get()
             ->groupBy('id_siswa')
-            ->having('jumlah_alfa', '>=', 3)
-            ->orderByDesc('jumlah_alfa')
-            ->get();
+            ->filter(fn ($grup) => $grup->count() >= 3)
+            ->map(fn ($grup) => (object) [
+                'siswa' => $grup->first()->siswa,
+                'jumlah' => $grup->count(),
+                'detail' => $grup,
+            ])
+            ->sortByDesc('jumlah')
+            ->values();
 
         return view('kesiswaan.tidak-masuk', compact('daftar', 'awalMinggu', 'akhirMinggu'));
     }

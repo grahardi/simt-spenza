@@ -54,16 +54,25 @@ class AjuanWhatsappController extends Controller
 
     public function tolak(Request $request, AjuanWhatsapp $ajuan, WhatsappMetaService $bot)
     {
+        $data = $request->validate(['alasan_tolak' => ['nullable', 'string', 'max:255']]);
+
         $ajuan->update([
             'status' => 'ditolak',
+            'alasan_tolak' => $data['alasan_tolak'] ?? null,
             'diproses_at' => now(),
             'diproses_oleh' => Auth::guard('member')->id(),
         ]);
 
+        \App\Models\LogAktivitas::catat(
+            'absensi',
+            (Auth::guard('member')->user()->nama ?? 'Piket').' menolak ajuan WhatsApp '.($ajuan->siswa->nama_lengkap ?? '').' ('.$ajuan->labelJenis().')'.($data['alasan_tolak'] ? ' - alasan: '.$data['alasan_tolak'] : '').'.'
+        );
+
         $labelJenis = $ajuan->labelJenis();
+        $tambahanAlasan = $data['alasan_tolak'] ? "\n\nAlasan: {$data['alasan_tolak']}" : '';
         $terkirim = $bot->kirimPesan(
             $ajuan->nomor_wa,
-            "Mohon maaf, ajuan *{$labelJenis}* untuk ananda *{$ajuan->siswa->nama_lengkap}* pada {$ajuan->created_at->translatedFormat('d F Y')} *belum bisa disetujui*. Silakan hubungi pihak sekolah untuk info lebih lanjut."
+            "Mohon maaf, ajuan *{$labelJenis}* untuk ananda *{$ajuan->siswa->nama_lengkap}* pada {$ajuan->created_at->translatedFormat('d F Y')} *belum bisa disetujui*.{$tambahanAlasan}\n\nSilakan hubungi pihak sekolah untuk info lebih lanjut."
         );
 
         return back()->with('status', $terkirim
