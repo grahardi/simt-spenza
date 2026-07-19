@@ -31,8 +31,22 @@
             </select>
         </div>
         <div class="col-md-2">
+            <select name="per_page" class="form-select" onchange="this.form.submit()">
+                @foreach ([10, 20, 50] as $n)
+                    <option value="{{ $n }}" @selected($perPage === $n)>{{ $n }} / halaman</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i> Cari</button>
         </div>
+        @if (request('kelas'))
+            <div class="col-md-1">
+                <a href="{{ route('siswa.print-pdf', ['kelas' => request('kelas')]) }}" class="btn btn-outline-danger w-100" title="Print PDF Kelas {{ request('kelas') }}">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+            </div>
+        @endif
     </form>
 </div>
 

@@ -10,6 +10,10 @@ class SiswaController extends Controller
     /** Pengganti daftarnama.php (list + cari). */
     public function index(Request $request)
     {
+        $perPage = in_array((int) $request->input('per_page'), [10, 20, 50], true)
+            ? (int) $request->input('per_page')
+            : 10;
+
         $siswa = Siswa::query()
             ->when($request->filled('cari'), function ($query) use ($request) {
                 $query->where('nama_lengkap', 'like', '%'.$request->input('cari').'%');
@@ -19,7 +23,7 @@ class SiswaController extends Controller
             })
             ->orderBy('kelas')
             ->orderBy('nama_lengkap')
-            ->paginate(10)
+            ->paginate($perPage)
             ->withQueryString();
 
         $daftarKelas = Siswa::query()
@@ -28,7 +32,21 @@ class SiswaController extends Controller
             ->orderBy('kelas')
             ->pluck('kelas');
 
-        return view('siswa.index', compact('siswa', 'daftarKelas'));
+        return view('siswa.index', compact('siswa', 'daftarKelas', 'perPage'));
+    }
+
+    /** Cetak daftar siswa 1 kelas ke PDF. */
+    public function printKelas(Request $request)
+    {
+        $kelas = $request->input('kelas');
+        abort_if(!$kelas, 400, 'Pilih kelas dulu sebelum mencetak.');
+
+        $siswa = Siswa::where('kelas', $kelas)->orderBy('nama_lengkap')->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('siswa.print-pdf', compact('siswa', 'kelas'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('Daftar Siswa Kelas '.$kelas.'.pdf');
     }
 
     /** Pengganti form tambah di siswatambah.php. */

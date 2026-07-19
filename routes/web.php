@@ -117,6 +117,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::resource('siswa', SiswaController::class)
         ->middleware('role:guru,walikelas,kepsek,admin,piket');
 
+    Route::get('/siswa-print-pdf', [SiswaController::class, 'printKelas'])
+        ->name('siswa.print-pdf')
+        ->middleware('role:guru,walikelas,kepsek,admin,piket');
+
     Route::get('/siswa/{siswa}/profil', [ProfilSiswaController::class, 'show'])
         ->name('siswa.profil')
         ->middleware('role:guru,walikelas,kepsek,admin,piket');
