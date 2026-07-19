@@ -149,7 +149,7 @@ class AbsensiSiswaController extends Controller
      * Kirim notifikasi Alfa ke wali murid LEWAT BOT (nomor sekolah), bukan
      * wa.me yang buka WhatsApp pribadi staf.
      */
-    public function kirimWaAlfa(Request $request, AbsenSiswa $absen, \App\Services\WhatsappBotService $bot)
+    public function kirimWaAlfa(Request $request, AbsenSiswa $absen, \App\Services\WhatsappMetaService $bot)
     {
         $data = $request->validate(['nomor' => ['required', 'string']]);
 

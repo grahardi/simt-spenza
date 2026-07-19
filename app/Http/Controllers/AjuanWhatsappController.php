@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AbsenSiswa;
 use App\Models\AjuanWhatsapp;
-use App\Services\WhatsappBotService;
+use App\Services\WhatsappMetaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +23,7 @@ class AjuanWhatsappController extends Controller
         return view('ajuan-whatsapp.index', compact('ajuan', 'status'));
     }
 
-    public function acc(AjuanWhatsapp $ajuan, WhatsappBotService $bot)
+    public function acc(AjuanWhatsapp $ajuan, WhatsappMetaService $bot)
     {
         AbsenSiswa::updateOrCreate(
             ['id_siswa' => $ajuan->id_siswa, 'tgl_absen' => $ajuan->created_at->toDateString()],
@@ -52,7 +52,7 @@ class AjuanWhatsappController extends Controller
             : 'Ajuan berhasil disetujui, TAPI notifikasi WhatsApp ke wali murid GAGAL terkirim (cek pengaturan bot / log sistem).');
     }
 
-    public function tolak(Request $request, AjuanWhatsapp $ajuan, WhatsappBotService $bot)
+    public function tolak(Request $request, AjuanWhatsapp $ajuan, WhatsappMetaService $bot)
     {
         $ajuan->update([
             'status' => 'ditolak',
