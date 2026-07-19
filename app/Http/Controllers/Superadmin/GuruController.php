@@ -95,7 +95,7 @@ class GuruController extends Controller
             'piket' => ['nullable', 'string', 'max:20'],
         ]);
 
-        $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal'];
+        $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal', 'tata_usaha', 'uks'];
         foreach ($flagRoles as $flag) {
             $data[$flag] = $request->boolean($flag) ? 1 : 0;
         }
