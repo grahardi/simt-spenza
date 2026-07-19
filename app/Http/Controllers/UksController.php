@@ -6,7 +6,7 @@ use App\Models\Siswa;
 use App\Models\UksKunjungan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Carbon;
+use Carbon\Carbon;
 
 class UksController extends Controller
 {
