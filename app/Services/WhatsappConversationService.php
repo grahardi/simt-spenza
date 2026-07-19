@@ -289,47 +289,54 @@ class WhatsappConversationService
     {
         $jawaban = strtolower(trim($teks));
 
-        if (str_contains($jawaban, 'ya')) {
-            $siswa = Siswa::find($sesi->id_siswa_calon_registrasi);
-
-            if (!$siswa) {
-                $sesi->reset();
-
-                return $this->teksMenu();
-            }
-
-            $sudahAda = $siswa->nomorWhatsapp()->where('nomor', $sesi->nomor)->exists();
-
-            if ($sudahAda) {
-                $sesi->reset();
-
-                return WhatsappTemplate::get('registrasi_sudah_ada', ['nama' => $siswa->nama_lengkap]);
-            }
-
-            $jumlahSaatIni = $siswa->nomorWhatsapp()->count();
-
-            if ($jumlahSaatIni >= SiswaWhatsapp::MAKSIMAL_PER_SISWA) {
-                $sesi->reset();
-
-                return WhatsappTemplate::get('registrasi_maksimal', [
-                    'nama' => $siswa->nama_lengkap,
-                    'maksimal' => SiswaWhatsapp::MAKSIMAL_PER_SISWA,
-                ]);
-            }
-
-            $siswa->nomorWhatsapp()->create(['nomor' => $sesi->nomor]);
-            $sesi->reset();
-
-            return WhatsappTemplate::get('registrasi_berhasil', ['nama' => $siswa->nama_lengkap]);
-        }
-
-        if (str_contains($jawaban, 'tidak') || $jawaban === 'batal') {
+        if ($jawaban === 'batal' || str_contains($jawaban, 'tidak')) {
             $sesi->reset();
 
             return WhatsappTemplate::get('registrasi_dibatalkan')."\n\n".$this->teksMenu();
         }
 
-        return WhatsappTemplate::get('registrasi_konfirmasi_invalid');
+        $label = match (true) {
+            $jawaban === '1' || str_contains($jawaban, 'ayah') => 'Ayah',
+            $jawaban === '2' || str_contains($jawaban, 'ibu') => 'Ibu',
+            $jawaban === '3' || str_contains($jawaban, 'wali') || str_contains($jawaban, 'lainnya') => 'Wali',
+            default => null,
+        };
+
+        if (!$label) {
+            return WhatsappTemplate::get('registrasi_konfirmasi_invalid');
+        }
+
+        $siswa = Siswa::find($sesi->id_siswa_calon_registrasi);
+
+        if (!$siswa) {
+            $sesi->reset();
+
+            return $this->teksMenu();
+        }
+
+        $sudahAda = $siswa->nomorWhatsapp()->where('nomor', $sesi->nomor)->exists();
+
+        if ($sudahAda) {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('registrasi_sudah_ada', ['nama' => $siswa->nama_lengkap]);
+        }
+
+        $jumlahSaatIni = $siswa->nomorWhatsapp()->count();
+
+        if ($jumlahSaatIni >= SiswaWhatsapp::MAKSIMAL_PER_SISWA) {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('registrasi_maksimal', [
+                'nama' => $siswa->nama_lengkap,
+                'maksimal' => SiswaWhatsapp::MAKSIMAL_PER_SISWA,
+            ]);
+        }
+
+        $siswa->nomorWhatsapp()->create(['nomor' => $sesi->nomor, 'label' => $label]);
+        $sesi->reset();
+
+        return WhatsappTemplate::get('registrasi_berhasil', ['nama' => $siswa->nama_lengkap]);
     }
 
     private function prosesPilihSiswa(WhatsappSesi $sesi, string $teks): string
