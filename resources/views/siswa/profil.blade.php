@@ -11,9 +11,9 @@
     <div class="row">
         <div class="col-lg-3 text-center mb-3 mb-lg-0">
             @if ($siswa->foto_url)
-                <img src="{{ $siswa->foto_url }}" alt="Foto Profil" class="rounded-circle shadow" style="width:140px;height:140px;object-fit:cover;">
+                <img src="{{ $siswa->foto_url }}" alt="Foto Profil" class="rounded shadow-sm border" style="width:120px;height:180px;object-fit:cover;">
             @else
-                <span class="foto-siswa-placeholder mx-auto" style="width:140px;height:140px;font-size:36px;">{{ $siswa->initials() }}</span>
+                <span class="foto-siswa-placeholder mx-auto" style="width:120px;height:180px;font-size:32px;border-radius:8px;">{{ $siswa->initials() }}</span>
             @endif
         </div>
         <div class="col-lg-9">
@@ -26,16 +26,6 @@
                     <tr><td>Jenis Kelamin</td><td>:</td><td>{{ $siswa->jenis_kelamin }}</td></tr>
                     <tr><td>Alamat</td><td>:</td><td>{{ $siswa->alamat }}</td></tr>
                     <tr><td>TTL</td><td>:</td><td>{{ $siswa->email }}</td></tr>
-                    <tr>
-                        <td>WhatsApp</td><td>:</td>
-                        <td>
-                            @forelse ($siswa->nomorWhatsapp as $n)
-                                {{ $n->nomor }}{{ $n->label ? ' ('.$n->label.')' : '' }}@if (!$loop->last), @endif
-                            @empty
-                                <span class="text-muted">Belum ada nomor terdaftar</span>
-                            @endforelse
-                        </td>
-                    </tr>
                 </table>
             </div>
         </div>
