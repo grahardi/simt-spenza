@@ -3,6 +3,7 @@
 @section('title', 'Ajuan WhatsApp')
 
 @section('content')
+@include('partials.menu-absensi')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <h1 class="h5 pt-2 mb-0"><i class="fab fa-whatsapp me-2"></i>Ajuan WhatsApp</h1>
 </div>
@@ -34,11 +35,16 @@
                         Kelas {{ $a->siswa->kelas ?? '-' }} &middot; {{ $a->created_at->translatedFormat('d F Y H:i') }}
                     </div>
                     <div class="text-muted small">
-                        <i class="fab fa-whatsapp me-1"></i> Diajukan dari nomor <strong>{{ $a->nomor_wa }}</strong>
-                        @if ($a->labelPengaju())
-                            <span class="badge bg-secondary">{{ $a->labelPengaju() }}</span>
-                        @endif
-                        <span class="fst-italic">- notifikasi ACC/Tolak akan dikirim balik ke nomor ini juga</span>
+                        @php
+                            $label = $a->labelPengaju();
+                            $ikon = match ($label) {
+                                'Ayah' => 'fas fa-male',
+                                'Ibu' => 'fas fa-female',
+                                default => 'fas fa-user-friends',
+                            };
+                        @endphp
+                        <i class="{{ $ikon }} me-1"></i> Diajukan oleh <strong>{{ $label ?? 'Wali/Lainnya' }}</strong>
+                        <span class="fst-italic">- notifikasi ACC/Tolak otomatis kembali ke nomor yang sama</span>
                     </div>
 
                     <div class="mt-2 d-flex flex-wrap gap-2">
