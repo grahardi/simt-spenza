@@ -77,7 +77,10 @@ class WhatsappConversationService
         if ($item->kode === 'registrasi') {
             $sesi->update(['langkah' => 'registrasi_input_induk']);
 
-            return WhatsappTemplate::get('registrasi_prompt');
+            $sudahTerdaftar = $this->infoSudahTerdaftar($nomor);
+            $prompt = WhatsappTemplate::get('registrasi_prompt');
+
+            return $sudahTerdaftar ? $sudahTerdaftar."\n\n".$prompt : $prompt;
         }
 
         if ($item->kode === 'absen') {
@@ -183,6 +186,28 @@ class WhatsappConversationService
         }
 
         return WhatsappTemplate::get('registrasi_konfirmasi_invalid');
+    }
+
+    /**
+     * Kalau nomor ini sudah terhubung ke 1/lebih siswa, kasih tahu di awal
+     * proses registrasi - supaya wali tidak bingung/kaget kalau nanti ternyata
+     * "sudah terdaftar" pas di tengah proses (nomor tetap boleh dipakai lagi
+     * buat tambah anak lain, ini cuma info, bukan penghalang).
+     */
+    private function infoSudahTerdaftar(string $nomor): ?string
+    {
+        $sepuluhDigit = substr($nomor, -10);
+        $daftarSiswa = Siswa::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {
+            $q->where('nomor', 'like', '%'.$sepuluhDigit);
+        })->get();
+
+        if ($daftarSiswa->isEmpty()) {
+            return null;
+        }
+
+        $daftarNama = $daftarSiswa->map(fn ($s) => $s->nama_lengkap.' ('.$s->kelas.')')->implode(', ');
+
+        return "\xE2\x84\xB9\xEF\xB8\x8F Nomor ini sudah terdaftar atas nama: *{$daftarNama}*.";
     }
 
     private function mulaiAbsen(WhatsappSesi $sesi, string $nomor): string
