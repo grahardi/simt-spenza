@@ -37,6 +37,7 @@ use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\UksController;
+use App\Http\Controllers\KesiswaanController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\KategoriSuratController;
 use App\Http\Controllers\TatibController;
@@ -98,10 +99,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     });
 
     // Modul Absensi Siswa - semua role yang dulu bisa akses absenjelas.php
-    Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin')->group(function () {
+    Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin,kesiswaan')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
         Route::get('/foto/{absen}', [AbsensiSiswaController::class, 'foto'])->name('foto');
         Route::post('/kirim-wa-alfa/{absen}', [AbsensiSiswaController::class, 'kirimWaAlfa'])->name('kirim-wa-alfa');
+
+        Route::get('/telat', [AbsensiSiswaController::class, 'listTelat'])->name('telat.list')
+            ->middleware('role:piket,kesiswaan');
 
         // Isi absensi manual & catat terlambat - KHUSUS piket (admin tidak boleh ubah absensi resmi)
         Route::middleware('role:piket')->group(function () {
@@ -109,7 +113,6 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
             Route::post('/tandai/{siswa}', [AbsensiSiswaController::class, 'tandai'])->name('tandai');
             Route::delete('/hapus/{absen}', [AbsensiSiswaController::class, 'hapus'])->name('hapus');
             Route::post('/telat/{siswa}', [AbsensiSiswaController::class, 'telat'])->name('telat');
-            Route::get('/telat', [AbsensiSiswaController::class, 'listTelat'])->name('telat.list');
         });
     });
 
@@ -152,6 +155,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/list', [UksController::class, 'list'])->name('list');
         Route::post('/penanganan/{uksKunjungan}', [UksController::class, 'penanganan'])->name('penanganan');
         Route::get('/panggilan', [UksController::class, 'panggilan'])->name('panggilan');
+    });
+
+    // Modul Kesiswaan - Absensi Hari Ini & Keterlambatan pakai route absensi yang sudah ada,
+    // Pelanggaran pakai route tatib yang sudah ada, ini cuma 2 fitur barunya
+    Route::prefix('kesiswaan')->name('kesiswaan.')->middleware('role:kesiswaan,kepsek')->group(function () {
+        Route::get('/tidak-masuk', [KesiswaanController::class, 'tidakMasuk'])->name('tidak-masuk');
+        Route::get('/rekap-mingguan', [KesiswaanController::class, 'rekapMingguan'])->name('rekap-mingguan');
     });
 
     // Absen Guru (piket) - list guru, link ke jadwal (bukan CRUD)

@@ -91,7 +91,7 @@ class KaryawanController extends Controller
             'piket' => ['nullable', 'string', 'max:20'],
         ]);
 
-        $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal', 'tata_usaha', 'uks'];
+        $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal', 'tata_usaha', 'uks', 'kesiswaan'];
         foreach ($flagRoles as $flag) {
             $data[$flag] = $request->boolean($flag) ? 1 : 0;
         }
