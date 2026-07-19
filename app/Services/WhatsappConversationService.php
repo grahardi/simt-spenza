@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AbsenSiswa;
 use App\Models\AjuanWhatsapp;
 use App\Models\Guru;
 use App\Models\KodeGuru;
@@ -35,8 +36,8 @@ class WhatsappConversationService
             'registrasi_guru_konfirmasi' => $this->prosesRegistrasiGuruKonfirmasi($sesi, $teks),
             'pilih_siswa' => $this->prosesPilihSiswa($sesi, $teks),
             'pilih_jenis' => $this->prosesPilihJenis($sesi, $teks),
-            'tunggu_selfie' => $this->prosesTungguSelfie($sesi, $gambarBase64),
-            'tunggu_surat' => $this->prosesTungguSurat($sesi, $gambarBase64),
+            'tunggu_selfie' => $this->prosesTungguSelfie($sesi, $teks, $gambarBase64),
+            'tunggu_surat' => $this->prosesTungguSurat($sesi, $teks, $gambarBase64),
             default => $this->prosesMenuUtama($sesi, $nomor, $teks),
         };
     }
@@ -180,11 +181,18 @@ class WhatsappConversationService
         }
 
         if ($daftarSiswa->count() === 1) {
-            $sesi->update(['langkah' => 'pilih_jenis', 'id_siswa_dipilih' => $daftarSiswa->first()->id_member]);
+            $siswa = $daftarSiswa->first();
+
+            $cekTerabsen = $this->cekSudahTerabsen($siswa);
+            if ($cekTerabsen) {
+                return $cekTerabsen;
+            }
+
+            $sesi->update(['langkah' => 'pilih_jenis', 'id_siswa_dipilih' => $siswa->id_member]);
 
             return WhatsappTemplate::get('absen_pilih_jenis', [
-                'nama' => $daftarSiswa->first()->nama_lengkap,
-                'kelas' => $daftarSiswa->first()->kelas,
+                'nama' => $siswa->nama_lengkap,
+                'kelas' => $siswa->kelas,
             ]);
         }
 
@@ -192,6 +200,23 @@ class WhatsappConversationService
         $daftar = $daftarSiswa->values()->map(fn ($s, $i) => ($i + 1).'. '.$s->nama_lengkap.' ('.$s->kelas.')')->implode("\n");
 
         return WhatsappTemplate::get('absen_pilih_siswa', ['daftar' => $daftar]);
+    }
+
+    /** Kalau siswa sudah tercatat absen resmi hari ini, jangan lanjut - kasih tahu statusnya. */
+    private function cekSudahTerabsen(Siswa $siswa): ?string
+    {
+        $absenHariIni = AbsenSiswa::where('id_siswa', $siswa->id_member)
+            ->whereDate('tgl_absen', now())
+            ->first();
+
+        if (!$absenHariIni) {
+            return null;
+        }
+
+        return WhatsappTemplate::get('absen_sudah_terabsen', [
+            'nama' => $siswa->nama_lengkap,
+            'status' => strtolower($absenHariIni->labelKeterangan()),
+        ]);
     }
 
     private function prosesRegistrasiInputInduk(WhatsappSesi $sesi, string $teks): string
@@ -263,6 +288,12 @@ class WhatsappConversationService
 
     private function prosesPilihSiswa(WhatsappSesi $sesi, string $teks): string
     {
+        if (strtolower(trim($teks)) === 'batal') {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('batal_umum')."\n\n".$this->teksMenu();
+        }
+
         $sepuluhDigit = substr($sesi->nomor, -10);
         $daftarSiswa = Siswa::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {
             $q->where('nomor', 'like', '%'.$sepuluhDigit);
@@ -274,6 +305,14 @@ class WhatsappConversationService
         }
 
         $siswa = $daftarSiswa[$pilihan];
+
+        $cekTerabsen = $this->cekSudahTerabsen($siswa);
+        if ($cekTerabsen) {
+            $sesi->reset();
+
+            return $cekTerabsen;
+        }
+
         $sesi->update(['langkah' => 'pilih_jenis', 'id_siswa_dipilih' => $siswa->id_member]);
 
         return WhatsappTemplate::get('absen_pilih_jenis', ['nama' => $siswa->nama_lengkap, 'kelas' => $siswa->kelas]);
@@ -282,6 +321,13 @@ class WhatsappConversationService
     private function prosesPilihJenis(WhatsappSesi $sesi, string $teks): string
     {
         $teks = trim($teks);
+
+        if (strtolower($teks) === 'batal') {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('batal_umum')."\n\n".$this->teksMenu();
+        }
+
         $jenis = match (true) {
             $teks === '1' || str_contains(strtolower($teks), 'sakit') => 's',
             $teks === '2' || str_contains(strtolower($teks), 'ijin') || str_contains(strtolower($teks), 'izin') => 'i',
@@ -298,8 +344,14 @@ class WhatsappConversationService
         return WhatsappTemplate::get('minta_selfie', ['jenis' => $labelJenis]);
     }
 
-    private function prosesTungguSelfie(WhatsappSesi $sesi, ?string $gambarBase64): string
+    private function prosesTungguSelfie(WhatsappSesi $sesi, string $teks, ?string $gambarBase64): string
     {
+        if (strtolower(trim($teks)) === 'batal') {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('batal_umum')."\n\n".$this->teksMenu();
+        }
+
         if (!$gambarBase64) {
             return WhatsappTemplate::get('selfie_invalid');
         }
@@ -317,8 +369,14 @@ class WhatsappConversationService
         }
     }
 
-    private function prosesTungguSurat(WhatsappSesi $sesi, ?string $gambarBase64): string
+    private function prosesTungguSurat(WhatsappSesi $sesi, string $teks, ?string $gambarBase64): string
     {
+        if (strtolower(trim($teks)) === 'batal') {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('batal_umum')."\n\n".$this->teksMenu();
+        }
+
         if (!$gambarBase64) {
             return WhatsappTemplate::get('surat_invalid');
         }
