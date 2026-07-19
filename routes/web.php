@@ -36,6 +36,7 @@ use App\Http\Controllers\ProfilSiswaController;
 use App\Http\Controllers\KebersihanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\UksController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\KategoriSuratController;
 use App\Http\Controllers\TatibController;
@@ -137,6 +138,15 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::post('/kategori-surat-pengaturan', [KategoriSuratController::class, 'updatePengaturan'])
         ->name('kategori-surat.pengaturan')
         ->middleware('role:tata_usaha,kepsek');
+
+    // Modul UKS - Siswa Sakit, List Siswa di UKS, Panggilan Wali Murid
+    Route::prefix('uks')->name('uks.')->middleware('role:uks,kepsek')->group(function () {
+        Route::get('/sakit', [UksController::class, 'cari'])->name('cari');
+        Route::post('/sakit/{siswa}', [UksController::class, 'simpanSakit'])->name('simpan-sakit');
+        Route::get('/list', [UksController::class, 'list'])->name('list');
+        Route::post('/penanganan/{uksKunjungan}', [UksController::class, 'penanganan'])->name('penanganan');
+        Route::get('/panggilan', [UksController::class, 'panggilan'])->name('panggilan');
+    });
 
     // Absen Guru (piket) - list guru, link ke jadwal (bukan CRUD)
     Route::get('/absen-guru', [GuruController::class, 'absenList'])

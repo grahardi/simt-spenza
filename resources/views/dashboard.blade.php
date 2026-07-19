@@ -117,6 +117,15 @@
                 ['label' => 'Kategori Surat', 'icon' => 'fas fa-tags', 'color' => 'teal', 'href' => route('kategori-surat.index')],
             ],
         ],
+        'uks' => [
+            'title' => 'Menu UKS',
+            'theme' => 'coral',
+            'items' => [
+                ['label' => 'Siswa Sakit', 'icon' => 'fas fa-briefcase-medical', 'color' => 'red', 'href' => route('uks.cari')],
+                ['label' => 'Siswa di UKS', 'icon' => 'fas fa-bed', 'color' => 'amber', 'href' => route('uks.list')],
+                ['label' => 'Panggilan Wali Murid', 'icon' => 'fas fa-phone-alt', 'color' => 'green', 'href' => route('uks.panggilan')],
+            ],
+        ],
     ];
 @endphp
 
