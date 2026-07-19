@@ -31,18 +31,18 @@ class AkunController extends Controller
      * "Login As" - masuk sebagai akun ini tanpa perlu tahu password-nya.
      * ID superadmin asli disimpan di session supaya bisa kembali lagi nanti.
      */
-    public function loginSebagai(Member $member)
+    public function loginSebagai(Member $akun)
     {
         $superadminAsli = \Illuminate\Support\Facades\Auth::guard('member')->id();
 
-        if ($member->id === $superadminAsli) {
+        if ($akun->id === $superadminAsli) {
             return back()->with('status', 'Ini akun Anda sendiri.');
         }
 
         session(['impersonator_id' => $superadminAsli]);
-        \Illuminate\Support\Facades\Auth::guard('member')->login($member);
+        \Illuminate\Support\Facades\Auth::guard('member')->login($akun);
 
-        return redirect()->route('dashboard')->with('status', 'Sekarang login sebagai '.$member->nama.'. Klik "Kembali ke Superadmin" di pojok atas kapan saja untuk keluar.');
+        return redirect()->route('dashboard')->with('status', 'Sekarang login sebagai '.$akun->nama.'. Klik "Kembali ke Superadmin" di pojok atas kapan saja untuk keluar.');
     }
 
     /** Kembali ke akun superadmin asli setelah selesai "Login As". */
