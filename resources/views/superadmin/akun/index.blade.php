@@ -18,8 +18,9 @@
             </div>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
-            <thead><tr><th>Nomor ID</th><th>Nama</th><th>Terhubung Guru</th><th>Roles</th><th style="width:100px">Aksi</th></tr></thead>
+            <thead><tr><th>Nomor ID</th><th>Nama</th><th>Terhubung Guru</th><th>Roles</th><th style="width:220px">Aksi</th></tr></thead>
             <tbody>
                 @forelse ($akun as $a)
                     <tr>
@@ -27,13 +28,25 @@
                         <td>{{ $a->nama }}</td>
                         <td>{{ $a->guru->nama ?? '-' }}</td>
                         <td>
+                            @php
+                                $warnaRole = [
+                                    'admin' => ['#e6f1fb', '#185fa5'], 'walikelas' => ['#eeedfe', '#534ab7'],
+                                    'tatib' => ['#fcebeb', '#a32d2d'], 'bk' => ['#fbeaf0', '#993556'],
+                                    'guru' => ['#eaf3de', '#3b6d11'], 'keagamaan' => ['#eeedfe', '#534ab7'],
+                                    'kebersihan' => ['#e1f5ee', '#0f6e56'], 'kepsek' => ['#faeeda', '#854f0b'],
+                                    'adminsoal' => ['#faece7', '#993c1d'], 'tata_usaha' => ['#e6f1fb', '#185fa5'],
+                                    'uks' => ['#fcebeb', '#a32d2d'], 'piket' => ['#eeedfe', '#534ab7'],
+                                    'superadmin' => ['#faeeda', '#854f0b'],
+                                ];
+                            @endphp
                             @forelse ($a->roles() as $r)
-                                <span class="badge badge-secondary">{{ $r }}</span>
+                                @php [$bg, $fg] = $warnaRole[$r] ?? ['#f0f0f0', '#666']; @endphp
+                                <span class="badge" style="background:{{ $bg }};color:{{ $fg }};font-weight:600;">{{ $r }}</span>
                             @empty
                                 <span class="text-muted">-</span>
                             @endforelse
                         </td>
-                        <td>
+                        <td class="text-nowrap">
                             <a href="{{ route('superadmin.akun.edit', $a) }}" class="btn btn-xs btn-outline-info"><i class="fas fa-user-shield"></i> Kelola</a>
                             <form action="{{ route('superadmin.akun.login-sebagai', $a) }}" method="POST" class="d-inline"
                                   onsubmit="return confirm('Login sebagai {{ $a->nama }}?')">
@@ -47,6 +60,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $akun->onEachSide(1)->links() }}
     </div>
 </div>
