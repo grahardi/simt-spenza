@@ -12,7 +12,7 @@ class AbsenSiswa extends Model
     public $incrementing = true;
     public $timestamps = false;
 
-    protected $fillable = ['tgl_absen', 'keterangan', 'id_siswa', 'tambahan', 'gambar'];
+    protected $fillable = ['tgl_absen', 'keterangan', 'id_siswa', 'tambahan', 'gambar', 'dari_wa'];
 
     protected $casts = [
         'tgl_absen' => 'date',

@@ -27,7 +27,7 @@ class AjuanWhatsappController extends Controller
     {
         AbsenSiswa::updateOrCreate(
             ['id_siswa' => $ajuan->id_siswa, 'tgl_absen' => $ajuan->created_at->toDateString()],
-            ['keterangan' => $ajuan->jenis, 'gambar' => $ajuan->foto_surat]
+            ['keterangan' => $ajuan->jenis, 'gambar' => $ajuan->foto_surat, 'dari_wa' => true]
         );
 
         $ajuan->update([

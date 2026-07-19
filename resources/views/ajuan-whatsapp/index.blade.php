@@ -36,7 +36,7 @@
                     </a>
                     @if ($a->foto_selfie)
                         <a href="{{ Storage::url($a->foto_selfie) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">
-                            <i class="fas fa-user me-1"></i> Lihat Selfie
+                            <i class="fas fa-user me-1"></i> Lihat Selfie Wali
                         </a>
                     @endif
                 </div>

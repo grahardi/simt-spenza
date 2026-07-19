@@ -338,37 +338,13 @@ class WhatsappConversationService
             return WhatsappTemplate::get('pilih_jenis_invalid');
         }
 
-        $sesi->update(['langkah' => 'tunggu_selfie', 'jenis_dipilih' => $jenis]);
+        $sesi->update(['langkah' => 'tunggu_surat', 'jenis_dipilih' => $jenis]);
         $labelJenis = $jenis === 's' ? 'Sakit' : 'Ijin';
 
         return WhatsappTemplate::get('minta_selfie', ['jenis' => $labelJenis]);
     }
 
-    private function prosesTungguSelfie(WhatsappSesi $sesi, string $teks, ?string $gambarBase64): string
-    {
-        if (strtolower(trim($teks)) === 'batal') {
-            $sesi->reset();
-
-            return WhatsappTemplate::get('batal_umum')."\n\n".$this->teksMenu();
-        }
-
-        if (!$gambarBase64) {
-            return WhatsappTemplate::get('selfie_invalid');
-        }
-
-        try {
-            $binary = base64_decode($gambarBase64);
-            $namaFile = 'selfie-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
-            Storage::disk('public')->put('ajuan-whatsapp/'.$namaFile, $binary);
-
-            $sesi->update(['langkah' => 'tunggu_surat', 'foto_sementara' => 'ajuan-whatsapp/'.$namaFile]);
-
-            return WhatsappTemplate::get('selfie_diterima_minta_surat');
-        } catch (\Throwable $e) {
-            return "Maaf, terjadi kendala menyimpan foto selfie. Silakan kirim ulang.";
-        }
-    }
-
+    /** Langkah 1/2 (baru): foto SURAT dulu. */
     private function prosesTungguSurat(WhatsappSesi $sesi, string $teks, ?string $gambarBase64): string
     {
         if (strtolower(trim($teks)) === 'batal') {
@@ -386,12 +362,41 @@ class WhatsappConversationService
             $namaFile = 'surat-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
             Storage::disk('public')->put('ajuan-whatsapp/'.$namaFile, $binary);
 
+            $sesi->update(['langkah' => 'tunggu_selfie', 'foto_sementara' => 'ajuan-whatsapp/'.$namaFile]);
+
+            return WhatsappTemplate::get('selfie_diterima_minta_surat');
+        } catch (\Throwable $e) {
+            return "Maaf, terjadi kendala menyimpan foto surat. Silakan kirim ulang.";
+        }
+    }
+
+    /**
+     * Langkah 2/2 (baru): foto SELFIE Bapak/Ibu Wali sambil memegang surat
+     * tadi (BUKAN foto Ananda) - dipakai buat verifikasi identitas pelapor.
+     */
+    private function prosesTungguSelfie(WhatsappSesi $sesi, string $teks, ?string $gambarBase64): string
+    {
+        if (strtolower(trim($teks)) === 'batal') {
+            $sesi->reset();
+
+            return WhatsappTemplate::get('batal_umum')."\n\n".$this->teksMenu();
+        }
+
+        if (!$gambarBase64) {
+            return WhatsappTemplate::get('selfie_invalid');
+        }
+
+        try {
+            $binary = base64_decode($gambarBase64);
+            $namaFile = 'selfie-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
+            Storage::disk('public')->put('ajuan-whatsapp/'.$namaFile, $binary);
+
             AjuanWhatsapp::create([
                 'nomor_wa' => $sesi->nomor,
                 'id_siswa' => $sesi->id_siswa_dipilih,
                 'jenis' => $sesi->jenis_dipilih,
-                'foto_surat' => 'ajuan-whatsapp/'.$namaFile,
-                'foto_selfie' => $sesi->foto_sementara,
+                'foto_surat' => $sesi->foto_sementara,
+                'foto_selfie' => 'ajuan-whatsapp/'.$namaFile,
                 'status' => 'menunggu',
                 'created_at' => now(),
             ]);

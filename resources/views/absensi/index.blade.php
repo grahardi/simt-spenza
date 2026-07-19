@@ -95,6 +95,9 @@
                             <td><span class="text-muted">{{ $a->siswa->kelas }}</span></td>
                             <td>
                                 <span class="badge-status badge-{{ $a->keterangan }}">{{ $a->labelKeterangan() }}</span>
+                                @if ($a->dari_wa)
+                                    <i class="fab fa-whatsapp text-success ms-1" title="Diajukan lewat WhatsApp"></i>
+                                @endif
                                 @if (in_array($a->keterangan, ['s', 'i']) && $a->gambar)
                                     <a href="{{ route('absensi.foto', $a) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1 py-0 px-2">
                                         <i class="fas fa-image"></i>
