@@ -26,6 +26,7 @@
             </div>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th>L/P</th><th style="width:160px">Aksi</th></tr></thead>
             <tbody>
@@ -45,6 +46,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $siswa->onEachSide(1)->links() }}
     </div>
 </div>

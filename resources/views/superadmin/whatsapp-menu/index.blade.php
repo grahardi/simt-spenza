@@ -20,6 +20,7 @@
             terprogram (tidak bisa dihapus, kode & isi balasannya tidak bisa diubah lewat sini), hanya
             label/urutan/aktif-nonaktif yang bisa diedit. Menu bertipe "info" bebas ditambah/diubah/dihapus.
         </p>
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -68,6 +69,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 @endsection

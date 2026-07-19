@@ -8,6 +8,7 @@
         <h3 class="card-title">Log Login</h3>
     </div>
     <div class="card-body">
+        <div class="table-responsive">
         <table class="table table-striped">
             <thead><tr><th style="width:180px">Waktu Login</th><th>Nama</th><th style="width:120px">Nomor ID</th></tr></thead>
             <tbody>
@@ -22,6 +23,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $log->onEachSide(1)->links() }}
     </div>
 </div>

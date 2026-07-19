@@ -9,6 +9,7 @@
         <a href="{{ route('superadmin.kelas.create') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i> Tambah Kelas</a>
     </div>
     <div class="card-body">
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>Nama Kelas</th><th>Kapasitas</th><th style="width:100px">Aksi</th></tr></thead>
             <tbody>
@@ -23,6 +24,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $kelas->onEachSide(1)->links() }}
     </div>
 </div>

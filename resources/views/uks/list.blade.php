@@ -29,6 +29,7 @@
             <i class="far fa-question-circle me-1"></i> Tidak ada data UKS pada {{ $tanggal->translatedFormat('d F Y') }}.
         </div>
     @else
+        <div class="table-responsive">
         <table class="table table-striped mb-0 align-middle">
             <thead>
                 <tr><th>Waktu Masuk</th><th>Nama</th><th>Kelas</th><th>Keterangan Sakit</th><th>Status</th><th></th></tr>
@@ -59,6 +60,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     @endif
 </div>
 

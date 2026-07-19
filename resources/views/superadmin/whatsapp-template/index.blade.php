@@ -16,6 +16,7 @@
             seperti <code>{nama}</code>, <code>{kelas}</code> akan otomatis diganti data asli - jangan dihapus
             kalau masih dipakai.
         </p>
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>Kode</th><th>Kapan Dipakai</th><th style="width:90px">Aksi</th></tr></thead>
             <tbody>
@@ -32,6 +33,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 @endsection

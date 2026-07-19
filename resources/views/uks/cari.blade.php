@@ -42,6 +42,7 @@
                 <i class="far fa-question-circle me-1"></i> Siswa tidak ditemukan.
             </div>
         @else
+            <div class="table-responsive">
             <table class="table table-striped mb-0 align-middle">
                 <thead>
                     <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th></th></tr>
@@ -65,6 +66,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         @endif
     </div>
 

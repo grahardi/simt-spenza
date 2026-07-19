@@ -43,6 +43,7 @@
     @if ($daftarUpload->isEmpty())
         <div class="text-muted small">Belum ada berkas DKN yang diupload untuk kelas ini.</div>
     @else
+        <div class="table-responsive">
         <table class="table table-striped">
             <thead><tr><th>Mapel</th><th>Terakhir Diupload</th><th>File</th></tr></thead>
             <tbody>
@@ -55,6 +56,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     @endif
 </div>
 @endsection

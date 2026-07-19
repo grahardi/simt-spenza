@@ -18,6 +18,7 @@
             @endforeach
         </ul>
 
+        <div class="table-responsive">
         <table class="table table-striped">
             <thead><tr><th style="width:160px">Waktu</th><th style="width:200px">Oleh</th><th>Aktivitas</th></tr></thead>
             <tbody>
@@ -32,6 +33,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $log->onEachSide(1)->links() }}
     </div>
 </div>

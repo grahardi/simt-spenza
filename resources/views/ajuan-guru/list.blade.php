@@ -19,6 +19,7 @@
             <i class="far fa-question-circle me-1"></i> Belum ada laporan kelas kosong.
         </div>
     @else
+        <div class="table-responsive">
         <table class="table table-striped align-middle">
             <thead><tr><th>Tanggal</th><th>Guru</th><th>Kelas</th><th>Jam</th><th>Keterangan</th><th>Status/Alasan</th></tr></thead>
             <tbody>
@@ -40,6 +41,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
         {{ $laporan->onEachSide(1)->links() }}
     @endif
 </div>

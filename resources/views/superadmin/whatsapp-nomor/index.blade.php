@@ -33,6 +33,7 @@
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>No. Induk</th><th>Nama Siswa</th><th>Kelas</th><th>Nomor WhatsApp</th><th>Label</th><th style="width:120px">Aksi</th></tr></thead>
             <tbody>
@@ -59,6 +60,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $nomor->onEachSide(1)->links() }}
     </div>
 </div>

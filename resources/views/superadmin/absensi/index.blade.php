@@ -18,6 +18,7 @@
             </div>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Status</th><th>Keterangan</th><th style="width:160px">Aksi</th></tr></thead>
             <tbody>
@@ -41,6 +42,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $absensi->onEachSide(1)->links() }}
     </div>
 </div>

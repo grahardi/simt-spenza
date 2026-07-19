@@ -15,6 +15,7 @@
             </div>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>Tanggal</th><th>Siswa</th><th>Jenis</th><th>Tindakan</th><th style="width:160px">Aksi</th></tr></thead>
             <tbody>
@@ -37,6 +38,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $bk->onEachSide(1)->links() }}
     </div>
 </div>

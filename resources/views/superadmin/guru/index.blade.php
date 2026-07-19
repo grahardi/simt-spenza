@@ -25,6 +25,7 @@
             </div>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>Nama</th><th>NIP</th><th>Jabatan</th><th>Status</th><th style="width:260px">Aksi</th></tr></thead>
             <tbody>
@@ -57,6 +58,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $guru->onEachSide(1)->links() }}
     </div>
 </div>

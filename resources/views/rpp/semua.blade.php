@@ -15,6 +15,7 @@
     @if ($rpp->isEmpty())
         <div class="text-muted text-center py-4">Belum ada RPP yang diupload.</div>
     @else
+        <div class="table-responsive">
         <table class="table table-striped align-middle">
             <thead><tr><th>Guru</th><th>Bulan</th><th>Tanggal</th><th>File</th><th>Status</th><th></th></tr></thead>
             <tbody>
@@ -43,6 +44,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
 
         {{ $rpp->onEachSide(1)->links() }}
     @endif

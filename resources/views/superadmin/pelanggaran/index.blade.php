@@ -15,6 +15,7 @@
             </div>
         </form>
 
+        <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead><tr><th>Tanggal</th><th>Siswa</th><th>Kategori</th><th>Poin</th><th>Penanganan</th><th style="width:160px">Aksi</th></tr></thead>
             <tbody>
@@ -38,6 +39,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         {{ $pelanggaran->onEachSide(1)->links() }}
     </div>
 </div>

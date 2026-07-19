@@ -38,6 +38,7 @@
     @if ($daftar->isEmpty())
         <div class="text-muted text-center py-3">Belum ada RPP yang diupload.</div>
     @else
+        <div class="table-responsive">
         <table class="table table-striped">
             <thead><tr><th>Bulan</th><th>Tanggal Upload</th><th>Status</th><th>File</th></tr></thead>
             <tbody>
@@ -57,6 +58,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     @endif
 </div>
 @endsection

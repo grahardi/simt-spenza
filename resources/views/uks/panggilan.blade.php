@@ -38,6 +38,7 @@
                 <i class="far fa-question-circle me-1"></i> Siswa tidak ditemukan.
             </div>
         @else
+            <div class="table-responsive">
             <table class="table table-striped mb-0 align-middle">
                 <thead>
                     <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th>Nomor Wali</th><th></th></tr>
@@ -66,6 +67,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         @endif
     </div>
 @endif
@@ -77,6 +79,7 @@
             <i class="far fa-question-circle me-1"></i> Tidak ada siswa di UKS saat ini.
         </div>
     @else
+        <div class="table-responsive">
         <table class="table table-striped mb-0 align-middle">
             <thead>
                 <tr><th>Waktu Masuk</th><th>Nama</th><th>Kelas</th><th>Keterangan</th><th></th></tr>
@@ -101,6 +104,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     @endif
 </div>
 @endsection
