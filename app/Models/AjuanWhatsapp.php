@@ -28,4 +28,12 @@ class AjuanWhatsapp extends Model
     {
         return self::LABEL_JENIS[$this->jenis] ?? $this->jenis;
     }
+
+    /** Label hubungan (Ayah/Ibu/Wali) dari nomor yang mengajukan - kalau terdaftar dengan label. */
+    public function labelPengaju(): ?string
+    {
+        return SiswaWhatsapp::where('id_siswa', $this->id_siswa)
+            ->where('nomor', $this->nomor_wa)
+            ->value('label');
+    }
 }

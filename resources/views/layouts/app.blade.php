@@ -106,6 +106,18 @@
         }
         .siswa-nama { font-weight: 600; font-size: 14px; }
 
+        /* Kartu Ajuan WhatsApp - pisahkan area info dari area tombol supaya
+           tombol tidak ikut kena style teks polos */
+        .ajuan-wa-card {
+            display: flex; flex-direction: column; gap: 8px;
+            padding: 16px 0;
+        }
+        @media (min-width: 768px) {
+            .ajuan-wa-card { flex-direction: row; align-items: flex-start; justify-content: space-between; }
+            .ajuan-wa-info { flex: 1; }
+        }
+        .ajuan-wa-aksi { display: flex; gap: 8px; flex-shrink: 0; }
+
         /* Foto profil siswa kecil di hasil pencarian (Isi Absensi, dll) */
         .foto-siswa-kecil {
             width: 40px; height: 40px; border-radius: 50%;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\WhatsappLog;
 use App\Services\WhatsappConversationService;
 use App\Services\WhatsappMetaService;
 use Illuminate\Http\Request;
@@ -37,6 +38,10 @@ class WhatsappMetaWebhookController extends Controller
      * Terima pesan masuk dari Meta. Beda dari Baileys: balasannya TIDAK
      * dikembalikan lewat response body (Meta cuma butuh 200 OK), tapi
      * harus dikirim AKTIF lewat WhatsappMetaService::kirimPesan().
+     *
+     * PENTING: Meta bisa mengirim ULANG event webhook yang sama kalau
+     * server kita telat/timeout membalas 200 - tanpa pengecekan wamid,
+     * ini bisa bikin 1 pesan diproses & dibalas berkali-kali (loop).
      */
     public function masuk(Request $request, WhatsappConversationService $percakapan, WhatsappMetaService $metaBot)
     {
@@ -45,6 +50,14 @@ class WhatsappMetaWebhookController extends Controller
         // Bisa juga webhook status update (delivered/read) yang tidak ada
         // 'messages', cuma 'statuses' - abaikan saja, bukan pesan masuk.
         if (!$pesan) {
+            return response()->json(['status' => 'ok']);
+        }
+
+        $wamid = $pesan['id'] ?? null;
+
+        if (WhatsappLog::sudahDiproses($wamid)) {
+            Log::info('Webhook WhatsApp Meta: pesan '.$wamid.' sudah pernah diproses, dilewati (cegah duplikat/retry).');
+
             return response()->json(['status' => 'ok']);
         }
 
@@ -61,6 +74,8 @@ class WhatsappMetaWebhookController extends Controller
 
             return response()->json(['status' => 'ok']);
         }
+
+        WhatsappLog::catat($nomor, 'masuk', $teks !== '' ? $teks : '[gambar]', 'meta', $wamid);
 
         $balasan = $percakapan->balas($nomor, $teks, $gambarBase64);
 

@@ -43,6 +43,8 @@ class WhatsappMetaService
                 Log::warning('WhatsappMetaService gagal kirim pesan: '.$respon->body());
             }
 
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', $pesan, 'meta');
+
             return $respon->successful();
         } catch (\Throwable $e) {
             Log::warning('WhatsappMetaService gagal kirim pesan: '.$e->getMessage());

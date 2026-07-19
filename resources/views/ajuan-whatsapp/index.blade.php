@@ -12,9 +12,9 @@
 @endif
 
 <div class="d-flex gap-2 mb-3">
-    <a href="{{ route('ajuan-whatsapp.index', ['status' => 'menunggu']) }}" class="tab-tahun {{ $status === 'menunggu' ? 'active' : '' }}">Menunggu</a>
-    <a href="{{ route('ajuan-whatsapp.index', ['status' => 'disetujui']) }}" class="tab-tahun {{ $status === 'disetujui' ? 'active' : '' }}">Disetujui</a>
-    <a href="{{ route('ajuan-whatsapp.index', ['status' => 'ditolak']) }}" class="tab-tahun {{ $status === 'ditolak' ? 'active' : '' }}">Ditolak</a>
+    <a href="{{ route('ajuan-whatsapp.index', ['status' => 'menunggu']) }}" class="tab-tahun {{ $status === 'menunggu' ? 'active' : '' }}" style="text-decoration:none; display:inline-block;">Menunggu</a>
+    <a href="{{ route('ajuan-whatsapp.index', ['status' => 'disetujui']) }}" class="tab-tahun {{ $status === 'disetujui' ? 'active' : '' }}" style="text-decoration:none; display:inline-block;">Disetujui</a>
+    <a href="{{ route('ajuan-whatsapp.index', ['status' => 'ditolak']) }}" class="tab-tahun {{ $status === 'ditolak' ? 'active' : '' }}" style="text-decoration:none; display:inline-block;">Ditolak</a>
 </div>
 
 <div class="p-4 bg-white rounded shadow">
@@ -24,25 +24,37 @@
         </div>
     @else
         @foreach ($ajuan as $a)
-            <div class="siswa-row-ringkas {{ !$loop->last ? 'border-bottom' : '' }}">
-                <div class="siswa-nama">
-                    {{ $a->siswa->nama_lengkap ?? '-' }}
-                    <div class="text-muted" style="font-size:11px">
-                        Kelas {{ $a->siswa->kelas ?? '-' }} &middot; {{ $a->created_at->translatedFormat('d F Y H:i') }} &middot; dari WA {{ $a->nomor_wa }}
+            <div class="ajuan-wa-card {{ !$loop->last ? 'border-bottom' : '' }}">
+                <div class="ajuan-wa-info">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <strong class="text-uppercase">{{ $a->siswa->nama_lengkap ?? '-' }}</strong>
+                        <span class="badge-status badge-{{ $a->jenis }}">{{ $a->labelJenis() }}</span>
                     </div>
-                    <span class="badge-status badge-{{ $a->jenis }} mt-1">{{ $a->labelJenis() }}</span>
-                    <a href="{{ Storage::url($a->foto_surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">
-                        <i class="fas fa-image me-1"></i> Lihat Surat
-                    </a>
-                    @if ($a->foto_selfie)
-                        <a href="{{ Storage::url($a->foto_selfie) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">
-                            <i class="fas fa-user me-1"></i> Lihat Selfie Wali
+                    <div class="text-muted small mt-1">
+                        Kelas {{ $a->siswa->kelas ?? '-' }} &middot; {{ $a->created_at->translatedFormat('d F Y H:i') }}
+                    </div>
+                    <div class="text-muted small">
+                        <i class="fab fa-whatsapp me-1"></i> Diajukan dari nomor <strong>{{ $a->nomor_wa }}</strong>
+                        @if ($a->labelPengaju())
+                            <span class="badge bg-secondary">{{ $a->labelPengaju() }}</span>
+                        @endif
+                        <span class="fst-italic">- notifikasi ACC/Tolak akan dikirim balik ke nomor ini juga</span>
+                    </div>
+
+                    <div class="mt-2 d-flex flex-wrap gap-2">
+                        <a href="{{ Storage::url($a->foto_surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-image me-1"></i> Lihat Surat
                         </a>
-                    @endif
+                        @if ($a->foto_selfie)
+                            <a href="{{ Storage::url($a->foto_selfie) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-user me-1"></i> Lihat Selfie Wali
+                            </a>
+                        @endif
+                    </div>
                 </div>
 
                 @if ($status === 'menunggu')
-                    <div class="siswa-aksi">
+                    <div class="ajuan-wa-aksi mt-2 mt-md-0">
                         <form method="POST" action="{{ route('ajuan-whatsapp.acc', $a) }}" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i> ACC</button>

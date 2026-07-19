@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\WhatsappLog;
 use App\Services\WhatsappConversationService;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,11 @@ class WhatsappWebhookController extends Controller
         $teks = trim((string) $request->input('teks'));
         $gambarBase64 = $request->input('gambar_base64');
 
+        WhatsappLog::catat($nomor, 'masuk', $teks !== '' ? $teks : '[gambar]', 'baileys');
+
         $balasan = $percakapan->balas($nomor, $teks, $gambarBase64);
+
+        WhatsappLog::catat($nomor, 'keluar', $balasan, 'baileys');
 
         return response()->json(['balasan' => $balasan]);
     }
