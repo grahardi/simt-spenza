@@ -26,6 +26,13 @@ class MemberLoginController extends Controller
         ]);
 
         if (!Auth::guard('member')->attempt($credentials, $request->boolean('remember'))) {
+            \App\Models\LogAktivitas::create([
+                'id_member' => null,
+                'kategori' => 'login',
+                'aksi' => 'Percobaan login GAGAL - Nomor ID "'.$credentials['user'].'" atau password salah.',
+                'created_at' => now(),
+            ]);
+
             throw ValidationException::withMessages([
                 'user' => 'Nomor ID atau password salah.',
             ]);

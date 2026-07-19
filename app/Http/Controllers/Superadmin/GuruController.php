@@ -113,6 +113,8 @@ class GuruController extends Controller
         $member = Member::where('id_guru', $guru->id_guru)->firstOrFail();
         $member->update(['password' => Hash::make($data['password_baru']), 'wajib_ganti_password' => true]);
 
+        \App\Models\LogAktivitas::catat('password', 'Superadmin mereset password akun guru '.$guru->nama.'.');
+
         return back()->with('status', 'Password berhasil direset.');
     }
 

@@ -17,7 +17,7 @@ class LogAktivitas extends Model
         'created_at' => 'datetime',
     ];
 
-    const KATEGORI = ['absensi', 'pelanggaran', 'keterlambatan', 'login', 'sistem', 'lainnya'];
+    const KATEGORI = ['absensi', 'pelanggaran', 'keterlambatan', 'login', 'password', 'sistem', 'lainnya'];
 
     public function member(): BelongsTo
     {

@@ -28,6 +28,8 @@ class GantiPasswordController extends Controller
             'wajib_ganti_password' => false,
         ]);
 
+        \App\Models\LogAktivitas::catat('password', $member->nama.' ('.$member->user.') mengganti password sendiri.');
+
         return redirect()->route('dashboard')->with('status', 'Password berhasil diganti.');
     }
 }

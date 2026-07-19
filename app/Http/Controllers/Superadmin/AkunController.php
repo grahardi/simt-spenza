@@ -119,6 +119,8 @@ class AkunController extends Controller
 
         $akun->update(['password' => Hash::make($data['password_baru']), 'wajib_ganti_password' => true]);
 
+        \App\Models\LogAktivitas::catat('password', 'Superadmin mereset password akun '.$akun->nama.' ('.$akun->user.').');
+
         return back()->with('status', 'Password berhasil direset.');
     }
 }

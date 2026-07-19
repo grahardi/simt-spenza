@@ -9,7 +9,7 @@
     </div>
     <div class="card-body">
         <ul class="nav nav-tabs mb-3">
-            @foreach (['absensi' => 'Absensi', 'pelanggaran' => 'Pelanggaran', 'keterlambatan' => 'Keterlambatan', 'sistem' => 'Sistem', 'lainnya' => 'Lainnya'] as $k => $label)
+            @foreach (['absensi' => 'Absensi', 'pelanggaran' => 'Pelanggaran', 'keterlambatan' => 'Keterlambatan', 'password' => 'Password', 'sistem' => 'Sistem', 'lainnya' => 'Lainnya'] as $k => $label)
                 <li class="nav-item">
                     <a href="{{ route('superadmin.log.index', ['kategori' => $k]) }}" class="nav-link {{ $kategori === $k ? 'active' : '' }}">
                         {{ $label }} <span class="badge badge-secondary">{{ $jumlahPerKategori[$k] ?? 0 }}</span>
