@@ -30,18 +30,6 @@ class WhatsappNomorController extends Controller
         return view('superadmin.whatsapp-nomor.index', compact('nomor', 'daftarKelas'));
     }
 
-    /** Hapus massal SEMUA nomor WA untuk 1 kelas sekaligus - dipakai kalau perlu bersihkan data uji coba. */
-    public function hapusMassalKelas(Request $request)
-    {
-        $data = $request->validate(['kelas' => ['required', 'string']]);
-
-        $jumlah = SiswaWhatsapp::whereHas('siswa', fn ($q) => $q->where('kelas', $data['kelas']))->count();
-        SiswaWhatsapp::whereHas('siswa', fn ($q) => $q->where('kelas', $data['kelas']))->delete();
-
-        return redirect()->route('superadmin.whatsapp-nomor.index')
-            ->with('status', $jumlah.' nomor WhatsApp untuk kelas '.$data['kelas'].' berhasil dihapus.');
-    }
-
     /**
      * Export semua nomor jadi file vCard (.vcf) - untuk di-import manual ke
      * kontak HP yang dipakai bot (Baileys tidak bisa simpan kontak otomatis,
