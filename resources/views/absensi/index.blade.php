@@ -110,32 +110,46 @@
                                     @php $nomorWali = $a->siswa->nomorWhatsapp; @endphp
                                     @if ($nomorWali->isEmpty())
                                         <span class="text-muted small d-block">Wali belum registrasi WA</span>
-                                    @elseif ($nomorWali->count() === 1)
-                                        <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="d-inline mt-1">
-                                            @csrf
-                                            <input type="hidden" name="nomor" value="{{ $nomorWali->first()->nomor }}">
-                                            <button type="submit" class="btn btn-sm btn-success">
-                                                <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
-                                            </button>
-                                        </form>
+                                    @elseif (!$a->status_wa)
+                                        @if ($nomorWali->count() === 1)
+                                            <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="d-inline mt-1">
+                                                @csrf
+                                                <input type="hidden" name="nomor" value="{{ $nomorWali->first()->nomor }}">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
+                                                </button>
+                                            </form>
+                                        @else
+                                            <div class="dropdown d-inline-block mt-1">
+                                                <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @foreach ($nomorWali as $nw)
+                                                        <li>
+                                                            <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="px-2">
+                                                                @csrf
+                                                                <input type="hidden" name="nomor" value="{{ $nw->nomor }}">
+                                                                <button type="submit" class="dropdown-item">
+                                                                    {{ $nw->nomor }}{{ $nw->label ? ' ('.$nw->label.')' : '' }}
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
                                     @else
-                                        <div class="dropdown d-inline-block mt-1">
-                                            <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                <i class="fab fa-whatsapp me-1"></i> WA Wali Murid
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                @foreach ($nomorWali as $nw)
-                                                    <li>
-                                                        <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="px-2">
-                                                            @csrf
-                                                            <input type="hidden" name="nomor" value="{{ $nw->nomor }}">
-                                                            <button type="submit" class="dropdown-item">
-                                                                {{ $nw->nomor }}{{ $nw->label ? ' ('.$nw->label.')' : '' }}
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
+                                        <div class="mt-1 small">
+                                            <i class="fab fa-whatsapp text-success me-1"></i> Sudah kirim WhatsApp
+                                            <div class="text-muted">
+                                                Keterangan:
+                                                @if ($a->status_wa === 'dibalas')
+                                                    <span class="text-dark">{{ $a->tambahan }}</span>
+                                                @else
+                                                    <span class="fst-italic">Belum</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endif
                                 @endif

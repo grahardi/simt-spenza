@@ -71,16 +71,23 @@ class WhatsappConversationService
             ->first();
 
         if (!$item) {
-            return $this->teksMenu();
+            $balasanAlfa = $this->cekBalasanKonfirmasiAlfa($nomor, $teks);
+
+            return $balasanAlfa ?? $this->teksMenu();
         }
 
         if ($item->kode === 'registrasi') {
+            $sudahTerdaftar = $this->infoSudahTerdaftar($nomor);
+
+            if ($sudahTerdaftar) {
+                // Sudah terdaftar - tidak perlu lanjut minta Nomor Induk lagi,
+                // cukup arahkan ke perintah yang relevan. Sesi TETAP di 'menu'.
+                return $sudahTerdaftar."\n\nSilakan ketik *absen* atau *info* saja.";
+            }
+
             $sesi->update(['langkah' => 'registrasi_input_induk']);
 
-            $sudahTerdaftar = $this->infoSudahTerdaftar($nomor);
-            $prompt = WhatsappTemplate::get('registrasi_prompt');
-
-            return $sudahTerdaftar ? $sudahTerdaftar."\n\n".$prompt : $prompt;
+            return WhatsappTemplate::get('registrasi_prompt');
         }
 
         if ($item->kode === 'absen') {
@@ -210,7 +217,32 @@ class WhatsappConversationService
         return "\xE2\x84\xB9\xEF\xB8\x8F Nomor ini sudah terdaftar atas nama: *{$daftarNama}*.";
     }
 
-    private function mulaiAbsen(WhatsappSesi $sesi, string $nomor): string
+    /**
+     * Kalau nomor ini terhubung ke siswa yang absen_siswa-nya sedang
+     * berstatus 'terkirim' (piket sudah klik WA Wali Murid, belum dibalas),
+     * anggap pesan bebas apapun yang masuk sebagai balasan konfirmasi -
+     * simpan ke kolom `tambahan` (dipakai sebagai keterangan di sistem),
+     * ubah status jadi 'dibalas', balas dengan ucapan terima kasih.
+     */
+    private function cekBalasanKonfirmasiAlfa(string $nomor, string $teksAsli): ?string
+    {
+        $sepuluhDigit = substr($nomor, -10);
+
+        $absen = AbsenSiswa::whereHas('siswa.nomorWhatsapp', function ($q) use ($sepuluhDigit) {
+            $q->where('nomor', 'like', '%'.$sepuluhDigit);
+        })
+            ->where('status_wa', 'terkirim')
+            ->whereDate('tgl_absen', now())
+            ->first();
+
+        if (!$absen) {
+            return null;
+        }
+
+        $absen->update(['status_wa' => 'dibalas', 'tambahan' => trim($teksAsli)]);
+
+        return "Terima kasih atas konfirmasinya \xF0\x9F\x99\x8F Balasan Bapak/Ibu sudah kami catat.";
+    }
     {
         $sepuluhDigit = substr($nomor, -10);
         $daftarSiswa = Siswa::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {

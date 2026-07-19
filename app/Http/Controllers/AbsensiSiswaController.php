@@ -159,6 +159,8 @@ class AbsensiSiswaController extends Controller
         $terkirim = $bot->kirimPesan($data['nomor'], $pesan);
 
         if ($terkirim) {
+            $absen->update(['status_wa' => 'terkirim']);
+
             \App\Models\LogAktivitas::catat(
                 'absensi',
                 (\Illuminate\Support\Facades\Auth::guard('member')->user()->nama ?? 'Seseorang').' kirim WA notifikasi Alfa untuk '.$absen->siswa->nama_lengkap.' ke '.$data['nomor'].'.'
