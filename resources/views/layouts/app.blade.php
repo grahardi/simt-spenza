@@ -287,6 +287,17 @@
         </div>
     </header>
 
+    @if (session('impersonator_id'))
+        <div class="bg-warning text-dark text-center py-2 small fw-semibold d-flex align-items-center justify-content-center gap-2">
+            <i class="fas fa-user-secret"></i>
+            Anda sedang login sebagai <strong>{{ auth('member')->user()->nama }}</strong> (mode simulasi Superadmin)
+            <form method="POST" action="{{ route('kembali-ke-superadmin') }}" class="d-inline ms-2">
+                @csrf
+                <button type="submit" class="btn btn-dark btn-sm py-0 px-2">Kembali ke Superadmin</button>
+            </form>
+        </div>
+    @endif
+
     <main class="container py-3">
         @yield('content')
     </main>

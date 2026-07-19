@@ -77,6 +77,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::get('/ganti-password', [GantiPasswordController::class, 'form'])->name('ganti-password');
     Route::post('/ganti-password', [GantiPasswordController::class, 'simpan'])->name('ganti-password.simpan');
 
+    Route::post('/kembali-ke-superadmin', [\App\Http\Controllers\Superadmin\AkunController::class, 'kembaliKeSuperadmin'])->name('kembali-ke-superadmin');
+
     Route::get('/', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -192,6 +194,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/akun/{akun}/edit', [SuperadminAkunController::class, 'edit'])->name('akun.edit');
         Route::put('/akun/{akun}', [SuperadminAkunController::class, 'update'])->name('akun.update');
         Route::post('/akun/{akun}/reset-password', [SuperadminAkunController::class, 'resetPassword'])->name('akun.reset-password');
+        Route::post('/akun/{akun}/login-sebagai', [SuperadminAkunController::class, 'loginSebagai'])->name('akun.login-sebagai');
 
         Route::get('/guru', [SuperadminGuruController::class, 'index'])->name('guru.index');
         Route::get('/guru/tambah', [SuperadminGuruController::class, 'create'])->name('guru.create');

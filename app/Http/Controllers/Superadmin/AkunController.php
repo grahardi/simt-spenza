@@ -27,6 +27,39 @@ class AkunController extends Controller
         return view('superadmin.akun.index', compact('akun'));
     }
 
+    /**
+     * "Login As" - masuk sebagai akun ini tanpa perlu tahu password-nya.
+     * ID superadmin asli disimpan di session supaya bisa kembali lagi nanti.
+     */
+    public function loginSebagai(Member $member)
+    {
+        $superadminAsli = \Illuminate\Support\Facades\Auth::guard('member')->id();
+
+        if ($member->id === $superadminAsli) {
+            return back()->with('status', 'Ini akun Anda sendiri.');
+        }
+
+        session(['impersonator_id' => $superadminAsli]);
+        \Illuminate\Support\Facades\Auth::guard('member')->login($member);
+
+        return redirect()->route('dashboard')->with('status', 'Sekarang login sebagai '.$member->nama.'. Klik "Kembali ke Superadmin" di pojok atas kapan saja untuk keluar.');
+    }
+
+    /** Kembali ke akun superadmin asli setelah selesai "Login As". */
+    public function kembaliKeSuperadmin()
+    {
+        $superadminAsli = session('impersonator_id');
+
+        if (!$superadminAsli) {
+            return redirect()->route('dashboard');
+        }
+
+        session()->forget('impersonator_id');
+        \Illuminate\Support\Facades\Auth::guard('member')->loginUsingId($superadminAsli);
+
+        return redirect()->route('superadmin.akun.index')->with('status', 'Kembali ke akun Superadmin.');
+    }
+
     public function create()
     {
         $daftarGuru = Guru::orderBy('nama')->get();

@@ -33,7 +33,14 @@
                                 <span class="text-muted">-</span>
                             @endforelse
                         </td>
-                        <td><a href="{{ route('superadmin.akun.edit', $a) }}" class="btn btn-xs btn-outline-info"><i class="fas fa-user-shield"></i> Kelola</a></td>
+                        <td>
+                            <a href="{{ route('superadmin.akun.edit', $a) }}" class="btn btn-xs btn-outline-info"><i class="fas fa-user-shield"></i> Kelola</a>
+                            <form action="{{ route('superadmin.akun.login-sebagai', $a) }}" method="POST" class="d-inline"
+                                  onsubmit="return confirm('Login sebagai {{ $a->nama }}?')">
+                                @csrf
+                                <button type="submit" class="btn btn-xs btn-outline-warning"><i class="fas fa-user-secret"></i> Login Sebagai</button>
+                            </form>
+                        </td>
                     </tr>
                 @empty
                     <tr><td colspan="5" class="text-center text-muted">Belum ada akun.</td></tr>
