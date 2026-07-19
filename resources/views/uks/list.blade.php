@@ -50,25 +50,9 @@
                         </td>
                         <td class="text-end">
                             @if ($d->status === 'di_uks')
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        Penanganan
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        @foreach (['kembali_kelas' => 'Kembali ke Kelas', 'pulang_dijemput' => 'Pulang Dijemput', 'puskesmas' => 'Puskesmas', 'lainnya' => 'Lainnya'] as $kode => $label)
-                                            <li>
-                                                <form method="POST" action="{{ route('uks.penanganan', $d) }}" class="px-2 {{ $kode === 'lainnya' ? '' : 'pb-1' }}">
-                                                    @csrf
-                                                    <input type="hidden" name="status" value="{{ $kode }}">
-                                                    @if ($kode === 'lainnya')
-                                                        <input type="text" name="keterangan_penanganan" class="form-control form-control-sm mb-1" placeholder="Keterangan...">
-                                                    @endif
-                                                    <button type="submit" class="dropdown-item ps-0">{{ $label }}</button>
-                                                </form>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalPenanganan{{ $d->id }}">
+                                    <i class="fas fa-clipboard-check me-1"></i> Penanganan
+                                </button>
                             @endif
                         </td>
                     </tr>
@@ -77,4 +61,38 @@
         </table>
     @endif
 </div>
+
+@foreach ($daftar as $d)
+    @if ($d->status === 'di_uks')
+        <div class="modal fade" id="modalPenanganan{{ $d->id }}" tabindex="-1">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ route('uks.penanganan', $d) }}" class="modal-content">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Penanganan - {{ $d->siswa->nama_lengkap ?? '-' }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Pilih Penanganan</label>
+                        <select name="status" class="form-select mb-3" required>
+                            <option value="">- Pilih -</option>
+                            <option value="kembali_kelas">Kembali ke Kelas</option>
+                            <option value="pulang_dijemput">Pulang Dijemput</option>
+                            <option value="puskesmas">Puskesmas</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                        <label class="form-label">Keterangan (opsional)</label>
+                        <input type="text" name="keterangan_penanganan" class="form-control" placeholder="contoh: dijemput ibu jam 08.15">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+@endforeach
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
