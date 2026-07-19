@@ -32,12 +32,13 @@
         <div class="table-responsive">
         <table class="table table-striped mb-0 align-middle">
             <thead>
-                <tr><th>Waktu Masuk</th><th>Nama</th><th>Kelas</th><th>Keterangan Sakit</th><th>Status</th><th></th></tr>
+                <tr><th>Waktu Masuk</th><th>Waktu Keluar</th><th>Nama</th><th>Kelas</th><th>Keterangan Sakit</th><th>Status</th><th></th></tr>
             </thead>
             <tbody>
                 @foreach ($daftar as $d)
                     <tr>
                         <td>{{ $d->waktu_masuk->format('H:i') }}</td>
+                        <td>{{ $d->waktu_selesai?->format('H:i') ?? '-' }}</td>
                         <td>{{ $d->siswa->nama_lengkap ?? '-' }}</td>
                         <td>{{ $d->siswa->kelas ?? '-' }}</td>
                         <td>{{ $d->keterangan_sakit ?: '-' }}</td>
@@ -84,7 +85,8 @@
                             <option value="lainnya">Lainnya</option>
                         </select>
                         <label class="form-label">Keterangan (opsional)</label>
-                        <input type="text" name="keterangan_penanganan" class="form-control" placeholder="contoh: dijemput ibu jam 08.15">
+                        <input type="text" name="keterangan_penanganan" class="form-control" placeholder="contoh: dijemput Ayah, sudah membaik">
+                        <small class="text-muted">Waktu keluar tercatat otomatis - tidak perlu ditulis manual di sini.</small>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
