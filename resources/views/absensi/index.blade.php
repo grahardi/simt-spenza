@@ -140,16 +140,8 @@
                                             </div>
                                         @endif
                                     @else
-                                        <div class="mt-1 small">
-                                            <i class="fab fa-whatsapp text-success me-1"></i> Sudah kirim WhatsApp
-                                            <div class="text-muted">
-                                                Keterangan:
-                                                @if ($a->status_wa === 'dibalas')
-                                                    <span class="text-dark">{{ $a->tambahan }}</span>
-                                                @else
-                                                    <span class="fst-italic">Belum</span>
-                                                @endif
-                                            </div>
+                                        <div class="mt-1 small text-success">
+                                            <i class="fab fa-whatsapp me-1"></i> Sudah kirim WhatsApp
                                         </div>
                                     @endif
                                 @endif
