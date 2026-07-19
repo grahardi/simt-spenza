@@ -60,8 +60,10 @@ class WhatsappConversationService
             return WhatsappTemplate::get('registrasi_guru_prompt');
         }
 
-        if ($pilihan === 'jadwal') {
-            return $this->jadwalMengajarHariIni($nomor);
+        if ($pilihan === 'jadwal' || str_starts_with($pilihan, 'jadwal ')) {
+            $namaHari = trim(substr($pilihan, 6)); // kosong = hari ini, atau nama hari (senin/selasa/dst)
+
+            return $this->jadwalMengajar($nomor, $namaHari);
         }
 
         $item = WhatsappMenu::where('aktif', true)
@@ -85,7 +87,12 @@ class WhatsappConversationService
         return $item->balasan ?? $this->teksMenu();
     }
 
-    private function jadwalMengajarHariIni(string $nomor): string
+    /**
+     * $namaHari kosong = jadwal hari ini. Kalau diisi (misal "senin"),
+     * dicocokkan ke SENIN/SELASA/dst di database - huruf besar/kecil dan
+     * spasi ekstra diabaikan, jadi "Senin", "senin", " SENIN " semua cocok.
+     */
+    private function jadwalMengajar(string $nomor, string $namaHari = ''): string
     {
         $sepuluhDigit = substr($nomor, -10);
         $guru = Guru::whereHas('nomorWhatsapp', function ($q) use ($sepuluhDigit) {
@@ -96,7 +103,16 @@ class WhatsappConversationService
             return WhatsappTemplate::get('jadwal_guru_belum_registrasi');
         }
 
-        $hari = Member::namaHariJakartaHuruBesar();
+        $hariValid = ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU', 'MINGGU'];
+
+        if ($namaHari === '') {
+            $hari = Member::namaHariJakartaHuruBesar();
+        } else {
+            $hari = strtoupper(trim($namaHari));
+            if (!in_array($hari, $hariValid, true)) {
+                return "Nama hari *\"{$namaHari}\"* tidak dikenali. Ketik salah satu: jadwal senin, jadwal selasa, jadwal rabu, jadwal kamis, atau jadwal jumat (atau *jadwal* saja untuk hari ini).";
+            }
+        }
 
         $jadwal = \App\Models\DataJadwal::where('kodeguru', $guru->id_guru)
             ->where('hari', $hari)
