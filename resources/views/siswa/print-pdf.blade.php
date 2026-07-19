@@ -5,8 +5,6 @@
     <style>
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 12px; color: #222; }
         .kop { text-align: center; margin-bottom: 4px; }
-        .kop h2 { margin: 0; font-size: 16px; }
-        .kop p { margin: 2px 0; font-size: 11px; }
         hr { border: none; border-top: 2px solid #333; margin: 8px 0 16px; }
         h3 { text-align: center; margin: 0 0 16px; font-size: 14px; text-decoration: underline; }
         table { width: 100%; border-collapse: collapse; }
@@ -18,8 +16,7 @@
 </head>
 <body>
     <div class="kop">
-        <h2>SMP NEGERI 1 TUREN</h2>
-        <p>Jl. ... Turen, Kabupaten Malang, Jawa Timur</p>
+        <img src="{{ storage_path('app/public/gambar/header.png') }}" style="width:100%;max-height:120px;object-fit:contain;">
     </div>
     <hr>
     <h3>DAFTAR NAMA SISWA KELAS {{ $kelas }}</h3>
@@ -29,6 +26,7 @@
             <tr>
                 <th class="center" style="width:30px;">No</th>
                 <th style="width:90px;">No. Induk</th>
+                <th style="width:100px;">NISN</th>
                 <th>Nama Lengkap</th>
                 <th class="center" style="width:50px;">L/P</th>
             </tr>
@@ -38,11 +36,12 @@
                 <tr>
                     <td class="center">{{ $i + 1 }}</td>
                     <td>{{ $s->id_member }}</td>
+                    <td>{{ $s->nisn }}</td>
                     <td>{{ $s->nama_lengkap }}</td>
                     <td class="center">{{ $s->jenis_kelamin }}</td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="center">Belum ada siswa di kelas ini.</td></tr>
+                <tr><td colspan="5" class="center">Belum ada siswa di kelas ini.</td></tr>
             @endforelse
         </tbody>
     </table>
