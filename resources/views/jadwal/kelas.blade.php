@@ -34,8 +34,16 @@
             </h3>
 
             <div class="d-flex flex-column gap-2 mb-2">
-                @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $i => $j)
-                    @php $warna = $palet[$i % count($palet)]; @endphp
+                @php $warnaIndex = -1; $kunciSebelumnya = null; @endphp
+                @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $j)
+                    @php
+                        $kunciSekarang = $j->kodeguru.'|'.$j->mapel;
+                        if ($kunciSekarang !== $kunciSebelumnya) {
+                            $warnaIndex++;
+                        }
+                        $kunciSebelumnya = $kunciSekarang;
+                        $warna = $palet[$warnaIndex % count($palet)];
+                    @endphp
                     <div class="jadwal-baris bg-{{ $warna }}">
                         <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
                         <span class="jadwal-waktu-kecil">{{ $j->waktu ?? '-' }}</span>
