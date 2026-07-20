@@ -59,7 +59,7 @@ class SuratTuguController extends Controller
             'totalhari' => (string) ($data['total_hari'] ?? 1),
         ];
 
-        $namaFile = 'sppd-'.$ajuanSurat->id.'-'.now()->format('Ymd').'.docx';
+        $namaFile = $this->namaFileSurat($guru, $data);
         \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('ajuan-surat');
         $outputPath = storage_path('app/public/ajuan-surat/'.$namaFile);
 
@@ -82,5 +82,22 @@ class SuratTuguController extends Controller
         ]);
 
         return redirect()->route('surat-tu.index')->with('status', 'Surat berhasil dibuat untuk '.($guru->nama ?? '-').' (format .docx, siap dicetak/diubah PDF manual).');
+    }
+
+    /**
+     * Nama file: sppd_{panggilan}_{judul}_{tanggal}.docx - "panggilan" dari
+     * member.panggilan, "judul" dari tema kegiatan. Karakter yang tidak aman
+     * untuk nama file (spasi, slash, dll) diganti garis bawah.
+     */
+    private function namaFileSurat($guru, array $data): string
+    {
+        $member = $guru->member;
+        $panggilan = $member->panggilan ?: $guru->nama;
+        $judul = $data['tema'] ?? 'sppd';
+        $tanggal = \Carbon\Carbon::parse($data['tanggal'] ?? now())->format('Ymd');
+
+        $bersihkan = fn ($teks) => trim(preg_replace('/[^A-Za-z0-9]+/', '_', $teks), '_');
+
+        return 'sppd_'.$bersihkan($panggilan).'_'.$bersihkan($judul).'_'.$tanggal.'.docx';
     }
 }
