@@ -21,7 +21,6 @@
                 ['label' => 'Guru Wali', 'icon' => 'fas fa-user-friends', 'color' => 'purple', 'href' => route('guru.wali-siswa')],
                 ['label' => 'Ajuan Surat', 'icon' => 'fas fa-file-signature', 'color' => 'red', 'href' => route('ajuan-surat.index')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
-                ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.upload')],
                 ['label' => 'Peminjaman', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],
                 ['label' => 'Daftar Nama Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'teal', 'href' => route('siswa.index')],
                 ['label' => 'Foto Siswa', 'icon' => 'fas fa-images', 'color' => 'pink', 'href' => route('foto-siswa.pilih-kelas')],
