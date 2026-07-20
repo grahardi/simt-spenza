@@ -60,7 +60,7 @@ class DocxMergeService
                 $akhirTagIni = $offsetIsi + strlen($isi) + strlen('</w:t>');
                 $celah = substr($xml, $akhirTagIni, max(0, $isiList[$i + 1][1] - $akhirTagIni));
                 $isiNext = $isiList[$i + 1][0];
-                if (preg_match('/^<\/w:r><w:r[^>]*>(<w:rPr>.*?<\/w:rPr>)?$/s', $celah) && preg_match('/^[a-zA-Z]+$/', $isiNext)) {
+                if (preg_match('/^<\/w:r><w:r[^>]*>(<w:rPr>.*?<\/w:rPr>)?<w:t[^>]*>$/s', $celah) && preg_match('/^[a-zA-Z]+$/', $isiNext)) {
                     $penggantian[] = [$offsetIsi, strlen($isi), $isi.$isiNext];
                     $penggantian[] = [$isiList[$i + 1][1], strlen($isiNext), ''];
                     $lewati = true;
