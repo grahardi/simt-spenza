@@ -76,4 +76,66 @@ class AjuanSuratController extends Controller
 
         return redirect()->route('ajuan-surat.index')->with('status', 'Ajuan SPPD berhasil dikirim, menunggu diproses Tata Usaha.');
     }
+
+    /**
+     * Cek boleh edit atau tidak - guru pemilik ajuan ATAU staf Tata Usaha/Kepsek,
+     * dan CUMA kalau statusnya belum "selesai" (surat belum di-generate).
+     */
+    private function bolehEdit(AjuanSurat $ajuan): bool
+    {
+        if ($ajuan->status === 'selesai') {
+            return false;
+        }
+
+        $member = Auth::guard('member')->user();
+
+        if ($member->hasRole('tata_usaha') || $member->hasRole('kepsek') || $member->hasRole('admin')) {
+            return true;
+        }
+
+        return $member->dataGuru && $member->dataGuru->id_guru === $ajuan->id_guru;
+    }
+
+    public function editSppd(AjuanSurat $ajuanSurat)
+    {
+        abort_unless($this->bolehEdit($ajuanSurat), 403, 'Surat ini sudah dibuat / bukan milik Anda - tidak bisa diedit lagi.');
+
+        return view('ajuan-surat.form-sppd', ['guru' => $ajuanSurat->guru, 'ajuan' => $ajuanSurat]);
+    }
+
+    public function updateSppd(Request $request, AjuanSurat $ajuanSurat)
+    {
+        abort_unless($this->bolehEdit($ajuanSurat), 403, 'Surat ini sudah dibuat / bukan milik Anda - tidak bisa diedit lagi.');
+
+        $data = $request->validate([
+            'isian_form' => ['required', 'string', 'max:300'],
+            'tanggal_dasar' => ['nullable', 'date'],
+            'nomor_surat_dasar' => ['nullable', 'string', 'max:100'],
+            'tanggal' => ['required', 'date'],
+            'tanggal_selesai' => ['nullable', 'date'],
+            'jam_mulai' => ['required', 'string', 'max:10'],
+            'jam_selesai' => ['nullable', 'string', 'max:10'],
+            'tempat_tujuan' => ['required', 'string', 'max:200'],
+            'tema' => ['required', 'string', 'max:200'],
+            'total_hari' => ['nullable', 'integer', 'min:1'],
+            'berkas_pendukung' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:8192'],
+        ]);
+
+        $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+        $data['total_hari'] = $data['total_hari'] ?? 1;
+
+        $filePendukung = $ajuanSurat->file_pendukung;
+        if ($request->hasFile('berkas_pendukung')) {
+            $filePendukung = $request->file('berkas_pendukung')->store('ajuan-surat/pendukung', 'public');
+        }
+        unset($data['berkas_pendukung']);
+
+        $ajuanSurat->update(['data' => $data, 'file_pendukung' => $filePendukung]);
+
+        $kembali = Auth::guard('member')->user()->dataGuru && Auth::guard('member')->user()->dataGuru->id_guru === $ajuanSurat->id_guru
+            ? redirect()->route('ajuan-surat.index')
+            : redirect()->route('surat-tu.show', $ajuanSurat);
+
+        return $kembali->with('status', 'Ajuan surat berhasil diperbarui.');
+    }
 }

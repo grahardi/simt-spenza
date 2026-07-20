@@ -54,6 +54,9 @@
             </a>
         </div>
     @else
+        <a href="{{ route('ajuan-surat.sppd.edit', $ajuan) }}" class="btn btn-outline-secondary mt-2 mb-2">
+            <i class="fas fa-edit me-1"></i> Edit Data Ajuan
+        </a>
         <form method="POST" action="{{ route('surat-tu.buat-surat', $ajuan) }}" class="mt-3">
             @csrf
             <label class="form-label">Nomor Surat</label>

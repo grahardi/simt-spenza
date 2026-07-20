@@ -40,6 +40,11 @@
                             </span>
                         </td>
                         <td class="text-end">
+                            @if ($a->status !== 'selesai')
+                                <a href="{{ route('ajuan-surat.sppd.edit', $a) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+                            @endif
                             @if ($a->file_pdf)
                                 <a href="{{ Storage::url($a->file_pdf) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-file-word me-1"></i> Unduh Surat (Word)
