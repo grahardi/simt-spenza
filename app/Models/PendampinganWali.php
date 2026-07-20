@@ -10,7 +10,7 @@ class PendampinganWali extends Model
 {
     protected $table = 'pendampingan_wali';
 
-    protected $fillable = ['id_guru', 'tanggal_waktu', 'kategori', 'judul', 'deskripsi', 'foto', 'visibilitas'];
+    protected $fillable = ['id_guru', 'tanggal_waktu', 'kategori', 'judul', 'deskripsi', 'foto', 'visibilitas', 'peserta_mode'];
 
     protected $casts = ['tanggal_waktu' => 'datetime'];
 

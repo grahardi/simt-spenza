@@ -9,18 +9,10 @@
     <h1 class="h5 pt-2 mb-0"><i class="fas fa-images me-2"></i>Galeri Wali</h1>
 </div>
 
-<div class="px-4 py-3 mb-3 bg-white rounded shadow">
-    <form method="GET" class="d-flex gap-2 align-items-center">
-        <label class="form-label mb-0">Tanggal</label>
-        <input type="date" name="tgl" class="form-control" style="max-width:200px"
-               value="{{ $tanggal->format('Y-m-d') }}" onchange="this.form.submit()">
-    </form>
-</div>
-
 <div class="p-4 bg-white rounded shadow">
     @if ($galeri->isEmpty())
         <div class="text-muted text-center py-4">
-            <i class="far fa-question-circle me-1"></i> Tidak ada kegiatan pendampingan (umum, berfoto) pada {{ $tanggal->translatedFormat('d F Y') }}.
+            <i class="far fa-question-circle me-1"></i> Belum ada kegiatan pendampingan (umum, berfoto).
         </div>
     @else
         <div class="row g-3">
@@ -31,7 +23,7 @@
                             <img src="{{ Storage::url($p->foto) }}" class="img-fluid rounded mb-2" style="aspect-ratio:1;object-fit:cover;width:100%;">
                             <div class="fw-semibold small">{{ $p->judul }}</div>
                             <div class="text-muted small">
-                                {{ $p->guru->nama ?? '-' }} &middot; {{ $p->tanggal_waktu->format('H:i') }}
+                                {{ $p->guru->nama ?? '-' }} &middot; {{ $p->tanggal_waktu->translatedFormat('d M Y') }}
                             </div>
                         </div>
                     </button>
@@ -57,7 +49,16 @@
                         <tr><td width="120">Kategori</td><td>: {{ $p->kategori }}</td></tr>
                         <tr><td>Guru Wali</td><td>: {{ $p->guru->nama ?? '-' }}</td></tr>
                         <tr><td>Tanggal</td><td>: {{ $p->tanggal_waktu->translatedFormat('d F Y, H:i') }}</td></tr>
-                        <tr><td>Peserta</td><td>: {{ $p->peserta->pluck('nama_lengkap')->implode(', ') ?: '-' }}</td></tr>
+                        <tr>
+                            <td>Peserta</td>
+                            <td>:
+                                @if ($p->peserta_mode === 'semua')
+                                    Semua anak wali ({{ $p->peserta_count }} siswa)
+                                @else
+                                    Individu ({{ $p->peserta_count }} siswa)
+                                @endif
+                            </td>
+                        </tr>
                         @if ($p->deskripsi)
                             <tr><td>Deskripsi</td><td>: {{ $p->deskripsi }}</td></tr>
                         @endif

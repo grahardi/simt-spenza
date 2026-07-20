@@ -32,18 +32,16 @@ class PendampinganController extends Controller
     }
 
     /** Galeri Wali - kegiatan pendampingan UMUM dari SEMUA guru wali (bukan cuma diri sendiri). */
-    public function galeri(Request $request)
+    public function galeri()
     {
-        $tanggal = $request->date('tgl') ?? \Carbon\Carbon::today('Asia/Jakarta');
-
-        $galeri = PendampinganWali::with(['guru', 'peserta'])
+        $galeri = PendampinganWali::with(['guru'])
+            ->withCount('peserta')
             ->where('visibilitas', 'umum')
             ->whereNotNull('foto')
-            ->whereDate('tanggal_waktu', $tanggal)
             ->orderByDesc('tanggal_waktu')
             ->paginate(20);
 
-        return view('pendampingan.galeri', compact('galeri', 'tanggal'));
+        return view('pendampingan.galeri', compact('galeri'));
     }
 
     public function create()
@@ -80,6 +78,7 @@ class PendampinganController extends Controller
             'judul' => $data['judul'],
             'deskripsi' => $data['deskripsi'] ?? null,
             'visibilitas' => $data['visibilitas'],
+            'peserta_mode' => $data['peserta_mode'],
         ];
 
         if ($request->hasFile('foto')) {
