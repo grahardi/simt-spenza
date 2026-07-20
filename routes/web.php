@@ -38,6 +38,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\UksController;
 use App\Http\Controllers\KesiswaanController;
+use App\Http\Controllers\AjuanAbsenGuruController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\KategoriSuratController;
 use App\Http\Controllers\TatibController;
@@ -376,6 +377,12 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
     // Placeholder modul lain, supaya link di bottom-nav tidak 404 dulu.
     Route::get('/tugas', fn () => view('placeholder', ['judul' => 'Tugas Siswa']))->name('tugas.index');
+
+    // Ajukan Absen Diri - guru ajukan sendiri Sakit/Ijin/Dispensasi, pilih tanggal
+    Route::prefix('ajuan-absen-guru')->name('ajuan-absen-guru.')->middleware('role:guru')->group(function () {
+        Route::get('/', [AjuanAbsenGuruController::class, 'index'])->name('index');
+        Route::post('/', [AjuanAbsenGuruController::class, 'simpan'])->name('simpan');
+    });
 
     // Jadwal Pelajaran - lihat berdasarkan Kelas atau Guru, siapa saja yang login boleh lihat
     Route::prefix('jadwal')->name('jadwal.')->group(function () {

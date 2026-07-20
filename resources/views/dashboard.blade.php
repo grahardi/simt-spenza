@@ -17,6 +17,7 @@
             'theme' => 'blue',
             'items' => [
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
+                ['label' => 'Ajukan Absen Diri', 'icon' => 'fas fa-user-clock', 'color' => 'red', 'href' => route('ajuan-absen-guru.index')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
                 ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.upload')],
                 ['label' => 'Peminjaman Ruang', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],

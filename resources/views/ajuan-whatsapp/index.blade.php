@@ -48,13 +48,13 @@
                     </div>
 
                     <div class="mt-2 d-flex flex-wrap gap-2">
-                        <a href="{{ Storage::url($a->foto_surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalFotoSurat{{ $a->id }}">
                             <i class="fas fa-image me-1"></i> Lihat Surat
-                        </a>
+                        </button>
                         @if ($a->foto_selfie)
-                            <a href="{{ Storage::url($a->foto_selfie) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalFotoSelfie{{ $a->id }}">
                                 <i class="fas fa-user me-1"></i> Lihat Selfie Wali
-                            </a>
+                            </button>
                         @endif
                     </div>
                     @if ($a->status === 'ditolak' && $a->alasan_tolak)
@@ -79,6 +79,35 @@
         @endforeach
 
         @foreach ($ajuan as $a)
+            <div class="modal fade" id="modalFotoSurat{{ $a->id }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Foto Surat - {{ $a->siswa->nama_lengkap ?? '-' }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="{{ Storage::url($a->foto_surat) }}" alt="Foto surat" class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if ($a->foto_selfie)
+                <div class="modal fade" id="modalFotoSelfie{{ $a->id }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selfie Wali - {{ $a->siswa->nama_lengkap ?? '-' }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img src="{{ Storage::url($a->foto_selfie) }}" alt="Foto selfie wali" class="img-fluid rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @if ($status === 'menunggu')
                 <div class="modal fade" id="modalTolak{{ $a->id }}" tabindex="-1">
                     <div class="modal-dialog">
