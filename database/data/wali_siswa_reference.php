@@ -1,9 +1,9 @@
 <?php
 
 // Data Guru Wali per siswa - hasil olahan dari Excel 'Guru_wali_2026-2027'
-// (gabungan 2 file: kelas 7 dari file pertama, kelas 8-9 dari file kedua
-// yang sudah diperbaiki - kedua file saling melengkapi kekosongan masing-masing).
-// Format: nis (= datasiswa.id_member) => nama guru wali persis dari Excel.
+// (gabungan 2 file: kelas 7 dari file pertama berisi NAMA guru,
+// kelas 8-9 dari file kedua berisi KODE ANGKA guru - keduanya saling melengkapi).
+// Format: nis (= datasiswa.id_member) => nama ATAU kode guru wali persis dari Excel.
 return [
     17280 => '102',
     17281 => '102',
@@ -643,6 +643,7 @@ return [
     17921 => '89',
     17922 => '89',
     17923 => '89',
+    17925 => '89',
     17928 => 'Ciplis Yulastari, S.Pd.',
     17929 => 'Ciplis Yulastari, S.Pd.',
     17930 => 'Ciplis Yulastari, S.Pd.',
