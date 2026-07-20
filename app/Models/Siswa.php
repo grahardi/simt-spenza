@@ -33,6 +33,11 @@ class Siswa extends Model
         return $this->hasMany(SiswaWhatsapp::class, 'id_siswa', 'id_member');
     }
 
+    public function guruWali(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Guru::class, 'id_guru_wali', 'id_guru');
+    }
+
     public function absenPadaTanggal(string $tanggal): ?AbsenSiswa
     {
         return $this->absensi()->whereDate('tgl_absen', $tanggal)->first();

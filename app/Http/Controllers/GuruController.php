@@ -43,7 +43,7 @@ class GuruController extends Controller
     public function waliSiswa()
     {
         $member = \Illuminate\Support\Facades\Auth::guard('member')->user();
-        $guru = $member->guru;
+        $guru = $member->dataGuru;
 
         abort_if(!$guru, 403, 'Akun ini tidak terhubung ke data guru manapun.');
 

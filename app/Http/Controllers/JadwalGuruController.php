@@ -31,7 +31,7 @@ class JadwalGuruController extends Controller
         return view('jadwal.guru', [
             'jadwal' => $jadwal,
             'hari' => $hari,
-            'guru' => $member->guru,
+            'guru' => $member->dataGuru,
             'sekarang' => $sekarang,
         ]);
     }

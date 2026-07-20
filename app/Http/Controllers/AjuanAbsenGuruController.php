@@ -20,7 +20,7 @@ class AjuanAbsenGuruController extends Controller
     public function index(Request $request)
     {
         $member = Auth::guard('member')->user();
-        $guru = $member->guru;
+        $guru = $member->dataGuru;
 
         abort_if(!$guru, 403, 'Akun ini tidak terhubung ke data guru manapun.');
 
@@ -54,7 +54,7 @@ class AjuanAbsenGuruController extends Controller
     public function simpan(Request $request)
     {
         $member = Auth::guard('member')->user();
-        $guru = $member->guru;
+        $guru = $member->dataGuru;
 
         abort_if(!$guru, 403, 'Akun ini tidak terhubung ke data guru manapun.');
 

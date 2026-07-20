@@ -239,6 +239,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/karyawan/{karyawan}/buat-akun', [SuperadminKaryawanController::class, 'buatAkun'])->name('karyawan.buat-akun');
         Route::post('/karyawan/{karyawan}/reset-password', [SuperadminKaryawanController::class, 'resetPassword'])->name('karyawan.reset-password');
 
+        Route::get('/guru-wali', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'index'])->name('guru-wali.index');
+        Route::post('/guru-wali/assign', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'assign'])->name('guru-wali.assign');
+        Route::delete('/guru-wali/{siswa}/lepas', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'lepas'])->name('guru-wali.lepas');
+
         Route::get('/absensi', [SuperadminAbsensiController::class, 'index'])->name('absensi.index');
         Route::get('/absensi/{absen}/edit', [SuperadminAbsensiController::class, 'edit'])->name('absensi.edit');
         Route::put('/absensi/{absen}', [SuperadminAbsensiController::class, 'update'])->name('absensi.update');

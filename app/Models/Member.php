@@ -47,7 +47,7 @@ class Member extends Authenticatable
         return 'user';
     }
 
-    public function guru(): BelongsTo
+    public function dataGuru(): BelongsTo
     {
         return $this->belongsTo(Guru::class, 'id_guru', 'id_guru');
     }

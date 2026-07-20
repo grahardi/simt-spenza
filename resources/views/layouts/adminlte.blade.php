@@ -143,8 +143,8 @@
                             <p>Data Siswa</p>
                         </a>
                     </li>
-                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*') ? 'active' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*', 'superadmin.guru-wali.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*', 'superadmin.guru-wali.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chalkboard-teacher"></i>
                             <p>
                                 Guru dan Karyawan
@@ -162,6 +162,12 @@
                                 <a href="{{ route('superadmin.karyawan.index') }}" class="nav-link {{ request()->routeIs('superadmin.karyawan.*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Karyawan</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.guru-wali.index') }}" class="nav-link {{ request()->routeIs('superadmin.guru-wali.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Guru Wali</p>
                                 </a>
                             </li>
                         </ul>
