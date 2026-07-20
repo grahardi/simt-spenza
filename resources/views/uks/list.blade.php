@@ -30,13 +30,13 @@
         </div>
     @else
         <div class="table-responsive">
-        <table class="table table-striped mb-0 align-middle">
+        <table class="table mb-0 align-middle">
             <thead>
                 <tr><th>Waktu Masuk</th><th>Waktu Keluar</th><th>Nama</th><th>Kelas</th><th>Keterangan Sakit</th><th>Status</th><th></th></tr>
             </thead>
             <tbody>
                 @foreach ($daftar as $d)
-                    <tr>
+                    <tr style="background:{{ ($d->siswa->jenis_kelamin ?? null) === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                         <td>{{ $d->waktu_masuk->format('H:i') }}</td>
                         <td>{{ $d->waktu_selesai?->format('H:i') ?? '-' }}</td>
                         <td>{{ $d->siswa->nama_lengkap ?? '-' }}</td>

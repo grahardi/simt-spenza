@@ -48,13 +48,13 @@
             </div>
         @else
             <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
+            <table class="table mb-0 align-middle">
                 <thead>
                     <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th>Status</th><th style="width:320px">Aksi</th></tr>
                 </thead>
                 <tbody>
                     @foreach ($siswa as $s)
-                        <tr>
+                        <tr style="background:{{ $s->jenis_kelamin === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                             <td>{{ $s->id_member }}</td>
                             <td>{{ $s->nama_lengkap }}</td>
                             <td>{{ $s->kelas }}</td>

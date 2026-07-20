@@ -48,13 +48,13 @@
             </div>
         @else
             <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
+            <table class="table mb-0 align-middle">
                 <thead>
-                    <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th>Status</th><th style="width:160px">Aksi</th></tr>
+                    <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th style="width:200px">Status / Aksi</th></tr>
                 </thead>
                 <tbody>
                     @foreach ($siswa as $s)
-                        <tr>
+                        <tr style="background:{{ $s->jenis_kelamin === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                             <td>{{ $s->id_member }}</td>
                             <td>{{ $s->nama_lengkap }}</td>
                             <td>{{ $s->kelas }}</td>
@@ -66,11 +66,6 @@
                                         {{ $s->absenHariIni->labelKeterangan() }}
                                     </span>
                                 @else
-                                    <span class="text-muted small">Belum diabsen</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if (! $s->telatHariIni && ! $s->absenHariIni)
                                     <form method="POST" action="{{ route('absensi.telat', $s) }}" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn-absen btn-absen-telat">

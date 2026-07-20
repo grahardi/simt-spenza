@@ -39,13 +39,13 @@
             </div>
         @else
             <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
+            <table class="table mb-0 align-middle">
                 <thead>
                     <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th>Nomor Wali</th><th></th></tr>
                 </thead>
                 <tbody>
                     @foreach ($siswa as $s)
-                        <tr>
+                        <tr style="background:{{ $s->jenis_kelamin === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                             <td>{{ $s->id_member }}</td>
                             <td>{{ $s->nama_lengkap }}</td>
                             <td>{{ $s->kelas }}</td>
@@ -80,13 +80,13 @@
         </div>
     @else
         <div class="table-responsive">
-        <table class="table table-striped mb-0 align-middle">
+        <table class="table mb-0 align-middle">
             <thead>
                 <tr><th>Waktu Masuk</th><th>Nama</th><th>Kelas</th><th>Keterangan</th><th></th></tr>
             </thead>
             <tbody>
                 @foreach ($sedangDiUks as $d)
-                    <tr>
+                    <tr style="background:{{ ($d->siswa->jenis_kelamin ?? null) === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                         <td>{{ $d->waktu_masuk->format('H:i') }}</td>
                         <td>{{ $d->siswa->nama_lengkap ?? '-' }}</td>
                         <td>{{ $d->siswa->kelas ?? '-' }}</td>
