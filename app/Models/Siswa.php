@@ -19,7 +19,7 @@ class Siswa extends Model
 
     protected $fillable = [
         'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin',
-        'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku',
+        'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku', 'id_guru_wali',
     ];
 
     public function absensi(): HasMany

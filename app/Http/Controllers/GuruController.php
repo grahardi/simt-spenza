@@ -39,6 +39,22 @@ class GuruController extends Controller
         return view('guru.form', ['guru' => new Guru()]);
     }
 
+    /** Guru Wali - list siswa yang jadi anak wali guru yang sedang login. */
+    public function waliSiswa()
+    {
+        $member = \Illuminate\Support\Facades\Auth::guard('member')->user();
+        $guru = $member->guru;
+
+        abort_if(!$guru, 403, 'Akun ini tidak terhubung ke data guru manapun.');
+
+        $siswa = \App\Models\Siswa::where('id_guru_wali', $guru->id_guru)
+            ->orderBy('kelas')
+            ->orderBy('nama_lengkap')
+            ->get();
+
+        return view('guru.wali-siswa', compact('guru', 'siswa'));
+    }
+
     public function store(Request $request)
     {
         Guru::create($this->validated($request));

@@ -135,6 +135,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::resource('guru', GuruController::class)
         ->middleware('role:kepsek,admin,piket');
 
+    // Guru Wali - list anak wali guru yang sedang login
+    Route::get('/guru-wali', [GuruController::class, 'waliSiswa'])->name('guru.wali-siswa')
+        ->middleware('role:guru');
+
     // Persuratan (Tata Usaha) - Surat Masuk & Surat Keluar
     Route::resource('surat-masuk', SuratMasukController::class)
         ->except(['show'])
