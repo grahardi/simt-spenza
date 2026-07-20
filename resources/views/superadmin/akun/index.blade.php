@@ -26,7 +26,7 @@
                     <tr>
                         <td>{{ $a->user }}</td>
                         <td>{{ $a->nama }}</td>
-                        <td>{{ $a->guru->nama ?? '-' }}</td>
+                        <td>{{ $a->dataGuru->nama ?? '-' }}</td>
                         <td>
                             @php
                                 $warnaRole = [

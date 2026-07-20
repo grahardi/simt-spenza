@@ -18,7 +18,7 @@ class AkunController extends Controller
      */
     public function index(Request $request)
     {
-        $akun = Member::with('guru')
+        $akun = Member::with('dataGuru')
             ->when($request->filled('cari'), fn ($q) => $q->where('nama', 'like', '%'.$request->input('cari').'%')->orWhere('user', 'like', '%'.$request->input('cari').'%'))
             ->orderBy('nama')
             ->paginate(20)
