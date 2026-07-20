@@ -68,15 +68,19 @@ class AbsensiSiswaController extends Controller
     {
         $siswa = null;
         $cari = trim((string) $request->input('cari'));
+        $kelasFilter = $request->input('kelas');
 
-        if ($cari !== '') {
+        if ($cari !== '' || $kelasFilter) {
             $siswa = Siswa::query()
-                ->where(function ($query) use ($cari) {
-                    $query->where('nama_lengkap', 'like', '%'.$cari.'%')
-                        ->orWhere('id_member', 'like', '%'.$cari.'%');
+                ->when($cari !== '', function ($query) use ($cari) {
+                    $query->where(function ($qq) use ($cari) {
+                        $qq->where('nama_lengkap', 'like', '%'.$cari.'%')
+                            ->orWhere('id_member', 'like', '%'.$cari.'%');
+                    });
                 })
-                ->orderByDesc('id_member')
-                ->limit(20)
+                ->when($kelasFilter, fn ($q) => $q->where('kelas', $kelasFilter))
+                ->orderBy('nama_lengkap')
+                ->limit(50)
                 ->get();
 
             $absenHariIni = AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
@@ -89,7 +93,9 @@ class AbsensiSiswaController extends Controller
             });
         }
 
-        return view('absensi.isi', ['siswa' => $siswa, 'cari' => $cari]);
+        $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
+
+        return view('absensi.isi', ['siswa' => $siswa, 'cari' => $cari, 'kelasFilter' => $kelasFilter, 'daftarKelas' => $daftarKelas]);
     }
 
     /**
@@ -100,15 +106,19 @@ class AbsensiSiswaController extends Controller
     {
         $siswa = null;
         $cari = trim((string) $request->input('cari'));
+        $kelasFilter = $request->input('kelas');
 
-        if ($cari !== '') {
+        if ($cari !== '' || $kelasFilter) {
             $siswa = Siswa::query()
-                ->where(function ($query) use ($cari) {
-                    $query->where('nama_lengkap', 'like', '%'.$cari.'%')
-                        ->orWhere('id_member', 'like', '%'.$cari.'%');
+                ->when($cari !== '', function ($query) use ($cari) {
+                    $query->where(function ($qq) use ($cari) {
+                        $qq->where('nama_lengkap', 'like', '%'.$cari.'%')
+                            ->orWhere('id_member', 'like', '%'.$cari.'%');
+                    });
                 })
-                ->orderByDesc('id_member')
-                ->limit(20)
+                ->when($kelasFilter, fn ($q) => $q->where('kelas', $kelasFilter))
+                ->orderBy('nama_lengkap')
+                ->limit(50)
                 ->get();
 
             $absenHariIni = AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
@@ -127,7 +137,9 @@ class AbsensiSiswaController extends Controller
             });
         }
 
-        return view('absensi.isi-keterlambatan', ['siswa' => $siswa, 'cari' => $cari]);
+        $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
+
+        return view('absensi.isi-keterlambatan', ['siswa' => $siswa, 'cari' => $cari, 'kelasFilter' => $kelasFilter, 'daftarKelas' => $daftarKelas]);
     }
 
     /**
