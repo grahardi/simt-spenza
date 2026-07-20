@@ -103,6 +103,8 @@ class SuratTuguController extends Controller
 
         $bersihkan = fn ($teks) => trim(preg_replace('/[^A-Za-z0-9]+/', '_', $teks), '_');
 
-        return 'sppd_'.$bersihkan($panggilan).'_'.$bersihkan($judul).'_'.$tanggal.'.docx';
+        $judulBersih = substr($bersihkan($judul), 0, 10);
+
+        return 'SPPD_'.$bersihkan($panggilan).'_'.$judulBersih.'_'.$tanggal.'.docx';
     }
 }
