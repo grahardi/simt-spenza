@@ -39,7 +39,19 @@ class SuratTuguController extends Controller
         $member = $guru->member;
         $data = $ajuanSurat->data;
 
-        $jamSelesai = !empty($data['jam_selesai']) ? $data['jam_selesai'] : '(selesai)';
+        $jamSelesai = !empty($data['jam_selesai']) ? $data['jam_selesai'] : 'selesai';
+
+        // Kalimat "Dasar" - kalau tanggal & nomor surat undangan diisi, tampilkan lengkap;
+        // kalau dua-duanya kosong, dipersingkat.
+        if (!empty($data['tanggal_dasar']) || !empty($data['nomor_surat_dasar'])) {
+            $tglDasar = !empty($data['tanggal_dasar'])
+                ? \Carbon\Carbon::parse($data['tanggal_dasar'])->translatedFormat('d F Y')
+                : '-';
+            $noDasar = $data['nomor_surat_dasar'] ?? '-';
+            $dasarKalimat = "Berdasarkan Surat Undangan {$data['isian_form']}, pada tanggal {$tglDasar}, No. {$noDasar} maka:";
+        } else {
+            $dasarKalimat = "Berdasarkan Surat Undangan {$data['isian_form']} maka:";
+        }
 
         $isian = [
             'nomersurat' => $request->input('nomor_surat'),
@@ -53,6 +65,7 @@ class SuratTuguController extends Controller
             'selesai' => $jamSelesai,
             'tempat' => $data['tempat_tujuan'] ?? '-',
             'tema' => $data['tema'] ?? '-',
+            'dasarkalimat' => $dasarKalimat,
             'tanggalsurat' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
             'tanggal' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
             'tanggalselesai' => !empty($data['tanggal_selesai']) ? \Carbon\Carbon::parse($data['tanggal_selesai'])->translatedFormat('d F Y') : '-',

@@ -43,6 +43,9 @@ class AjuanSuratController extends Controller
         $guru = $this->guruLogin();
 
         $data = $request->validate([
+            'isian_form' => ['required', 'string', 'max:300'],
+            'tanggal_dasar' => ['nullable', 'date'],
+            'nomor_surat_dasar' => ['nullable', 'string', 'max:100'],
             'tanggal' => ['required', 'date'],
             'tanggal_selesai' => ['nullable', 'date'],
             'jam_mulai' => ['required', 'string', 'max:10'],

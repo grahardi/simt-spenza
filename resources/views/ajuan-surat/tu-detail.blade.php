@@ -36,7 +36,9 @@
     <hr>
     <h6 class="mb-3">Detail Isian</h6>
     <table class="table table-sm table-bordered">
-        <tr><td width="200">Hari, Tanggal Berangkat</td><td>{{ $ajuan->data['hari'] ?? '-' }}, {{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
+        <tr><td width="200">Isian Surat Undangan</td><td>{{ $ajuan->data['isian_form'] ?? '-' }}</td></tr>
+        <tr><td>Tanggal/Nomor Surat Undangan</td><td>{{ $ajuan->data['tanggal_dasar'] ?? '-' }} / {{ $ajuan->data['nomor_surat_dasar'] ?? '-' }}</td></tr>
+        <tr><td>Hari, Tanggal Berangkat</td><td>{{ $ajuan->data['hari'] ?? '-' }}, {{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
         <tr><td>Tanggal Kembali</td><td>{{ $ajuan->data['tanggal_selesai'] ?? '-' }}</td></tr>
         <tr><td>Jam</td><td>{{ $ajuan->data['jam_mulai'] ?? '-' }} s.d. {{ $ajuan->data['jam_selesai'] ?? 'selesai' }}</td></tr>
         <tr><td>Total Hari</td><td>{{ $ajuan->data['total_hari'] ?? 1 }}</td></tr>

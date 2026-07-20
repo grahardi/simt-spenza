@@ -31,6 +31,18 @@
                 <input type="file" name="berkas_pendukung" accept="image/*,.pdf" class="form-control">
                 <small class="text-muted">Boleh gambar atau PDF.</small>
             </div>
+            <div class="col-12">
+                <label class="form-label">Nama/Isian Surat Undangan</label>
+                <input type="text" name="isian_form" class="form-control" value="{{ old('isian_form') }}" placeholder="contoh: MGMP Kabupaten Malang Mapel Informatika dan KKA (MGMP IFKKA)" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Tanggal Surat Undangan (opsional)</label>
+                <input type="date" name="tanggal_dasar" class="form-control" value="{{ old('tanggal_dasar') }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Nomor Surat Undangan (opsional)</label>
+                <input type="text" name="nomor_surat_dasar" class="form-control" value="{{ old('nomor_surat_dasar') }}" placeholder="contoh: 02/012/FKKA-SMP.KABmlg/VII/2026">
+            </div>
             <div class="col-md-4">
                 <label class="form-label">Tanggal Berangkat</label>
                 <input type="date" name="tanggal" class="form-control" value="{{ old('tanggal') }}" required>
