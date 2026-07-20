@@ -54,6 +54,9 @@ class SuratTuguController extends Controller
             'tempat' => $data['tempat_tujuan'] ?? '-',
             'tema' => $data['tema'] ?? '-',
             'deskrpsi' => $data['isian_form'] ?? '-',
+            'tglundangan' => !empty($data['tanggal_dasar'])
+                ? \Carbon\Carbon::parse($data['tanggal_dasar'])->translatedFormat('d F Y')
+                : '-',
             'noundangan' => !empty($data['nomor_surat_dasar']) ? 'No. '.$data['nomor_surat_dasar'] : '',
             'tanggalsurat' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
             'tanggal' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
