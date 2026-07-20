@@ -26,13 +26,30 @@ class SuratTuguController extends Controller
     /** Detail lengkap 1 ajuan - sebelum dibuatkan surat. */
     public function show(AjuanSurat $ajuanSurat)
     {
-        return view('ajuan-surat.tu-detail', ['ajuan' => $ajuanSurat]);
+        $nomorUrutBerikutnya = \App\Models\SuratKeluar::nomorUrutTerbesar() + 1;
+        $kodeBaku = PengaturanSurat::ambil()->kode_baku;
+
+        return view('ajuan-surat.tu-detail', [
+            'ajuan' => $ajuanSurat,
+            'nomorUrutBerikutnya' => $nomorUrutBerikutnya,
+            'kodeBaku' => $kodeBaku,
+        ]);
     }
 
     /** Generate surat (.docx, isi langsung ke template Word asli) dari data ajuan - khusus jenis SPPD dulu. */
     public function buatSurat(Request $request, AjuanSurat $ajuanSurat)
     {
-        $request->validate(['nomor_surat' => ['required', 'string', 'max:100']]);
+        $request->validate([
+            'kode_umum' => ['required', 'string', 'max:30'],
+            'nomor_urut' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $susunan = \App\Models\SuratKeluar::susunKode(
+            $request->input('kode_umum'),
+            (int) $request->input('nomor_urut'),
+            now()
+        );
+        $nomorSuratLengkap = $susunan['kode_surat'];
 
         $pengaturan = PengaturanSurat::ambil();
         $guru = $ajuanSurat->guru;
@@ -42,7 +59,7 @@ class SuratTuguController extends Controller
         $jamSelesai = !empty($data['jam_selesai']) ? $data['jam_selesai'] : 'selesai';
 
         $isian = [
-            'nomersurat' => $request->input('nomor_surat'),
+            'nomersurat' => $nomorSuratLengkap,
             'namaguru' => $guru->nama ?? '-',
             'nama' => $guru->nama ?? '-', // dipakai di halaman SPD (placeholder beda dari Surat Tugas)
             'nip' => $guru->nip ?? '-',
@@ -80,7 +97,7 @@ class SuratTuguController extends Controller
 
         $ajuanSurat->update([
             'status' => 'selesai',
-            'nomor_surat' => $request->input('nomor_surat'),
+            'nomor_surat' => $nomorSuratLengkap,
             'file_pdf' => 'ajuan-surat/'.$namaFile,
             'diproses_oleh' => Auth::guard('member')->id(),
             'diproses_at' => now(),

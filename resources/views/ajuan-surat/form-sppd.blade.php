@@ -55,17 +55,14 @@
                 <label class="form-label">Nomor Surat Undangan (opsional)</label>
                 <input type="text" name="nomor_surat_dasar" class="form-control" value="{{ $isi('nomor_surat_dasar') }}" placeholder="contoh: 02/012/FKKA-SMP.KABmlg/VII/2026">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label class="form-label">Tanggal Berangkat</label>
                 <input type="date" name="tanggal" class="form-control" value="{{ $isi('tanggal') }}" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label class="form-label">Tanggal Kembali (opsional)</label>
                 <input type="date" name="tanggal_selesai" class="form-control" value="{{ $isi('tanggal_selesai') }}">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Total Hari</label>
-                <input type="number" name="total_hari" class="form-control" value="{{ $isi('total_hari', 1) }}" min="1">
+                <small class="text-muted">Total hari & nama hari dihitung otomatis dari tanggal.</small>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Jam Mulai</label>

@@ -60,15 +60,25 @@
     </a>
     <form method="POST" action="{{ route('surat-tu.buat-surat', $ajuan) }}" class="mt-3">
         @csrf
+        @php
+            // Kalau pernah dibuat sebelumnya, isi ulang kode_umum & nomor_urut dari nomor lama
+            $bagianLama = $ajuan->nomor_surat ? explode('/', $ajuan->nomor_surat) : [];
+            $kodeUmumLama = $bagianLama[0] ?? '800';
+            $nomorUrutLama = $bagianLama[1] ?? $nomorUrutBerikutnya;
+        @endphp
         <label class="form-label">Nomor Surat</label>
-        <div class="d-flex gap-2">
-            <input type="text" name="nomor_surat" class="form-control" value="{{ $ajuan->nomor_surat }}" placeholder="contoh: 422/012/35.07.301.09.43/2026" required>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <input type="text" name="kode_umum" class="form-control" style="max-width:100px" value="{{ $kodeUmumLama }}" placeholder="800" required>
+            <span>/</span>
+            <input type="number" name="nomor_urut" class="form-control" style="max-width:120px" value="{{ $nomorUrutLama }}" min="1" required>
+            <span>/ {{ $kodeBaku }} / {{ now()->format('Y') }}</span>
             <button type="submit" class="btn btn-primary text-nowrap">
                 <i class="fas fa-sync-alt me-1"></i> {{ $ajuan->status === 'selesai' ? 'Generate Ulang' : 'Buat Surat' }}
             </button>
         </div>
+        <small class="text-muted d-block mt-1">Bagian belakang (kode baku &amp; tahun) terisi otomatis - cukup isi 2 kotak pertama.</small>
         @if ($ajuan->status === 'selesai')
-            <small class="text-muted d-block mt-1">Kalau ada perubahan data, edit dulu di atas, baru klik Generate Ulang - file lama akan tertimpa yang baru.</small>
+            <small class="text-muted d-block">Kalau ada perubahan data, edit dulu di atas, baru klik Generate Ulang - file lama akan tertimpa yang baru.</small>
         @endif
     </form>
 

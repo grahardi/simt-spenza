@@ -58,7 +58,12 @@ class AjuanSuratController extends Controller
 
         // Hari dihitung otomatis dari tanggal berangkat, tidak perlu diisi manual.
         $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
-        $data['total_hari'] = $data['total_hari'] ?? 1;
+
+        // Total hari dihitung otomatis dari selisih tanggal berangkat & kembali
+        // (kalau tanggal kembali diisi) - dijamin valid, tidak perlu diisi manual.
+        $data['total_hari'] = !empty($data['tanggal_selesai'])
+            ? \Carbon\Carbon::parse($data['tanggal'])->diffInDays(\Carbon\Carbon::parse($data['tanggal_selesai'])) + 1
+            : 1;
 
         $filePendukung = null;
         if ($request->hasFile('berkas_pendukung')) {
@@ -118,7 +123,9 @@ class AjuanSuratController extends Controller
         ]);
 
         $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
-        $data['total_hari'] = $data['total_hari'] ?? 1;
+        $data['total_hari'] = !empty($data['tanggal_selesai'])
+            ? \Carbon\Carbon::parse($data['tanggal'])->diffInDays(\Carbon\Carbon::parse($data['tanggal_selesai'])) + 1
+            : 1;
 
         $filePendukung = $ajuanSurat->file_pendukung;
         if ($request->hasFile('berkas_pendukung')) {
