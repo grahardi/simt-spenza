@@ -32,6 +32,48 @@ class DocxMergeService
             return false;
         }
 
+        // Word sering "memecah" $placeholder jadi beberapa <w:t> terpisah
+        // (misal gara-gara ditandai spell-check, autocorrect, atau proses
+        // edit/simpan berulang) - contoh nyata: "<w:t> $</w:t>...<w:t>hari</w:t>".
+        // Disatukan di sini SEBELUM diganti, dengan cara AMAN: cuma ubah ISI
+        // TEKS di dalam tag <w:t> yang sudah ada, TIDAK PERNAH menghapus/
+        // menggabung tag <w:r>/<w:t> itu sendiri - supaya XML dijamin tetap valid.
+
+        // 1) Penanda spell-check Word aman dihapus (cuma metadata visual, tidak ada teks di dalamnya)
+        $xml = preg_replace('/<w:proofErr[^>]*\/>/', '', $xml);
+
+        // 2) Satukan run yang berakhir dengan "$" dengan run berikutnya kalau
+        // berikutnya itu murni huruf dan cuma dipisahkan tag run-boundary biasa
+        preg_match_all('/(<w:t\b[^>]*>)([^<]*)(<\/w:t>)/', $xml, $semuaRun, PREG_OFFSET_CAPTURE);
+        $isiList = $semuaRun[2]; // [ [teks, offset], ... ]
+        $jumlah = count($isiList);
+        $penggantian = []; // [start, end, teks_baru]
+        $lewati = false;
+
+        for ($i = 0; $i < $jumlah; $i++) {
+            if ($lewati) {
+                $lewati = false;
+                continue;
+            }
+            [$isi, $offsetIsi] = $isiList[$i];
+            if (str_ends_with($isi, '$') && $i + 1 < $jumlah) {
+                $akhirTagIni = $offsetIsi + strlen($isi) + strlen('</w:t>');
+                $celah = substr($xml, $akhirTagIni, max(0, $isiList[$i + 1][1] - $akhirTagIni));
+                $isiNext = $isiList[$i + 1][0];
+                if (preg_match('/^<\/w:r><w:r[^>]*>(<w:rPr>.*?<\/w:rPr>)?$/s', $celah) && preg_match('/^[a-zA-Z]+$/', $isiNext)) {
+                    $penggantian[] = [$offsetIsi, strlen($isi), $isi.$isiNext];
+                    $penggantian[] = [$isiList[$i + 1][1], strlen($isiNext), ''];
+                    $lewati = true;
+                }
+            }
+        }
+
+        // Terapkan dari BELAKANG supaya offset tidak bergeser
+        usort($penggantian, fn ($a, $b) => $b[0] <=> $a[0]);
+        foreach ($penggantian as [$start, $panjang, $isiBaru]) {
+            $xml = substr($xml, 0, $start).$isiBaru.substr($xml, $start + $panjang);
+        }
+
         // Urutkan dari NAMA TERPANJANG dulu - penting supaya "$tanggal" tidak
         // "memakan" sebagian "$tanggalselesai"/"$tanggalsurat" sebelum sempat
         // diganti utuh (str_replace bisa salah tangkap kalau urutannya kebalik).
