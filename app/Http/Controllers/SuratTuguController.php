@@ -29,26 +29,49 @@ class SuratTuguController extends Controller
         return view('ajuan-surat.tu-detail', ['ajuan' => $ajuanSurat]);
     }
 
-    /** Generate PDF surat dari data ajuan (khusus jenis SPPD dulu). */
+    /** Generate surat (.docx, isi langsung ke template Word asli) dari data ajuan - khusus jenis SPPD dulu. */
     public function buatSurat(Request $request, AjuanSurat $ajuanSurat)
     {
         $request->validate(['nomor_surat' => ['required', 'string', 'max:100']]);
 
         $pengaturan = PengaturanSurat::ambil();
         $guru = $ajuanSurat->guru;
+        $member = $guru->member;
         $data = $ajuanSurat->data;
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('ajuan-surat.pdf-sppd', [
-            'ajuan' => $ajuanSurat,
-            'guru' => $guru,
-            'data' => $data,
-            'pengaturan' => $pengaturan,
-            'nomorSurat' => $request->input('nomor_surat'),
-        ])->setPaper('a4', 'portrait');
+        $jamSelesai = !empty($data['jam_selesai']) ? $data['jam_selesai'] : '(selesai)';
 
-        $namaFile = 'sppd-'.$ajuanSurat->id.'-'.now()->format('Ymd').'.pdf';
+        $isian = [
+            'nomersurat' => $request->input('nomor_surat'),
+            'namaguru' => $guru->nama ?? '-',
+            'nama' => $guru->nama ?? '-', // dipakai di halaman SPD (placeholder beda dari Surat Tugas)
+            'nip' => $guru->nip ?? '-',
+            'pangkat' => $member->pangkat ?? '-',
+            'pangkatjabat' => $member->jabatan_dinas ?? '-',
+            'hari' => $data['hari'] ?? '-',
+            'mulai' => $data['jam_mulai'] ?? '-',
+            'selesai' => $jamSelesai,
+            'tempat' => $data['tempat_tujuan'] ?? '-',
+            'tema' => $data['tema'] ?? '-',
+            'tanggalsurat' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
+            'tanggal' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
+            'tanggalselesai' => !empty($data['tanggal_selesai']) ? \Carbon\Carbon::parse($data['tanggal_selesai'])->translatedFormat('d F Y') : '-',
+            'totalhari' => (string) ($data['total_hari'] ?? 1),
+        ];
+
+        $namaFile = 'sppd-'.$ajuanSurat->id.'-'.now()->format('Ymd').'.docx';
         \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('ajuan-surat');
-        $pdf->save(storage_path('app/public/ajuan-surat/'.$namaFile));
+        $outputPath = storage_path('app/public/ajuan-surat/'.$namaFile);
+
+        $berhasil = \App\Services\DocxMergeService::isi(
+            resource_path('templates/sppd_template.docx'),
+            $isian,
+            $outputPath
+        );
+
+        if (!$berhasil) {
+            return back()->with('status', 'Gagal membuat surat - cek template docx di server.');
+        }
 
         $ajuanSurat->update([
             'status' => 'selesai',
@@ -58,6 +81,6 @@ class SuratTuguController extends Controller
             'diproses_at' => now(),
         ]);
 
-        return redirect()->route('surat-tu.index')->with('status', 'Surat berhasil dibuat untuk '.($guru->nama ?? '-').'.');
+        return redirect()->route('surat-tu.index')->with('status', 'Surat berhasil dibuat untuk '.($guru->nama ?? '-').' (format .docx, siap dicetak/diubah PDF manual).');
     }
 }

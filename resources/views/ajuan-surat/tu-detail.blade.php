@@ -46,9 +46,9 @@
 
     @if ($ajuan->status === 'selesai')
         <div class="alert alert-success">
-            Surat sudah dibuat dengan nomor <strong>{{ $ajuan->nomor_surat }}</strong>.
-            <a href="{{ Storage::url($ajuan->file_pdf) }}" target="_blank" class="btn btn-sm btn-outline-danger ms-2">
-                <i class="fas fa-file-pdf me-1"></i> Lihat PDF
+            Surat sudah dibuat dengan nomor <strong>{{ $ajuan->nomor_surat }}</strong> (format Word, siap diprint atau di-convert PDF manual).
+            <a href="{{ Storage::url($ajuan->file_pdf) }}" class="btn btn-sm btn-outline-primary ms-2">
+                <i class="fas fa-file-word me-1"></i> Unduh Surat (.docx)
             </a>
         </div>
     @else

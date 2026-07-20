@@ -41,8 +41,8 @@
                         </td>
                         <td class="text-end">
                             @if ($a->file_pdf)
-                                <a href="{{ Storage::url($a->file_pdf) }}" target="_blank" class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-file-pdf me-1"></i> Unduh Surat
+                                <a href="{{ Storage::url($a->file_pdf) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-file-word me-1"></i> Unduh Surat (Word)
                                 </a>
                             @endif
                         </td>
