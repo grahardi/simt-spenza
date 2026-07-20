@@ -76,11 +76,42 @@ class JadwalController extends Controller
             ->get()
             ->groupBy('hari');
 
+        $absenGuruHariIni = \App\Models\AbsensiGuru::where('id_guru', $guru->id_guru)
+            ->whereDate('tanggal', now('Asia/Jakarta'))
+            ->first();
+
+        $tugasHariIni = \App\Models\Tugas::where('idguru', $guru->id_guru)
+            ->whereDate('tgl_tugas', now('Asia/Jakarta'))
+            ->get()
+            ->keyBy('kelas');
+
         return view('jadwal.guru-detail', [
             'guru' => $guru,
             'jadwalPerHari' => $jadwal,
             'urutanHari' => $this->urutanHari,
             'layout' => $this->layout(),
+            'absenGuruHariIni' => $absenGuruHariIni,
+            'tugasHariIni' => $tugasHariIni,
         ]);
+    }
+
+    /** Catat absensi guru hari ini (Sakit/Ijin/Alfa/Dispensasi) - manual dari halaman Absen Guru. */
+    public function tandaiAbsen(Request $request, Guru $guru)
+    {
+        $data = $request->validate([
+            'status' => ['required', 'in:s,i,a,d'],
+            'keterangan' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        \App\Models\AbsensiGuru::updateOrCreate(
+            ['id_guru' => $guru->id_guru, 'tanggal' => now('Asia/Jakarta')->toDateString()],
+            [
+                'status' => $data['status'],
+                'keterangan' => $data['keterangan'] ?? null,
+                'dicatat_oleh' => \Illuminate\Support\Facades\Auth::guard('member')->id(),
+            ]
+        );
+
+        return back()->with('status', 'Absensi '.$guru->nama.' berhasil dicatat.');
     }
 }

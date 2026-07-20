@@ -9,10 +9,15 @@ use Illuminate\Http\Request;
 
 class TugasController extends Controller
 {
-    /** Pengganti uploadtugas.php - form upload tugas untuk 1 kelas (guru sedang/akan absen). */
+    /** Pengganti uploadtugas.php - form upload tugas untuk 1 kelas (guru sedang/akan absen). Kalau sudah ada, tampil terisi (bisa diedit). */
     public function upload(Guru $guru, string $kelas)
     {
-        return view('tugas.upload', compact('guru', 'kelas'));
+        $tugas = Tugas::where('idguru', $guru->id_guru)
+            ->where('kelas', $kelas)
+            ->whereDate('tgl_tugas', Carbon::today())
+            ->first();
+
+        return view('tugas.upload', compact('guru', 'kelas', 'tugas'));
     }
 
     /** Pengganti prosestugas.php - simpan tugas untuk kelas hari ini. */

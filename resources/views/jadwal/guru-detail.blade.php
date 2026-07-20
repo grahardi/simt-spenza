@@ -24,6 +24,62 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
+@if ($prefix === 'jadwal.' && auth('member')->user() && (auth('member')->user()->hasRole('piket') || auth('member')->user()->hasRole('admin') || auth('member')->user()->hasRole('kesiswaan')))
+    <div class="px-4 py-3 mb-3 bg-white rounded shadow">
+        <h6 class="mb-2"><i class="fas fa-user-check me-1"></i> Absensi Guru Hari Ini</h6>
+        @if ($absenGuruHariIni)
+            <span class="badge-status badge-{{ $absenGuruHariIni->status }}">
+                {{ $absenGuruHariIni->labelStatus() }}
+            </span>
+            @if ($absenGuruHariIni->keterangan)
+                <span class="text-muted small ms-2">{{ $absenGuruHariIni->keterangan }}</span>
+            @endif
+        @else
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn-absen btn-absen-sakit" data-bs-toggle="modal" data-bs-target="#modalAbsenGuru-s">
+                    <i class="fas fa-thermometer me-1"></i> Sakit
+                </button>
+                <button type="button" class="btn-absen btn-absen-ijin" data-bs-toggle="modal" data-bs-target="#modalAbsenGuru-i">
+                    <i class="fas fa-envelope me-1"></i> Ijin
+                </button>
+                <button type="button" class="btn-absen btn-absen-dispensasi" data-bs-toggle="modal" data-bs-target="#modalAbsenGuru-d">
+                    <i class="fas fa-bus me-1"></i> Dispensasi
+                </button>
+                <form method="POST" action="{{ route('jadwal.guru.absen', $guru) }}" class="d-inline">
+                    @csrf
+                    <input type="hidden" name="status" value="a">
+                    <button type="submit" class="btn-absen btn-absen-alfa">
+                        <i class="fas fa-times me-1"></i> Alfa
+                    </button>
+                </form>
+            </div>
+        @endif
+    </div>
+
+    @foreach (['s' => 'Sakit', 'i' => 'Ijin', 'd' => 'Dispensasi'] as $kode => $label)
+        <div class="modal fade" id="modalAbsenGuru-{{ $kode }}" tabindex="-1">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ route('jadwal.guru.absen', $guru) }}" class="modal-content">
+                    @csrf
+                    <input type="hidden" name="status" value="{{ $kode }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Absen {{ $label }} - {{ $guru->nama }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Keterangan (opsional)</label>
+                        <input type="text" name="keterangan" class="form-control" placeholder="contoh: demam, ada urusan keluarga">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
+@endif
+
 <div class="p-4 bg-white rounded shadow">
     @if ($jadwalPerHari->isEmpty())
         <div class="text-muted text-center py-4">
@@ -42,20 +98,32 @@
                 @foreach ($jadwalPerHari[$hari]->sortBy('jamhari') as $j)
                     @php
                         $kunciSekarang = $j->kelas.'|'.$j->mapel;
-                        if ($kunciSekarang !== $kunciSebelumnya) {
+                        $blokBaru = $kunciSekarang !== $kunciSebelumnya;
+                        if ($blokBaru) {
                             $warnaIndex++;
                         }
                         $kunciSebelumnya = $kunciSekarang;
                         $warna = $palet[$warnaIndex % count($palet)];
+
+                        // Tombol Upload/Lihat Tugas: HANYA di baris PERTAMA tiap blok
+                        // kelas+mapel (jam berurutan gabung jadi 1 tombol saja), dan
+                        // HANYA kalau guru sudah tercatat absen hari ini & bukan Alfa.
+                        $tampilkanTombolTugas = $blokBaru && $hari === $hariIni && $prefix === 'jadwal.'
+                            && $absenGuruHariIni && $absenGuruHariIni->status !== 'a';
+                        $tugasSudahAda = $tampilkanTombolTugas ? ($tugasHariIni[$j->kelas] ?? null) : null;
                     @endphp
                     <div class="jadwal-baris bg-{{ $warna }}">
                         <span class="jadwal-jam-kecil">{{ $j->jamhari }}</span>
                         <span class="jadwal-waktu-kecil">{{ $j->waktu ?? '-' }}</span>
                         <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
                         <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
-                        @if ($hari === $hariIni && $prefix === 'jadwal.')
+                        @if ($tampilkanTombolTugas)
                             <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
-                                <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
+                                @if ($tugasSudahAda)
+                                    <i class="fas fa-eye me-1"></i> Lihat Tugas
+                                @else
+                                    <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
+                                @endif
                             </a>
                         @endif
                     </div>
@@ -64,4 +132,6 @@
         @endforeach
     @endif
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

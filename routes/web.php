@@ -384,6 +384,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/kelas/{kelas}', [JadwalController::class, 'kelasDetail'])->name('kelas');
         Route::get('/guru', [JadwalController::class, 'guruList'])->name('pilih-guru');
         Route::get('/guru/{guru}', [JadwalController::class, 'guruDetail'])->name('guru');
+        Route::post('/guru/{guru}/absen', [JadwalController::class, 'tandaiAbsen'])->name('guru.absen')
+            ->middleware('role:piket,admin,kesiswaan');
     });
 
     // Route generik untuk semua menu panel_*.php yang belum dimigrasi satu-satu.
