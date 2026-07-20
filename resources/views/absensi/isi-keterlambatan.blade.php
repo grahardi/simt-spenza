@@ -21,6 +21,17 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Gagal menyimpan:</strong>
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="px-4 py-3 mb-3 bg-white rounded shadow">
     <form method="GET" class="row g-2">
         <div class="col-md-6">

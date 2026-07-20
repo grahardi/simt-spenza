@@ -33,7 +33,7 @@ class KebersihanController extends Controller
     public function simpan(Request $request, string $kelas)
     {
         $data = $request->validate([
-            'foto' => ['required', 'image', 'max:2048'],
+            'foto' => ['required', 'image', 'max:8192'],
             'catatan' => ['nullable', 'string', 'max:100'],
         ]);
 
@@ -75,7 +75,7 @@ class KebersihanController extends Controller
     public function tindak(Request $request, Kebersihan $lapor)
     {
         $request->validate([
-            'foto_aksi' => ['required', 'image', 'max:2048'],
+            'foto_aksi' => ['required', 'image', 'max:8192'],
         ]);
 
         $lapor->update([

@@ -44,7 +44,7 @@ class BimbinganController extends Controller
             'kategori' => ['required', 'in:Pendampingan,Verifikasi,Pelanggaran,Lainnya'],
             'keterangan' => ['nullable', 'string', 'max:255'],
             'tindakan' => ['required', 'in:Tidak Ada,Notifikasi,Peringatan,Tindakan'],
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'foto' => ['nullable', 'image', 'max:8192'],
         ]);
 
         /** @var Member $member */

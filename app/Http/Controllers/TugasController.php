@@ -21,7 +21,7 @@ class TugasController extends Controller
         $data = $request->validate([
             'tugas' => ['required', 'string', 'max:255'],
             'keterangan' => ['nullable', 'string', 'max:255'],
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'foto' => ['nullable', 'image', 'max:8192'],
         ]);
 
         $atribut = [

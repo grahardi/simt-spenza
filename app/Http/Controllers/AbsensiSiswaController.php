@@ -152,7 +152,7 @@ class AbsensiSiswaController extends Controller
         $data = $request->validate([
             'keterangan' => ['required', 'in:h,s,i,a,d'],
             'catatan' => ['nullable', 'string', 'max:100'],
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'foto' => ['nullable', 'image', 'max:8192'],
         ]);
 
         $atribut = [

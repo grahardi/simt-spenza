@@ -55,7 +55,7 @@ class FotoSiswaController extends Controller
     public function upload(Request $request, Siswa $siswa)
     {
         $request->validate([
-            'foto' => ['required', 'image', 'mimes:jpg,jpeg', 'max:2048'],
+            'foto' => ['required', 'image', 'mimes:jpg,jpeg', 'max:8192'],
         ]);
 
         // Hapus foto lama kalau ada, supaya tidak menumpuk file tak terpakai.

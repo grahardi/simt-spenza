@@ -79,7 +79,7 @@ class AjuanAbsensiController extends Controller
         $data = $request->validate([
             'keterangan' => ['required', 'in:s,i,a,d'],
             'catatan' => ['nullable', 'string', 'max:100'],
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'foto' => ['nullable', 'image', 'max:8192'],
         ]);
 
         $atribut = [
