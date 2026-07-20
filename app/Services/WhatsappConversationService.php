@@ -259,6 +259,15 @@ class WhatsappConversationService
             return null;
         }
 
+        // Alfa boleh dikoreksi lewat ajuan WA susulan (misal ternyata sakit,
+        // baru dikabari belakangan) - begitu di-ACC nanti otomatis menimpa
+        // status Alfa jadi Sakit/Ijin. Yang benar-benar dikunci cuma kalau
+        // sudah ada keterangan resmi (Sakit/Ijin/Dispensasi) - itu baru tidak
+        // perlu diajukan ulang.
+        if ($absenHariIni->keterangan === 'a') {
+            return null;
+        }
+
         return WhatsappTemplate::get('absen_sudah_terabsen', [
             'nama' => $siswa->nama_lengkap,
             'status' => strtolower($absenHariIni->labelKeterangan()),
