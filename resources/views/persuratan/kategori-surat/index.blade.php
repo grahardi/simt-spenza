@@ -23,10 +23,27 @@
     <p class="text-muted small mb-2">
         Kode tetap sekolah yang dipakai di setiap nomor surat keluar (contoh: <code>35.07.301.09.43</code>).
     </p>
-    <form method="POST" action="{{ route('kategori-surat.pengaturan') }}" class="d-flex gap-2">
+    <form method="POST" action="{{ route('kategori-surat.pengaturan') }}" class="row g-2">
         @csrf
-        <input type="text" name="kode_baku" class="form-control" style="max-width:280px" value="{{ $pengaturan->kode_baku }}" required>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan</button>
+        <div class="col-md-4">
+            <label class="form-label small">Kode Baku</label>
+            <input type="text" name="kode_baku" class="form-control" value="{{ $pengaturan->kode_baku }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Nama Kepala Sekolah</label>
+            <input type="text" name="kepsek_nama" class="form-control" value="{{ $pengaturan->kepsek_nama }}" placeholder="untuk tanda tangan surat dinas">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">NIP Kepala Sekolah</label>
+            <input type="text" name="kepsek_nip" class="form-control" value="{{ $pengaturan->kepsek_nip }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">Pangkat Kepsek</label>
+            <input type="text" name="kepsek_pangkat" class="form-control" value="{{ $pengaturan->kepsek_pangkat }}">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan</button>
+        </div>
     </form>
 </div>
 

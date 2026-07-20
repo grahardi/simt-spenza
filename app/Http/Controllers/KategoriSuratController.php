@@ -54,7 +54,12 @@ class KategoriSuratController extends Controller
     /** Update kode baku (setting global, satu-satunya field yang bisa diubah di sini). */
     public function updatePengaturan(Request $request)
     {
-        $data = $request->validate(['kode_baku' => ['required', 'string', 'max:50']]);
+        $data = $request->validate([
+            'kode_baku' => ['required', 'string', 'max:50'],
+            'kepsek_nama' => ['nullable', 'string', 'max:100'],
+            'kepsek_nip' => ['nullable', 'string', 'max:50'],
+            'kepsek_pangkat' => ['nullable', 'string', 'max:100'],
+        ]);
 
         PengaturanSurat::ambil()->update($data);
 

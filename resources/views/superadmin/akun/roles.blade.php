@@ -13,6 +13,14 @@
                 <input type="text" name="jabatan" class="form-control" value="{{ $member->jabatan }}">
             </div>
             <div class="form-group">
+                <label>Pangkat/Golongan <span class="text-muted small">(untuk surat dinas, contoh: Pembina Utama Muda)</span></label>
+                <input type="text" name="pangkat" class="form-control" value="{{ $member->pangkat }}">
+            </div>
+            <div class="form-group">
+                <label>Jabatan Dinas <span class="text-muted small">(jabatan resmi kepegawaian, beda dari Jabatan Login di atas)</span></label>
+                <input type="text" name="jabatan_dinas" class="form-control" value="{{ $member->jabatan_dinas }}" placeholder="contoh: Guru Mata Pelajaran Informatika">
+            </div>
+            <div class="form-group">
                 <label>Wali Kelas <span class="text-muted small">(isi nama kelas persis, mis. "7 - A")</span></label>
                 <input type="text" name="walikelas" class="form-control" value="{{ $member->walikelas }}">
             </div>

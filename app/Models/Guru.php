@@ -26,4 +26,10 @@ class Guru extends Model
     {
         return $this->hasMany(GuruWhatsapp::class, 'id_guru', 'id_guru');
     }
+
+    /** Data akun login guru ini - dipakai buat ambil pangkat/jabatan_dinas untuk surat dinas. */
+    public function member(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Member::class, 'id_guru', 'id_guru');
+    }
 }

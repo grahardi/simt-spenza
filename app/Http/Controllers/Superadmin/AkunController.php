@@ -99,6 +99,8 @@ class AkunController extends Controller
     {
         $data = $request->validate([
             'jabatan' => ['nullable', 'string', 'max:20'],
+            'pangkat' => ['nullable', 'string', 'max:100'],
+            'jabatan_dinas' => ['nullable', 'string', 'max:100'],
             'walikelas' => ['nullable', 'string', 'max:10'],
             'piket' => ['nullable', 'string', 'max:20'],
         ]);

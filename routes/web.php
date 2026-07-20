@@ -139,6 +139,19 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::get('/guru-wali', [GuruController::class, 'waliSiswa'])->name('guru.wali-siswa')
         ->middleware('role:guru');
 
+    // Ajuan Surat - guru ajukan (SPPD dulu), Tata Usaha proses jadi PDF
+    Route::prefix('ajuan-surat')->name('ajuan-surat.')->middleware('role:guru')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AjuanSuratController::class, 'index'])->name('index');
+        Route::get('/sppd/tambah', [\App\Http\Controllers\AjuanSuratController::class, 'createSppd'])->name('sppd.create');
+        Route::post('/sppd', [\App\Http\Controllers\AjuanSuratController::class, 'storeSppd'])->name('sppd.store');
+    });
+
+    Route::prefix('surat-tu')->name('surat-tu.')->middleware('role:tata_usaha,kepsek')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SuratTuguController::class, 'index'])->name('index');
+        Route::get('/{ajuanSurat}', [\App\Http\Controllers\SuratTuguController::class, 'show'])->name('show');
+        Route::post('/{ajuanSurat}/buat-surat', [\App\Http\Controllers\SuratTuguController::class, 'buatSurat'])->name('buat-surat');
+    });
+
     // Pendampingan - catatan kegiatan pendampingan guru wali ke anak walinya
     Route::prefix('pendampingan')->name('pendampingan.')->middleware('role:guru')->group(function () {
         Route::get('/', [\App\Http\Controllers\PendampinganController::class, 'index'])->name('index');

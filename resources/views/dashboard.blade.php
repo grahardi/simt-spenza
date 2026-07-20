@@ -19,6 +19,7 @@
                 ['label' => 'Jadwal Mengajar', 'icon' => 'fas fa-clock', 'color' => 'blue', 'href' => route('jadwal-mengajar')],
                 ['label' => 'Ajukan Absen Diri', 'icon' => 'fas fa-user-clock', 'color' => 'red', 'href' => route('ajuan-absen-guru.index')],
                 ['label' => 'Guru Wali', 'icon' => 'fas fa-user-friends', 'color' => 'purple', 'href' => route('guru.wali-siswa')],
+                ['label' => 'Ajuan Surat', 'icon' => 'fas fa-file-signature', 'color' => 'red', 'href' => route('ajuan-surat.index')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
                 ['label' => 'Upload RPP', 'icon' => 'fas fa-book', 'color' => 'amber', 'href' => route('rpp.upload')],
                 ['label' => 'Peminjaman', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],
@@ -116,6 +117,7 @@
                 ['label' => 'Surat Masuk', 'icon' => 'fas fa-inbox', 'color' => 'blue', 'href' => route('surat-masuk.index')],
                 ['label' => 'Surat Keluar', 'icon' => 'fas fa-paper-plane', 'color' => 'purple', 'href' => route('surat-keluar.index')],
                 ['label' => 'Kategori Surat', 'icon' => 'fas fa-tags', 'color' => 'teal', 'href' => route('kategori-surat.index')],
+                ['label' => 'Ajuan Surat', 'icon' => 'fas fa-file-signature', 'color' => 'red', 'href' => route('surat-tu.index')],
             ],
         ],
         'uks' => [

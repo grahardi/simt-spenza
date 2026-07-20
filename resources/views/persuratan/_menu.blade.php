@@ -10,4 +10,7 @@
     <a href="{{ route('kategori-surat.index') }}" class="btn btn-sm {{ str_starts_with($rute, 'kategori-surat') ? 'btn-primary' : 'btn-outline-primary' }}">
         <i class="fas fa-tags me-1"></i> Kategori Surat
     </a>
+    <a href="{{ route('surat-tu.index') }}" class="btn btn-sm {{ str_starts_with($rute, 'surat-tu') ? 'btn-primary' : 'btn-outline-primary' }}">
+        <i class="fas fa-file-signature me-1"></i> Ajuan Surat
+    </a>
 </div>
