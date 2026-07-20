@@ -100,9 +100,9 @@
                                     <i class="fab fa-whatsapp text-success ms-1" title="Diajukan lewat WhatsApp"></i>
                                 @endif
                                 @if (in_array($a->keterangan, ['s', 'i']) && $a->gambar)
-                                    <a href="{{ route('absensi.foto', $a) }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1 py-0 px-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary ms-1 py-0 px-2" data-bs-toggle="modal" data-bs-target="#modalFotoAbsen{{ $a->id_absen_siswa }}">
                                         <i class="fas fa-image"></i>
-                                    </a>
+                                    </button>
                                 @elseif (in_array($a->keterangan, ['s', 'i']))
                                     <span class="text-muted small d-block">Tanpa foto</span>
                                 @endif
@@ -166,6 +166,24 @@
                     @endforeach
                 </tbody>
             </table>
+
+            @foreach ($absensi as $a)
+                @if (in_array($a->keterangan, ['s', 'i']) && $a->gambar)
+                    <div class="modal fade" id="modalFotoAbsen{{ $a->id_absen_siswa }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Foto Bukti - {{ $a->siswa->nama_lengkap ?? '-' }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="{{ Storage::url($a->gambar) }}" alt="Foto bukti" class="img-fluid rounded">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
         </div>
 
         {{ $absensi->onEachSide(1)->links() }}
