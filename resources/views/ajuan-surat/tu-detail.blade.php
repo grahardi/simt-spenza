@@ -18,6 +18,21 @@
         <tr><td>Status</td><td>: <span class="badge {{ $ajuan->status === 'selesai' ? 'bg-success' : 'bg-secondary' }}">{{ $ajuan->labelStatus() }}</span></td></tr>
     </table>
 
+    @if ($ajuan->file_pendukung)
+        <div class="mb-3">
+            <label class="form-label d-block">Berkas Pendukung</label>
+            @if (str_ends_with($ajuan->file_pendukung, '.pdf'))
+                <a href="{{ Storage::url($ajuan->file_pendukung) }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-file-pdf me-1"></i> Lihat PDF Pendukung
+                </a>
+            @else
+                <a href="{{ Storage::url($ajuan->file_pendukung) }}" target="_blank">
+                    <img src="{{ Storage::url($ajuan->file_pendukung) }}" alt="Berkas pendukung" class="img-fluid rounded border" style="max-height:280px;">
+                </a>
+            @endif
+        </div>
+    @endif
+
     <hr>
     <h6 class="mb-3">Detail Isian</h6>
     <table class="table table-sm table-bordered">

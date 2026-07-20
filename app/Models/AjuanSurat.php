@@ -9,7 +9,7 @@ class AjuanSurat extends Model
 {
     protected $table = 'ajuan_surat';
 
-    protected $fillable = ['id_guru', 'jenis_surat', 'data', 'status', 'nomor_surat', 'file_pdf', 'diproses_oleh', 'diproses_at'];
+    protected $fillable = ['id_guru', 'jenis_surat', 'data', 'file_pendukung', 'status', 'nomor_surat', 'file_pdf', 'diproses_oleh', 'diproses_at'];
 
     protected $casts = [
         'data' => 'array',

@@ -23,9 +23,14 @@
         Data diri (nama, NIP, pangkat, jabatan) diambil otomatis dari data kepegawaian Bapak/Ibu.
     </p>
 
-    <form method="POST" action="{{ route('ajuan-surat.sppd.store') }}">
+    <form method="POST" action="{{ route('ajuan-surat.sppd.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Berkas Pendukung (opsional)</label>
+                <input type="file" name="berkas_pendukung" accept="image/*,.pdf" class="form-control">
+                <small class="text-muted">Foto/scan undangan, surat penunjukan, atau bukti pendukung lain. Boleh gambar atau PDF.</small>
+            </div>
             <div class="col-12">
                 <label class="form-label">Dasar Penugasan</label>
                 <textarea name="dasar" class="form-control" rows="2" placeholder="contoh: Berdasarkan surat undangan MGMP Kabupaten Malang..., tanggal ..., No. ... perihal ...">{{ old('dasar') }}</textarea>
