@@ -68,6 +68,18 @@
             </div>
 
             <div class="col-12">
+                <label class="form-label d-block">Visibilitas</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="visibilitas" value="umum" class="form-check-input" id="visUmum" checked>
+                    <label class="form-check-label" for="visUmum">Umum (tampil di Galeri Wali)</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="visibilitas" value="private" class="form-check-input" id="visPrivate">
+                    <label class="form-check-label" for="visPrivate">Private (cuma saya yang lihat)</label>
+                </div>
+            </div>
+
+            <div class="col-12">
                 <label class="form-label">Foto Kegiatan (opsional)</label>
                 <input type="file" name="foto" accept="image/*" class="form-control">
             </div>

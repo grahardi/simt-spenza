@@ -142,6 +142,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Pendampingan - catatan kegiatan pendampingan guru wali ke anak walinya
     Route::prefix('pendampingan')->name('pendampingan.')->middleware('role:guru')->group(function () {
         Route::get('/', [\App\Http\Controllers\PendampinganController::class, 'index'])->name('index');
+        Route::get('/galeri', [\App\Http\Controllers\PendampinganController::class, 'galeri'])->name('galeri');
         Route::get('/tambah', [\App\Http\Controllers\PendampinganController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\PendampinganController::class, 'store'])->name('store');
     });

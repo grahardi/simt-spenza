@@ -31,6 +31,21 @@ class PendampinganController extends Controller
         return view('pendampingan.index', compact('guru', 'daftar'));
     }
 
+    /** Galeri Wali - kegiatan pendampingan UMUM dari SEMUA guru wali (bukan cuma diri sendiri). */
+    public function galeri(Request $request)
+    {
+        $tanggal = $request->date('tgl') ?? \Carbon\Carbon::today('Asia/Jakarta');
+
+        $galeri = PendampinganWali::with(['guru', 'peserta'])
+            ->where('visibilitas', 'umum')
+            ->whereNotNull('foto')
+            ->whereDate('tanggal_waktu', $tanggal)
+            ->orderByDesc('tanggal_waktu')
+            ->paginate(20);
+
+        return view('pendampingan.galeri', compact('galeri', 'tanggal'));
+    }
+
     public function create()
     {
         $guru = $this->guruLogin();
@@ -52,6 +67,7 @@ class PendampinganController extends Controller
             'judul' => ['required', 'string', 'max:150'],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'foto' => ['nullable', 'image', 'max:8192'],
+            'visibilitas' => ['required', 'in:umum,private'],
             'peserta_mode' => ['required', 'in:semua,pilih'],
             'peserta_id' => ['required_if:peserta_mode,pilih', 'array'],
             'peserta_id.*' => ['integer'],
@@ -63,6 +79,7 @@ class PendampinganController extends Controller
             'kategori' => $data['kategori'],
             'judul' => $data['judul'],
             'deskripsi' => $data['deskripsi'] ?? null,
+            'visibilitas' => $data['visibilitas'],
         ];
 
         if ($request->hasFile('foto')) {
