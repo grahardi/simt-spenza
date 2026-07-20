@@ -21,6 +21,14 @@
                 <input type="text" name="jabatan_dinas" class="form-control" value="{{ $member->jabatan_dinas }}" placeholder="contoh: Guru Mata Pelajaran Informatika">
             </div>
             <div class="form-group">
+                <label>Jenis PTK <span class="text-muted small">(klasifikasi data - untuk sinkron ke sistem lain)</span></label>
+                <select name="jenis_ptk" class="form-control">
+                    <option value="">- Belum ditentukan -</option>
+                    <option value="guru" @selected($member->jenis_ptk === 'guru')>Guru (Pendidik)</option>
+                    <option value="tenaga_administrasi" @selected($member->jenis_ptk === 'tenaga_administrasi')>Tenaga Administrasi (PTK Non-Guru)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Wali Kelas <span class="text-muted small">(isi nama kelas persis, mis. "7 - A")</span></label>
                 <input type="text" name="walikelas" class="form-control" value="{{ $member->walikelas }}">
             </div>

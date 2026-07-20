@@ -101,6 +101,7 @@ class AkunController extends Controller
             'jabatan' => ['nullable', 'string', 'max:20'],
             'pangkat' => ['nullable', 'string', 'max:100'],
             'jabatan_dinas' => ['nullable', 'string', 'max:100'],
+            'jenis_ptk' => ['nullable', 'in:guru,tenaga_administrasi'],
             'walikelas' => ['nullable', 'string', 'max:10'],
             'piket' => ['nullable', 'string', 'max:20'],
         ]);

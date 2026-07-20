@@ -28,7 +28,7 @@ class Member extends Authenticatable
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'user', 'password', 'nama', 'jabatan', 'pangkat', 'jabatan_dinas', 'admin', 'walikelas',
+        'id', 'user', 'password', 'nama', 'jabatan', 'pangkat', 'jabatan_dinas', 'jenis_ptk', 'admin', 'walikelas',
         'tatib', 'bk', 'piket', 'guru', 'keagamaan', 'kebersihan',
         'kepsek', 'id_guru', 'id_karyawan', 'foto', 'panggilan', 'adminsoal', 'tata_usaha', 'uks', 'kesiswaan',
         'wajib_ganti_password', 'last_login_at',

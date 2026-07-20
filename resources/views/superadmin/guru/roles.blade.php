@@ -33,6 +33,22 @@
                     <input type="text" name="jabatan" class="form-control" value="{{ $member->jabatan }}" placeholder="contoh: Guru, Superadmin">
                 </div>
                 <div class="form-group">
+                    <label>Pangkat/Golongan <span class="text-muted small">(untuk surat dinas)</span></label>
+                    <input type="text" name="pangkat" class="form-control" value="{{ $member->pangkat }}">
+                </div>
+                <div class="form-group">
+                    <label>Jabatan Dinas <span class="text-muted small">(jabatan resmi kepegawaian)</span></label>
+                    <input type="text" name="jabatan_dinas" class="form-control" value="{{ $member->jabatan_dinas }}">
+                </div>
+                <div class="form-group">
+                    <label>Jenis PTK <span class="text-muted small">(untuk sinkron ke sistem lain)</span></label>
+                    <select name="jenis_ptk" class="form-control">
+                        <option value="">- Belum ditentukan -</option>
+                        <option value="guru" @selected($member->jenis_ptk === 'guru')>Guru (Pendidik)</option>
+                        <option value="tenaga_administrasi" @selected($member->jenis_ptk === 'tenaga_administrasi')>Tenaga Administrasi</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Wali Kelas <span class="text-muted small">(isi nama kelas persis, mis. "7 - A", kosongkan kalau bukan wali kelas)</span></label>
                     <input type="text" name="walikelas" class="form-control" value="{{ $member->walikelas }}">
                 </div>
