@@ -34,16 +34,34 @@ class SinkronGuruWali extends Command
         $cocok = 0;
         $tidakCocokNama = [];
         $tidakCocokSiswa = [];
+        $idGuruTidakAda = [];
         $update = [];
 
-        foreach ($referensi as $nis => $namaGuruExcel) {
+        $daftarGuruById = $daftarGuru->keyBy('id_guru');
+
+        foreach ($referensi as $nis => $nilaiGuruExcel) {
             $siswa = Siswa::find($nis);
             if (!$siswa) {
                 $tidakCocokSiswa[] = $nis;
                 continue;
             }
 
-            $target = $this->normalisasi($namaGuruExcel);
+            // Kelas 8-9 di Excel isinya KODE ANGKA (langsung id_guru asli,
+            // sama seperti pola kodeguru di jadwal), kelas 7 isinya NAMA teks.
+            if (ctype_digit((string) $nilaiGuruExcel)) {
+                $idGuru = (int) $nilaiGuruExcel;
+                $guruAsli = $daftarGuruById->get($idGuru);
+
+                if ($guruAsli) {
+                    $cocok++;
+                    $update[$nis] = $idGuru;
+                } else {
+                    $idGuruTidakAda[$idGuru] = ($idGuruTidakAda[$idGuru] ?? 0) + 1;
+                }
+                continue;
+            }
+
+            $target = $this->normalisasi($nilaiGuruExcel);
             $guruCocok = null;
             $skorTerbaik = 0;
 
@@ -59,7 +77,7 @@ class SinkronGuruWali extends Command
                 $cocok++;
                 $update[$nis] = $guruCocok->id_guru;
             } else {
-                $tidakCocokNama[$namaGuruExcel] = ($tidakCocokNama[$namaGuruExcel] ?? 0) + 1;
+                $tidakCocokNama[$nilaiGuruExcel] = ($tidakCocokNama[$nilaiGuruExcel] ?? 0) + 1;
             }
         }
 
@@ -68,6 +86,13 @@ class SinkronGuruWali extends Command
 
         if ($tidakCocokSiswa) {
             $this->warn('NIS tidak ditemukan di tabel siswa: '.implode(', ', array_slice($tidakCocokSiswa, 0, 20)).(count($tidakCocokSiswa) > 20 ? ' ...' : ''));
+        }
+
+        if ($idGuruTidakAda) {
+            $this->warn('Kode id_guru dari Excel TIDAK ADA di tabel guru:');
+            foreach ($idGuruTidakAda as $id => $jumlah) {
+                $this->line("  - kode {$id} ({$jumlah} siswa)");
+            }
         }
 
         if ($tidakCocokNama) {
