@@ -36,16 +36,12 @@
     <hr>
     <h6 class="mb-3">Detail Isian</h6>
     <table class="table table-sm table-bordered">
-        <tr><td width="200">Dasar Penugasan</td><td>{{ $ajuan->data['dasar'] ?? '-' }}</td></tr>
-        <tr><td>Hari</td><td>{{ $ajuan->data['hari'] ?? '-' }}</td></tr>
-        <tr><td>Tanggal Berangkat</td><td>{{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
+        <tr><td width="200">Hari, Tanggal Berangkat</td><td>{{ $ajuan->data['hari'] ?? '-' }}, {{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
         <tr><td>Tanggal Kembali</td><td>{{ $ajuan->data['tanggal_selesai'] ?? '-' }}</td></tr>
         <tr><td>Jam</td><td>{{ $ajuan->data['jam_mulai'] ?? '-' }} s.d. {{ $ajuan->data['jam_selesai'] ?? 'selesai' }}</td></tr>
         <tr><td>Total Hari</td><td>{{ $ajuan->data['total_hari'] ?? 1 }}</td></tr>
-        <tr><td>Tempat Kegiatan</td><td>{{ $ajuan->data['tempat'] ?? '-' }}</td></tr>
         <tr><td>Tempat Tujuan</td><td>{{ $ajuan->data['tempat_tujuan'] ?? '-' }}</td></tr>
         <tr><td>Tema/Perihal</td><td>{{ $ajuan->data['tema'] ?? '-' }}</td></tr>
-        <tr><td>Maksud</td><td>{{ $ajuan->data['maksud'] ?? '-' }}</td></tr>
     </table>
 
     @if ($ajuan->status === 'selesai')

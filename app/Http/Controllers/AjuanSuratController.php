@@ -43,20 +43,18 @@ class AjuanSuratController extends Controller
         $guru = $this->guruLogin();
 
         $data = $request->validate([
-            'dasar' => ['required', 'string', 'max:500'],
-            'hari' => ['required', 'string', 'max:30'],
             'tanggal' => ['required', 'date'],
             'tanggal_selesai' => ['nullable', 'date'],
             'jam_mulai' => ['required', 'string', 'max:10'],
             'jam_selesai' => ['nullable', 'string', 'max:10'],
-            'tempat' => ['required', 'string', 'max:200'],
-            'tema' => ['required', 'string', 'max:200'],
             'tempat_tujuan' => ['required', 'string', 'max:200'],
-            'maksud' => ['required', 'string', 'max:300'],
+            'tema' => ['required', 'string', 'max:200'],
             'total_hari' => ['nullable', 'integer', 'min:1'],
             'berkas_pendukung' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:8192'],
         ]);
 
+        // Hari dihitung otomatis dari tanggal berangkat, tidak perlu diisi manual.
+        $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
         $data['total_hari'] = $data['total_hari'] ?? 1;
 
         $filePendukung = null;
