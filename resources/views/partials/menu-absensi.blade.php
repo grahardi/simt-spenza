@@ -15,12 +15,12 @@
             <i class="fas fa-clock me-1"></i> Isi Keterlambatan
         </a>
     @endif
-    @if (auth('member')->user()->hasRole('admin'))
-        <a href="{{ route('ajuan-absensi.pilih-kelas') }}" class="btn btn-sm {{ str_starts_with($rute, 'ajuan-absensi') ? 'btn-primary' : 'btn-outline-primary' }}">
+    @if (auth('member')->user()->hasRole('piket'))
+        <a href="{{ route('ajuan-absensi.index') }}" class="btn btn-sm {{ str_starts_with($rute, 'ajuan-absensi') ? 'btn-primary' : 'btn-outline-primary' }}">
             <i class="fas fa-inbox me-1"></i> Ajuan Absensi
         </a>
-    @elseif (auth('member')->user()->hasRole('piket'))
-        <a href="{{ route('ajuan-absensi.index') }}" class="btn btn-sm {{ str_starts_with($rute, 'ajuan-absensi') ? 'btn-primary' : 'btn-outline-primary' }}">
+    @elseif (auth('member')->user()->hasRole('admin'))
+        <a href="{{ route('ajuan-absensi.pilih-kelas') }}" class="btn btn-sm {{ str_starts_with($rute, 'ajuan-absensi') ? 'btn-primary' : 'btn-outline-primary' }}">
             <i class="fas fa-inbox me-1"></i> Ajuan Absensi
         </a>
     @endif
