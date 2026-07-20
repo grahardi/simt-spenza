@@ -1,0 +1,13 @@
+@php $rute = request()->route()->getName(); @endphp
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-home me-1"></i> Home
+    </a>
+    <a href="{{ route('guru.wali-siswa') }}" class="btn btn-sm {{ $rute === 'guru.wali-siswa' ? 'btn-primary' : 'btn-outline-primary' }}">
+        <i class="fas fa-user-friends me-1"></i> List Siswa
+    </a>
+    <a href="{{ route('pendampingan.index') }}" class="btn btn-sm {{ str_starts_with($rute, 'pendampingan') ? 'btn-primary' : 'btn-outline-primary' }}">
+        <i class="fas fa-hands-helping me-1"></i> Pendampingan
+    </a>
+</div>

@@ -3,6 +3,7 @@
 @section('title', 'Guru Wali - ' . $guru->nama)
 
 @section('content')
+@include('partials.menu-wali')
 <div class="d-flex flex-column flex-md-row px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <div class="d-flex align-items-center me-md-auto">
         <i class="fas fa-user-friends fa-lg me-3"></i>

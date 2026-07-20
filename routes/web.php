@@ -139,6 +139,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::get('/guru-wali', [GuruController::class, 'waliSiswa'])->name('guru.wali-siswa')
         ->middleware('role:guru');
 
+    // Pendampingan - catatan kegiatan pendampingan guru wali ke anak walinya
+    Route::prefix('pendampingan')->name('pendampingan.')->middleware('role:guru')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PendampinganController::class, 'index'])->name('index');
+        Route::get('/tambah', [\App\Http\Controllers\PendampinganController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\PendampinganController::class, 'store'])->name('store');
+    });
+
     // Persuratan (Tata Usaha) - Surat Masuk & Surat Keluar
     Route::resource('surat-masuk', SuratMasukController::class)
         ->except(['show'])
