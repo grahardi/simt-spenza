@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@php $editMode = isset($ajuan); @endphp
-@section('title', $editMode ? 'Edit Ajuan SPPD' : 'Ajukan SPPD')
+@php $editMode = isset($ajuan); $dariTu = $dariTu ?? false; @endphp
+@section('title', $editMode ? 'Edit Ajuan SPPD' : ($dariTu ? 'Buat SPPD' : 'Ajukan SPPD'))
 
 @php
     $isi = fn ($field, $default = '') => old($field, $editMode ? ($ajuan->data[$field] ?? $default) : $default);
@@ -9,7 +9,7 @@
 
 @section('content')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0"><i class="fas fa-file-signature me-2"></i>{{ $editMode ? 'Edit Ajuan SPPD' : 'Ajukan SPPD' }}</h1>
+    <h1 class="h5 pt-2 mb-0"><i class="fas fa-file-signature me-2"></i>{{ $editMode ? 'Edit Ajuan SPPD' : ($dariTu ? 'Buat SPPD' : 'Ajukan SPPD') }}</h1>
 </div>
 
 <div class="p-4 bg-white rounded shadow" style="max-width:640px;">
@@ -24,17 +24,33 @@
     @endif
 
     <p class="text-muted small">
-        Surat Tugas &amp; Surat Perjalanan Dinas akan dibuat otomatis oleh sistem berdasarkan data ini, setelah disetujui Tata Usaha.
-        Data diri (nama, NIP, pangkat, jabatan) diambil otomatis dari data kepegawaian Bapak/Ibu. Hari dihitung otomatis dari tanggal berangkat.
+        Surat Tugas &amp; Surat Perjalanan Dinas akan dibuat otomatis oleh sistem berdasarkan data ini.
+        @if ($dariTu)
+            Pilih guru yang bersangkutan - data diri (NIP, pangkat, jabatan) diambil otomatis dari data kepegawaian guru tersebut.
+        @else
+            Data diri (nama, NIP, pangkat, jabatan) diambil otomatis dari data kepegawaian Bapak/Ibu.
+        @endif
+        Hari &amp; total hari dihitung otomatis dari tanggal.
         @if ($editMode)
             <br><strong>Ajuan ini bisa diedit kapan saja, termasuk setelah surat sudah dibuat - tinggal generate ulang kalau ada perubahan.</strong>
         @endif
     </p>
 
-    <form method="POST" action="{{ $editMode ? route('ajuan-surat.sppd.update', $ajuan) : route('ajuan-surat.sppd.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ $editMode ? route('ajuan-surat.sppd.update', $ajuan) : ($dariTu ? route('surat-tu.sppd.store') : route('ajuan-surat.sppd.store')) }}" enctype="multipart/form-data">
         @csrf
         @if ($editMode) @method('PUT') @endif
         <div class="row g-3">
+            @if ($dariTu)
+                <div class="col-12">
+                    <label class="form-label">Guru</label>
+                    <select name="id_guru" class="form-select" required>
+                        <option value="">- Pilih guru -</option>
+                        @foreach ($daftarGuru as $g)
+                            <option value="{{ $g->id_guru }}">{{ $g->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
             <div class="col-12">
                 <label class="form-label">Berkas Pendukung <span class="text-muted">(undangan/surat penunjukan, jadi dasar penugasan)</span></label>
                 <input type="file" name="berkas_pendukung" accept="image/*,.pdf" class="form-control">
@@ -86,7 +102,9 @@
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-{{ $editMode ? 'save' : 'paper-plane' }} me-1"></i> {{ $editMode ? 'Simpan Perubahan' : 'Kirim Ajuan' }}
             </button>
-            <a href="{{ $editMode ? ((auth('member')->user()->hasRole('tata_usaha') || auth('member')->user()->hasRole('kepsek')) ? route('surat-tu.show', $ajuan) : route('ajuan-surat.index')) : route('ajuan-surat.index') }}" class="btn btn-outline-secondary">Batal</a>
+            <a href="{{ $editMode
+                    ? ((auth('member')->user()->hasRole('tata_usaha') || auth('member')->user()->hasRole('kepsek')) ? route('surat-tu.show', $ajuan) : route('ajuan-surat.index'))
+                    : ($dariTu ? route('surat-tu.index') : route('ajuan-surat.index')) }}" class="btn btn-outline-secondary">Batal</a>
         </div>
     </form>
 </div>

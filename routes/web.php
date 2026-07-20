@@ -154,6 +154,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
     Route::prefix('surat-tu')->name('surat-tu.')->middleware('role:tata_usaha,kepsek')->group(function () {
         Route::get('/', [\App\Http\Controllers\SuratTuguController::class, 'index'])->name('index');
+        Route::get('/sppd/tambah', [\App\Http\Controllers\SuratTuguController::class, 'createSppd'])->name('sppd.create');
+        Route::post('/sppd', [\App\Http\Controllers\SuratTuguController::class, 'storeSppd'])->name('sppd.store');
         Route::get('/{ajuanSurat}', [\App\Http\Controllers\SuratTuguController::class, 'show'])->name('show');
         Route::post('/{ajuanSurat}/buat-surat', [\App\Http\Controllers\SuratTuguController::class, 'buatSurat'])->name('buat-surat');
     });

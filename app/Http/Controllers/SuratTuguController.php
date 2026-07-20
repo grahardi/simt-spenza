@@ -23,6 +23,53 @@ class SuratTuguController extends Controller
         return view('ajuan-surat.tu-index', compact('daftar', 'status'));
     }
 
+    /** Form Buat SPPD langsung dari Tata Usaha - beda dari ajuan guru, di sini TU pilih gurunya sendiri. */
+    public function createSppd()
+    {
+        $daftarGuru = \App\Models\Guru::orderBy('nama')->get();
+
+        return view('ajuan-surat.form-sppd', ['guru' => null, 'daftarGuru' => $daftarGuru, 'dariTu' => true]);
+    }
+
+    public function storeSppd(Request $request)
+    {
+        $request->validate(['id_guru' => ['required', 'integer', 'exists:guru,id_guru']]);
+
+        $data = $request->validate([
+            'isian_form' => ['required', 'string', 'max:300'],
+            'tanggal_dasar' => ['nullable', 'date'],
+            'nomor_surat_dasar' => ['nullable', 'string', 'max:100'],
+            'tanggal' => ['required', 'date'],
+            'tanggal_selesai' => ['nullable', 'date'],
+            'jam_mulai' => ['required', 'string', 'max:10'],
+            'jam_selesai' => ['nullable', 'string', 'max:10'],
+            'tempat_tujuan' => ['required', 'string', 'max:200'],
+            'tema' => ['required', 'string', 'max:200'],
+            'berkas_pendukung' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:8192'],
+        ]);
+
+        $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+        $data['total_hari'] = !empty($data['tanggal_selesai'])
+            ? \Carbon\Carbon::parse($data['tanggal'])->diffInDays(\Carbon\Carbon::parse($data['tanggal_selesai'])) + 1
+            : 1;
+
+        $filePendukung = null;
+        if ($request->hasFile('berkas_pendukung')) {
+            $filePendukung = $request->file('berkas_pendukung')->store('ajuan-surat/pendukung', 'public');
+        }
+        unset($data['berkas_pendukung']);
+
+        $ajuan = AjuanSurat::create([
+            'id_guru' => (int) $request->input('id_guru'),
+            'jenis_surat' => 'sppd',
+            'data' => $data,
+            'file_pendukung' => $filePendukung,
+            'status' => 'menunggu',
+        ]);
+
+        return redirect()->route('surat-tu.show', $ajuan)->with('status', 'SPPD berhasil dibuat, lanjutkan ke pemberian nomor surat.');
+    }
+
     /** Detail lengkap 1 ajuan - sebelum dibuatkan surat. */
     public function show(AjuanSurat $ajuanSurat)
     {

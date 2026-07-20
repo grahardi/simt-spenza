@@ -5,8 +5,14 @@
 @section('content')
 @include('persuratan._menu')
 
-<div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0"><i class="fas fa-file-signature me-2"></i>Ajuan Surat</h1>
+<div class="px-4 py-2 mb-3 text-white rounded shadow d-flex flex-column flex-md-row" style="background:#4b0082;">
+    <div class="d-flex align-items-center me-md-auto">
+        <i class="fas fa-file-signature fa-lg me-3"></i>
+        <h1 class="h5 pt-2 mb-0">Ajuan Surat</h1>
+    </div>
+    <a href="{{ route('surat-tu.sppd.create') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+        <i class="fas fa-plus me-1"></i> Buat SPPD
+    </a>
 </div>
 
 @if (session('status'))
