@@ -63,6 +63,7 @@
             'theme' => 'teal',
             'items' => [
                 ['label' => 'Isi Absensi', 'icon' => 'fas fa-pen', 'color' => 'blue', 'href' => route('absensi.isi')],
+                ['label' => 'Isi Keterlambatan', 'icon' => 'fas fa-clock', 'color' => 'purple', 'href' => route('absensi.telat-isi')],
                 ['label' => 'Siswa Terlambat', 'icon' => 'fas fa-clock', 'color' => 'red', 'href' => route('absensi.telat.list')],
                 ['label' => 'Absensi Siswa', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Arsip Surat', 'icon' => 'fas fa-envelope-open-text', 'color' => 'amber', 'href' => route('arsip-surat')],

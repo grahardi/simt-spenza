@@ -9,8 +9,11 @@
         <i class="fas fa-search fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Pengisian Absensi</h1>
     </div>
+    <a href="{{ route('absensi.telat-isi') }}" class="btn btn-light btn-sm mt-2 mt-md-0 me-2">
+        <i class="fas fa-clock me-1"></i> Isi Keterlambatan
+    </a>
     <a href="{{ route('absensi.telat.list') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
-        <i class="fas fa-clock me-1"></i> Data Terlambat
+        <i class="fas fa-list me-1"></i> Data Terlambat
     </a>
 </div>
 
@@ -81,12 +84,6 @@
                                 <input type="hidden" name="keterangan" value="a">
                                 <button type="submit" class="btn-absen btn-absen-alfa">
                                     <i class="fas fa-times me-1"></i> Alfa
-                                </button>
-                            </form>
-                            <form method="POST" action="{{ route('absensi.telat', $s) }}" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn-absen btn-absen-telat">
-                                    <i class="fas fa-clock me-1"></i> Terlambat
                                 </button>
                             </form>
                         </div>

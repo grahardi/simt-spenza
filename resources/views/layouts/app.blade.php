@@ -220,6 +220,7 @@
         .badge-i { background: #eaf3de; color: #3b6d11; }
         .badge-a { background: #fcebeb; color: #a32d2d; }
         .badge-d { background: #e6f1fb; color: #185fa5; }
+        .badge-t { background: #eeedfe; color: #534ab7; }
 
         /* Grid kartu kelas untuk Ajukan Absensi - pengganti laporlistkelas.php.
            Kotak dibuat ukuran tetap kecil (~70px, mirip tombol lama), BUKAN

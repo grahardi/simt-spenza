@@ -106,6 +106,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
         Route::get('/telat', [AbsensiSiswaController::class, 'listTelat'])->name('telat.list')
             ->middleware('role:piket,kesiswaan');
+        Route::get('/telat-isi', [AbsensiSiswaController::class, 'isiKeterlambatan'])->name('telat-isi')
+            ->middleware('role:piket');
 
         // Isi absensi manual & catat terlambat - KHUSUS piket (admin tidak boleh ubah absensi resmi)
         Route::middleware('role:piket')->group(function () {

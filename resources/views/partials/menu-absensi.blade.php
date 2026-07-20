@@ -11,6 +11,9 @@
         <a href="{{ route('absensi.isi') }}" class="btn btn-sm {{ $rute === 'absensi.isi' ? 'btn-primary' : 'btn-outline-primary' }}">
             <i class="fas fa-pen me-1"></i> Isi Absensi
         </a>
+        <a href="{{ route('absensi.telat-isi') }}" class="btn btn-sm {{ $rute === 'absensi.telat-isi' ? 'btn-primary' : 'btn-outline-primary' }}">
+            <i class="fas fa-clock me-1"></i> Isi Keterlambatan
+        </a>
     @endif
     @if (auth('member')->user()->hasRole('admin'))
         <a href="{{ route('ajuan-absensi.pilih-kelas') }}" class="btn btn-sm {{ str_starts_with($rute, 'ajuan-absensi') ? 'btn-primary' : 'btn-outline-primary' }}">

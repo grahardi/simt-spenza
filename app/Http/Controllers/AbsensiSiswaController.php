@@ -93,6 +93,44 @@ class AbsensiSiswaController extends Controller
     }
 
     /**
+     * Halaman TERPISAH khusus tandai terlambat - dipisah dari Isi Absensi
+     * supaya piket tidak salah pencet antara "absen" dan "terlambat".
+     */
+    public function isiKeterlambatan(Request $request)
+    {
+        $siswa = null;
+        $cari = trim((string) $request->input('cari'));
+
+        if ($cari !== '') {
+            $siswa = Siswa::query()
+                ->where(function ($query) use ($cari) {
+                    $query->where('nama_lengkap', 'like', '%'.$cari.'%')
+                        ->orWhere('id_member', 'like', '%'.$cari.'%');
+                })
+                ->orderByDesc('id_member')
+                ->limit(20)
+                ->get();
+
+            $absenHariIni = AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
+                ->whereDate('tgl_absen', Carbon::today())
+                ->get()
+                ->keyBy('id_siswa');
+
+            $telatHariIni = \App\Models\Keterlambatan::whereIn('id_siswa', $siswa->pluck('id_member'))
+                ->whereDate('tgl_absen', Carbon::today())
+                ->get()
+                ->keyBy('id_siswa');
+
+            $siswa->each(function ($s) use ($absenHariIni, $telatHariIni) {
+                $s->absenHariIni = $absenHariIni->get($s->id_member);
+                $s->telatHariIni = $telatHariIni->get($s->id_member);
+            });
+        }
+
+        return view('absensi.isi-keterlambatan', ['siswa' => $siswa, 'cari' => $cari]);
+    }
+
+    /**
      * Pengganti absensi.php - insert/update absensi hari ini untuk 1 siswa.
      * Dulu ditulis via link GET (rawan double-submit & CSRF) - sekarang POST + validasi.
      * Sakit/Ijin bisa sertakan foto bukti (opsional - klik "Absen" tanpa foto tetap tersimpan).
