@@ -86,7 +86,7 @@ class SuratTuguController extends Controller
             'diproses_at' => now(),
         ]);
 
-        return redirect()->route('surat-tu.index')->with('status', 'Surat berhasil dibuat untuk '.($guru->nama ?? '-').' (format .docx, siap dicetak/diubah PDF manual).');
+        return redirect()->route('surat-tu.show', $ajuanSurat)->with('status', 'Surat berhasil dibuat untuk '.($guru->nama ?? '-').' (format .docx, siap dicetak/diubah PDF manual).');
     }
 
     /**

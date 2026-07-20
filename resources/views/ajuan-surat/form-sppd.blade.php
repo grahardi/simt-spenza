@@ -27,7 +27,7 @@
         Surat Tugas &amp; Surat Perjalanan Dinas akan dibuat otomatis oleh sistem berdasarkan data ini, setelah disetujui Tata Usaha.
         Data diri (nama, NIP, pangkat, jabatan) diambil otomatis dari data kepegawaian Bapak/Ibu. Hari dihitung otomatis dari tanggal berangkat.
         @if ($editMode)
-            <br><strong>Ajuan ini masih bisa diedit selama surat belum dibuat oleh Tata Usaha.</strong>
+            <br><strong>Ajuan ini bisa diedit kapan saja, termasuk setelah surat sudah dibuat - tinggal generate ulang kalau ada perubahan.</strong>
         @endif
     </p>
 

@@ -83,10 +83,6 @@ class AjuanSuratController extends Controller
      */
     private function bolehEdit(AjuanSurat $ajuan): bool
     {
-        if ($ajuan->status === 'selesai') {
-            return false;
-        }
-
         $member = Auth::guard('member')->user();
 
         if ($member->hasRole('tata_usaha') || $member->hasRole('kepsek') || $member->hasRole('admin')) {
@@ -98,14 +94,14 @@ class AjuanSuratController extends Controller
 
     public function editSppd(AjuanSurat $ajuanSurat)
     {
-        abort_unless($this->bolehEdit($ajuanSurat), 403, 'Surat ini sudah dibuat / bukan milik Anda - tidak bisa diedit lagi.');
+        abort_unless($this->bolehEdit($ajuanSurat), 403, 'Bukan milik Anda - tidak bisa diedit.');
 
         return view('ajuan-surat.form-sppd', ['guru' => $ajuanSurat->guru, 'ajuan' => $ajuanSurat]);
     }
 
     public function updateSppd(Request $request, AjuanSurat $ajuanSurat)
     {
-        abort_unless($this->bolehEdit($ajuanSurat), 403, 'Surat ini sudah dibuat / bukan milik Anda - tidak bisa diedit lagi.');
+        abort_unless($this->bolehEdit($ajuanSurat), 403, 'Bukan milik Anda - tidak bisa diedit.');
 
         $data = $request->validate([
             'isian_form' => ['required', 'string', 'max:300'],

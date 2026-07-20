@@ -53,21 +53,24 @@
                 <i class="fas fa-file-word me-1"></i> Unduh Surat (.docx)
             </a>
         </div>
-    @else
-        <a href="{{ route('ajuan-surat.sppd.edit', $ajuan) }}" class="btn btn-outline-secondary mt-2 mb-2">
-            <i class="fas fa-edit me-1"></i> Edit Data Ajuan
-        </a>
-        <form method="POST" action="{{ route('surat-tu.buat-surat', $ajuan) }}" class="mt-3">
-            @csrf
-            <label class="form-label">Nomor Surat</label>
-            <div class="d-flex gap-2">
-                <input type="text" name="nomor_surat" class="form-control" placeholder="contoh: 422/012/35.07.301.09.43/2026" required>
-                <button type="submit" class="btn btn-primary text-nowrap">
-                    <i class="fas fa-file-pdf me-1"></i> Buat Surat (PDF)
-                </button>
-            </div>
-        </form>
     @endif
+
+    <a href="{{ route('ajuan-surat.sppd.edit', $ajuan) }}" class="btn btn-outline-secondary mt-2 mb-2">
+        <i class="fas fa-edit me-1"></i> Edit Data Ajuan
+    </a>
+    <form method="POST" action="{{ route('surat-tu.buat-surat', $ajuan) }}" class="mt-3">
+        @csrf
+        <label class="form-label">Nomor Surat</label>
+        <div class="d-flex gap-2">
+            <input type="text" name="nomor_surat" class="form-control" value="{{ $ajuan->nomor_surat }}" placeholder="contoh: 422/012/35.07.301.09.43/2026" required>
+            <button type="submit" class="btn btn-primary text-nowrap">
+                <i class="fas fa-sync-alt me-1"></i> {{ $ajuan->status === 'selesai' ? 'Generate Ulang' : 'Buat Surat' }}
+            </button>
+        </div>
+        @if ($ajuan->status === 'selesai')
+            <small class="text-muted d-block mt-1">Kalau ada perubahan data, edit dulu di atas, baru klik Generate Ulang - file lama akan tertimpa yang baru.</small>
+        @endif
+    </form>
 
     <a href="{{ route('surat-tu.index') }}" class="btn btn-outline-secondary mt-3">Kembali</a>
 </div>
