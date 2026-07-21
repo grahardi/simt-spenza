@@ -49,7 +49,7 @@ class KesiswaanController extends Controller
         $awalMinggu = Carbon::parse($mingguDipilih)->startOfWeek(Carbon::MONDAY);
         $akhirMinggu = $awalMinggu->copy()->endOfWeek(Carbon::SUNDAY);
 
-        $rekap = AbsenSiswa::with('siswa')
+        $rekapSemua = AbsenSiswa::with('siswa')
             ->whereIn('keterangan', ['s', 'i', 'a']) // dispensasi (d) sengaja tidak dihitung
             ->whereBetween('tgl_absen', [$awalMinggu->format('Y-m-d'), $akhirMinggu->format('Y-m-d')])
             ->get()
@@ -64,6 +64,15 @@ class KesiswaanController extends Controller
             })
             ->sortByDesc(fn ($r) => $r->sakit + $r->ijin + $r->alfa)
             ->values();
+
+        $halaman = $request->input('page', 1);
+        $rekap = new \Illuminate\Pagination\LengthAwarePaginator(
+            $rekapSemua->forPage($halaman, 15),
+            $rekapSemua->count(),
+            15,
+            $halaman,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return view('kesiswaan.rekap-mingguan', compact('rekap', 'awalMinggu', 'akhirMinggu'));
     }

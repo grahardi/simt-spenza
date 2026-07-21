@@ -80,4 +80,6 @@
         </div>
     @endif
 </div>
+
+{{ $rekap->onEachSide(1)->links() }}
 @endsection
