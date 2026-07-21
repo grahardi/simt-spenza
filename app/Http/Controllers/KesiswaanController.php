@@ -39,22 +39,32 @@ class KesiswaanController extends Controller
     }
 
     /**
-     * Rekap absensi per hari (S/I/A/D), diurutkan tanggal terbaru dulu,
-     * paginasi 15 baris per halaman supaya gampang navigasi mundur per minggu.
+     * Rekap absensi per SISWA dalam 1 minggu (Senin-Minggu) - kolom Sakit/
+     * Ijin/Alfa terpisah (Dispensasi TIDAK dihitung, bukan kategori "tidak
+     * masuk"). Siswa dengan total S+I+A >= 3 ditandai warna warning di view.
      */
     public function rekapMingguan(Request $request)
     {
-        $rekap = AbsenSiswa::query()
-            ->select('tgl_absen')
-            ->selectRaw("SUM(keterangan = 's') as sakit")
-            ->selectRaw("SUM(keterangan = 'i') as ijin")
-            ->selectRaw("SUM(keterangan = 'a') as alfa")
-            ->selectRaw("SUM(keterangan = 'd') as dispensasi")
-            ->groupBy('tgl_absen')
-            ->orderByDesc('tgl_absen')
-            ->paginate(15)
-            ->withQueryString();
+        $mingguDipilih = $request->date('minggu') ?? Carbon::now('Asia/Jakarta');
+        $awalMinggu = Carbon::parse($mingguDipilih)->startOfWeek(Carbon::MONDAY);
+        $akhirMinggu = $awalMinggu->copy()->endOfWeek(Carbon::SUNDAY);
 
-        return view('kesiswaan.rekap-mingguan', compact('rekap'));
+        $rekap = AbsenSiswa::with('siswa')
+            ->whereIn('keterangan', ['s', 'i', 'a']) // dispensasi (d) sengaja tidak dihitung
+            ->whereBetween('tgl_absen', [$awalMinggu->format('Y-m-d'), $akhirMinggu->format('Y-m-d')])
+            ->get()
+            ->groupBy('id_siswa')
+            ->map(function ($grup) {
+                return (object) [
+                    'siswa' => $grup->first()->siswa,
+                    'sakit' => $grup->where('keterangan', 's')->count(),
+                    'ijin' => $grup->where('keterangan', 'i')->count(),
+                    'alfa' => $grup->where('keterangan', 'a')->count(),
+                ];
+            })
+            ->sortByDesc(fn ($r) => $r->sakit + $r->ijin + $r->alfa)
+            ->values();
+
+        return view('kesiswaan.rekap-mingguan', compact('rekap', 'awalMinggu', 'akhirMinggu'));
     }
 }
