@@ -46,6 +46,7 @@ class AjuanSuratController extends Controller
             'isian_form' => ['required', 'string', 'max:300'],
             'tanggal_dasar' => ['nullable', 'date'],
             'nomor_surat_dasar' => ['nullable', 'string', 'max:100'],
+            'tanggal_surat' => ['nullable', 'date'],
             'tanggal' => ['required', 'date'],
             'tanggal_selesai' => ['nullable', 'date'],
             'jam_mulai' => ['required', 'string', 'max:10'],
@@ -58,6 +59,7 @@ class AjuanSuratController extends Controller
 
         // Hari dihitung otomatis dari tanggal berangkat, tidak perlu diisi manual.
         $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+        $data['tanggal_surat'] = $data['tanggal_surat'] ?? now('Asia/Jakarta')->toDateString();
 
         // Total hari dihitung otomatis dari selisih tanggal berangkat & kembali
         // (kalau tanggal kembali diisi) - dijamin valid, tidak perlu diisi manual.
@@ -112,6 +114,7 @@ class AjuanSuratController extends Controller
             'isian_form' => ['required', 'string', 'max:300'],
             'tanggal_dasar' => ['nullable', 'date'],
             'nomor_surat_dasar' => ['nullable', 'string', 'max:100'],
+            'tanggal_surat' => ['nullable', 'date'],
             'tanggal' => ['required', 'date'],
             'tanggal_selesai' => ['nullable', 'date'],
             'jam_mulai' => ['required', 'string', 'max:10'],
@@ -123,6 +126,7 @@ class AjuanSuratController extends Controller
         ]);
 
         $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+        $data['tanggal_surat'] = $data['tanggal_surat'] ?? now('Asia/Jakarta')->toDateString();
         $data['total_hari'] = !empty($data['tanggal_selesai'])
             ? \Carbon\Carbon::parse($data['tanggal'])->diffInDays(\Carbon\Carbon::parse($data['tanggal_selesai'])) + 1
             : 1;
@@ -162,12 +166,14 @@ class AjuanSuratController extends Controller
             'kota' => ['required', 'string', 'max:100'],
             'kegiatan' => ['required', 'string', 'max:200'],
             'tempat' => ['required', 'string', 'max:200'],
+            'tanggal_surat' => ['nullable', 'date'],
             'tanggal' => ['required', 'date'],
             'waktu' => ['required', 'string', 'max:10'],
             'tindakan' => ['required', 'string', 'max:300'],
         ]);
 
         $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+        $data['tanggal_surat'] = $data['tanggal_surat'] ?? now('Asia/Jakarta')->toDateString();
 
         $ajuanSurat->update(['data' => $data]);
 

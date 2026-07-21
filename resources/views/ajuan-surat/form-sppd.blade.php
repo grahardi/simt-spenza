@@ -72,6 +72,10 @@
                 <input type="text" name="nomor_surat_dasar" class="form-control" value="{{ $isi('nomor_surat_dasar') }}" placeholder="contoh: 02/012/FKKA-SMP.KABmlg/VII/2026">
             </div>
             <div class="col-md-6">
+                <label class="form-label">Tanggal Surat <span class="text-muted">(tanggal terbit surat, default hari ini)</span></label>
+                <input type="date" name="tanggal_surat" class="form-control" value="{{ $isi('tanggal_surat', now('Asia/Jakarta')->toDateString()) }}">
+            </div>
+            <div class="col-md-6">
                 <label class="form-label">Tanggal Berangkat</label>
                 <input type="date" name="tanggal" class="form-control" value="{{ $isi('tanggal') }}" required>
             </div>

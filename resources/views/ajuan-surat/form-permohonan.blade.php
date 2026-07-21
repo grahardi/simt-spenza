@@ -45,11 +45,15 @@
                 <label class="form-label">Kegiatan</label>
                 <input type="text" name="kegiatan" class="form-control" value="{{ $isi('kegiatan') }}" placeholder="contoh: Pentas Seni Akhir Tahun" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <label class="form-label">Tanggal Surat <span class="text-muted">(tanggal terbit, default hari ini)</span></label>
+                <input type="date" name="tanggal_surat" class="form-control" value="{{ $isi('tanggal_surat', now('Asia/Jakarta')->toDateString()) }}">
+            </div>
+            <div class="col-md-4">
                 <label class="form-label">Tanggal Kegiatan</label>
                 <input type="date" name="tanggal" class="form-control" value="{{ $isi('tanggal') }}" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label">Waktu</label>
                 <input type="time" name="waktu" class="form-control" value="{{ $isi('waktu') }}" required>
             </div>

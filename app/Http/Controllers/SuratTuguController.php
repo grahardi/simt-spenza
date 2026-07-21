@@ -84,12 +84,14 @@ class SuratTuguController extends Controller
             'kota' => ['required', 'string', 'max:100'],
             'kegiatan' => ['required', 'string', 'max:200'],
             'tempat' => ['required', 'string', 'max:200'],
+            'tanggal_surat' => ['nullable', 'date'],
             'tanggal' => ['required', 'date'],
             'waktu' => ['required', 'string', 'max:10'],
             'tindakan' => ['required', 'string', 'max:300'],
         ]);
 
         $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+        $data['tanggal_surat'] = $data['tanggal_surat'] ?? now('Asia/Jakarta')->toDateString();
 
         $ajuan = AjuanSurat::create([
             'id_guru' => null,
@@ -190,7 +192,7 @@ class SuratTuguController extends Controller
                 ? \Carbon\Carbon::parse($data['tanggal_dasar'])->translatedFormat('d F Y')
                 : '-',
             'noundangan' => !empty($data['nomor_surat_dasar']) ? 'No. '.$data['nomor_surat_dasar'] : '',
-            'tanggalsurat' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
+            'tanggalsurat' => \Carbon\Carbon::parse($data['tanggal_surat'] ?? $data['tanggal'] ?? now())->translatedFormat('d F Y'),
             'tanggal' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
             'tanggalselesai' => !empty($data['tanggal_selesai']) ? \Carbon\Carbon::parse($data['tanggal_selesai'])->translatedFormat('d F Y') : '-',
             'totalhari' => (string) ($data['total_hari'] ?? 1),
@@ -216,6 +218,7 @@ class SuratTuguController extends Controller
         $isian = [
             'nomorlengkap' => $nomorSuratLengkap,
             'tanggal' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
+            'tanggalterbit' => \Carbon\Carbon::parse($data['tanggal_surat'] ?? $data['tanggal'] ?? now())->translatedFormat('d F Y'),
             'tujuan' => $data['tujuan'] ?? '-',
             'alamat' => $data['alamat'] ?? '-',
             'kota' => $data['kota'] ?? '-',
