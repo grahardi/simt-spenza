@@ -9,8 +9,8 @@
         <i class="fas fa-paper-plane fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Surat Keluar</h1>
     </div>
-    <a href="{{ route('surat-keluar.create') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
-        <i class="fas fa-plus me-1"></i> Buat Surat Keluar
+    <a href="{{ route('surat-keluar.pilih-jenis') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+        <i class="fas fa-plus me-1"></i> Tambah Surat
     </a>
 </div>
 

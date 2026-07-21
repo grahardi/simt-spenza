@@ -1,11 +1,14 @@
 @extends('layouts.app')
 
-@section('title', $item->exists ? 'Ubah Surat Keluar' : 'Buat Surat Keluar')
+@section('title', $item->exists ? 'Ubah Arsip Surat' : 'Arsip Surat Keluar')
 
 @section('content')
 @include('persuratan._menu')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0">{{ $item->exists ? 'Ubah Surat Keluar' : 'Buat Surat Keluar' }}</h1>
+    <h1 class="h5 pt-2 mb-0">{{ $item->exists ? 'Ubah Arsip Surat' : 'Arsip Surat Keluar' }}</h1>
+    @if (!$item->exists)
+        <p class="mb-0 small text-white-50">Surat sudah jadi dari luar sistem - tinggal upload berkas &amp; isi keterangan (tidak digenerate).</p>
+    @endif
 </div>
 
 <div class="p-4 bg-white rounded shadow">

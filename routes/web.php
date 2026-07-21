@@ -176,6 +176,9 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::resource('surat-masuk', SuratMasukController::class)
         ->except(['show'])
         ->middleware('role:tata_usaha,kepsek');
+    Route::get('/surat-keluar/pilih-jenis', [SuratKeluarController::class, 'pilihJenis'])
+        ->name('surat-keluar.pilih-jenis')
+        ->middleware('role:tata_usaha,kepsek');
     Route::resource('surat-keluar', SuratKeluarController::class)
         ->except(['show'])
         ->middleware('role:tata_usaha,kepsek');

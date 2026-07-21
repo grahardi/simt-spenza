@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class SuratKeluarController extends Controller
 {
+    public function pilihJenis()
+    {
+        return view('persuratan.surat-keluar.pilih-jenis');
+    }
+
     public function index(Request $request)
     {
         $surat = SuratKeluar::with('kategori')
