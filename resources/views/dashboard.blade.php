@@ -117,6 +117,7 @@
                 ['label' => 'Surat Keluar', 'icon' => 'fas fa-paper-plane', 'color' => 'purple', 'href' => route('surat-keluar.index')],
                 ['label' => 'Kategori Surat', 'icon' => 'fas fa-tags', 'color' => 'teal', 'href' => route('kategori-surat.index')],
                 ['label' => 'Ajuan Surat', 'icon' => 'fas fa-file-signature', 'color' => 'red', 'href' => route('surat-tu.index')],
+                ['label' => 'Surat Permohonan', 'icon' => 'fas fa-file-alt', 'color' => 'amber', 'href' => route('surat-tu.permohonan.create')],
             ],
         ],
         'uks' => [

@@ -16,7 +16,7 @@ class AjuanSurat extends Model
         'diproses_at' => 'datetime',
     ];
 
-    const JENIS_LABEL = ['sppd' => 'SPPD (Surat Tugas & Perjalanan Dinas)'];
+    const JENIS_LABEL = ['sppd' => 'SPPD (Surat Tugas & Perjalanan Dinas)', 'surat_permohonan' => 'Surat Permohonan'];
     const STATUS_LABEL = ['menunggu' => 'Menunggu', 'diproses' => 'Diproses', 'selesai' => 'Selesai'];
 
     public function guru(): BelongsTo

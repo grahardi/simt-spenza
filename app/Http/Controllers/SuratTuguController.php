@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SuratTuguController extends Controller
 {
-    /** List semua ajuan surat (semua guru) - buat Tata Usaha proses. */
+    /** List semua ajuan surat (semua jenis) - buat Tata Usaha proses. */
     public function index(Request $request)
     {
         $status = $request->input('status', 'menunggu');
@@ -70,6 +70,37 @@ class SuratTuguController extends Controller
         return redirect()->route('surat-tu.show', $ajuan)->with('status', 'SPPD berhasil dibuat, lanjutkan ke pemberian nomor surat.');
     }
 
+    /** Form Buat Surat Permohonan - murni dari Tata Usaha, tidak melibatkan data guru. */
+    public function createPermohonan()
+    {
+        return view('ajuan-surat.form-permohonan');
+    }
+
+    public function storePermohonan(Request $request)
+    {
+        $data = $request->validate([
+            'tujuan' => ['required', 'string', 'max:150'],
+            'alamat' => ['required', 'string', 'max:200'],
+            'kota' => ['required', 'string', 'max:100'],
+            'kegiatan' => ['required', 'string', 'max:200'],
+            'tempat' => ['required', 'string', 'max:200'],
+            'tanggal' => ['required', 'date'],
+            'waktu' => ['required', 'string', 'max:10'],
+            'tindakan' => ['required', 'string', 'max:300'],
+        ]);
+
+        $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+
+        $ajuan = AjuanSurat::create([
+            'id_guru' => null,
+            'jenis_surat' => 'surat_permohonan',
+            'data' => $data,
+            'status' => 'menunggu',
+        ]);
+
+        return redirect()->route('surat-tu.show', $ajuan)->with('status', 'Surat Permohonan berhasil dibuat, lanjutkan ke pemberian nomor surat.');
+    }
+
     /** Detail lengkap 1 ajuan - sebelum dibuatkan surat. */
     public function show(AjuanSurat $ajuanSurat)
     {
@@ -83,7 +114,7 @@ class SuratTuguController extends Controller
         ]);
     }
 
-    /** Generate surat (.docx, isi langsung ke template Word asli) dari data ajuan - khusus jenis SPPD dulu. */
+    /** Generate surat (.docx, isi langsung ke template Word asli) dari data ajuan - support SPPD & Surat Permohonan. */
     public function buatSurat(Request $request, AjuanSurat $ajuanSurat)
     {
         $request->validate([
@@ -97,18 +128,55 @@ class SuratTuguController extends Controller
             now()
         );
         $nomorSuratLengkap = $susunan['kode_surat'];
+        $data = $ajuanSurat->data;
 
-        $pengaturan = PengaturanSurat::ambil();
+        if ($ajuanSurat->jenis_surat === 'surat_permohonan') {
+            [$namaFile, $perihal, $tujuanSurat] = $this->buatSuratPermohonan($ajuanSurat, $nomorSuratLengkap, $data);
+        } else {
+            [$namaFile, $perihal, $tujuanSurat] = $this->buatSuratSppd($ajuanSurat, $nomorSuratLengkap, $data);
+        }
+
+        if (!$namaFile) {
+            return back()->with('status', 'Gagal membuat surat - cek template docx di server.');
+        }
+
+        $ajuanSurat->update([
+            'status' => 'selesai',
+            'nomor_surat' => $nomorSuratLengkap,
+            'file_pdf' => 'ajuan-surat/'.$namaFile,
+            'diproses_oleh' => Auth::guard('member')->id(),
+            'diproses_at' => now(),
+        ]);
+
+        // Sekalian catat di Surat Keluar (list umum) supaya kelihatan di 1 tempat
+        \App\Models\SuratKeluar::updateOrCreate(
+            ['kode_surat' => $nomorSuratLengkap],
+            [
+                'nomor_urut' => $susunan['nomor_urut'],
+                'tahun' => $susunan['tahun'],
+                'kode_umum' => $susunan['kode_umum'],
+                'tanggal_surat' => \Carbon\Carbon::parse($data['tanggal'] ?? now()),
+                'tujuan_surat' => $tujuanSurat,
+                'perihal' => $perihal,
+                'lampiran' => 'ajuan-surat/'.$namaFile,
+                'dibuat_oleh' => Auth::guard('member')->id(),
+            ]
+        );
+
+        return redirect()->route('surat-tu.show', $ajuanSurat)->with('status', 'Surat berhasil dibuat (format .docx, siap dicetak/diubah PDF manual). Ikut tercatat di Surat Keluar.');
+    }
+
+    private function buatSuratSppd(AjuanSurat $ajuanSurat, string $nomorSuratLengkap, array $data): array
+    {
         $guru = $ajuanSurat->guru;
         $member = $guru->member;
-        $data = $ajuanSurat->data;
 
         $jamSelesai = !empty($data['jam_selesai']) ? $data['jam_selesai'] : 'selesai';
 
         $isian = [
             'nomersurat' => $nomorSuratLengkap,
             'namaguru' => $guru->nama ?? '-',
-            'nama' => $guru->nama ?? '-', // dipakai di halaman SPD (placeholder beda dari Surat Tugas)
+            'nama' => $guru->nama ?? '-',
             'nip' => $guru->nip ?? '-',
             'pangkat' => $member->pangkat ?? '-',
             'pangkatjabat' => $member->jabatan_dinas ?? '-',
@@ -128,37 +196,57 @@ class SuratTuguController extends Controller
             'totalhari' => (string) ($data['total_hari'] ?? 1),
         ];
 
-        $namaFile = $this->namaFileSurat($guru, $data);
+        $namaFile = $this->namaFileSppd($guru, $data);
         \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('ajuan-surat');
         $outputPath = storage_path('app/public/ajuan-surat/'.$namaFile);
 
-        $berhasil = \App\Services\DocxMergeService::isi(
-            resource_path('templates/sppd_template.docx'),
-            $isian,
-            $outputPath
-        );
+        $berhasil = \App\Services\DocxMergeService::isi(resource_path('templates/sppd_template.docx'), $isian, $outputPath);
 
-        if (!$berhasil) {
-            return back()->with('status', 'Gagal membuat surat - cek template docx di server.');
-        }
+        return [
+            $berhasil ? $namaFile : null,
+            'SPPD - '.($data['tema'] ?? '-'),
+            $guru->nama ?? '-',
+        ];
+    }
 
-        $ajuanSurat->update([
-            'status' => 'selesai',
-            'nomor_surat' => $nomorSuratLengkap,
-            'file_pdf' => 'ajuan-surat/'.$namaFile,
-            'diproses_oleh' => Auth::guard('member')->id(),
-            'diproses_at' => now(),
-        ]);
+    private function buatSuratPermohonan(AjuanSurat $ajuanSurat, string $nomorSuratLengkap, array $data): array
+    {
+        $pengaturan = PengaturanSurat::ambil();
 
-        return redirect()->route('surat-tu.show', $ajuanSurat)->with('status', 'Surat berhasil dibuat untuk '.($guru->nama ?? '-').' (format .docx, siap dicetak/diubah PDF manual).');
+        $isian = [
+            'nomorlengkap' => $nomorSuratLengkap,
+            'tanggal' => \Carbon\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('d F Y'),
+            'tujuan' => $data['tujuan'] ?? '-',
+            'alamat' => $data['alamat'] ?? '-',
+            'kota' => $data['kota'] ?? '-',
+            'kegiatan' => $data['kegiatan'] ?? '-',
+            'tempat' => $data['tempat'] ?? '-',
+            'hariotomatis' => $data['hari'] ?? '-',
+            'waktu' => $data['waktu'] ?? '-',
+            'tindakan' => $data['tindakan'] ?? '-',
+        ];
+
+        $bersihkan = fn ($teks) => trim(preg_replace('/[^A-Za-z0-9]+/', '_', (string) $teks), '_');
+        $namaFile = 'PERMOHONAN_'.substr($bersihkan($data['kegiatan'] ?? 'surat'), 0, 15).'_'.\Carbon\Carbon::parse($data['tanggal'] ?? now())->format('Ymd').'.docx';
+
+        \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('ajuan-surat');
+        $outputPath = storage_path('app/public/ajuan-surat/'.$namaFile);
+
+        $berhasil = \App\Services\DocxMergeService::isi(resource_path('templates/surat_permohonan_template.docx'), $isian, $outputPath);
+
+        return [
+            $berhasil ? $namaFile : null,
+            'Permohonan - '.($data['kegiatan'] ?? '-'),
+            $data['tujuan'] ?? '-',
+        ];
     }
 
     /**
-     * Nama file: sppd_{panggilan}_{judul}_{tanggal}.docx - "panggilan" dari
+     * Nama file: SPPD_{panggilan}_{judul}_{tanggal}.docx - "panggilan" dari
      * member.panggilan, "judul" dari tema kegiatan. Karakter yang tidak aman
      * untuk nama file (spasi, slash, dll) diganti garis bawah.
      */
-    private function namaFileSurat($guru, array $data): string
+    private function namaFileSppd($guru, array $data): string
     {
         $member = $guru->member;
         $panggilan = $member->panggilan ?: $guru->nama;

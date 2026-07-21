@@ -141,4 +141,36 @@ class AjuanSuratController extends Controller
 
         return $kembali->with('status', 'Ajuan surat berhasil diperbarui.');
     }
+
+    /** Edit Surat Permohonan - khusus Tata Usaha/Kepsek/Admin (tidak melibatkan guru). */
+    public function editPermohonan(AjuanSurat $ajuanSurat)
+    {
+        $member = Auth::guard('member')->user();
+        abort_unless($member->hasRole('tata_usaha') || $member->hasRole('kepsek') || $member->hasRole('admin'), 403);
+
+        return view('ajuan-surat.form-permohonan', ['ajuan' => $ajuanSurat]);
+    }
+
+    public function updatePermohonan(Request $request, AjuanSurat $ajuanSurat)
+    {
+        $member = Auth::guard('member')->user();
+        abort_unless($member->hasRole('tata_usaha') || $member->hasRole('kepsek') || $member->hasRole('admin'), 403);
+
+        $data = $request->validate([
+            'tujuan' => ['required', 'string', 'max:150'],
+            'alamat' => ['required', 'string', 'max:200'],
+            'kota' => ['required', 'string', 'max:100'],
+            'kegiatan' => ['required', 'string', 'max:200'],
+            'tempat' => ['required', 'string', 'max:200'],
+            'tanggal' => ['required', 'date'],
+            'waktu' => ['required', 'string', 'max:10'],
+            'tindakan' => ['required', 'string', 'max:300'],
+        ]);
+
+        $data['hari'] = \Carbon\Carbon::parse($data['tanggal'])->translatedFormat('l');
+
+        $ajuanSurat->update(['data' => $data]);
+
+        return redirect()->route('surat-tu.show', $ajuanSurat)->with('status', 'Surat Permohonan berhasil diperbarui.');
+    }
 }

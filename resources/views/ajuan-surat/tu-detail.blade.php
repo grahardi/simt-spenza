@@ -6,14 +6,21 @@
 @include('persuratan._menu')
 
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0"><i class="fas fa-file-signature me-2"></i>Detail Ajuan - {{ $ajuan->guru->nama ?? '-' }}</h1>
+    <h1 class="h5 pt-2 mb-0">
+        <i class="fas fa-file-signature me-2"></i>Detail Ajuan -
+        {{ $ajuan->jenis_surat === 'surat_permohonan' ? ($ajuan->data['kegiatan'] ?? '-') : ($ajuan->guru->nama ?? '-') }}
+    </h1>
 </div>
 
 <div class="p-4 bg-white rounded shadow" style="max-width:700px;">
     <table class="table table-sm">
         <tr><td width="180">Jenis Surat</td><td>: {{ $ajuan->labelJenis() }}</td></tr>
-        <tr><td>Guru Pengaju</td><td>: {{ $ajuan->guru->nama ?? '-' }}</td></tr>
-        <tr><td>NIP</td><td>: {{ $ajuan->guru->nip ?? '-' }}</td></tr>
+        @if ($ajuan->jenis_surat === 'surat_permohonan')
+            <tr><td>Ditujukan Kepada</td><td>: {{ $ajuan->data['tujuan'] ?? '-' }}</td></tr>
+        @else
+            <tr><td>Guru Pengaju</td><td>: {{ $ajuan->guru->nama ?? '-' }}</td></tr>
+            <tr><td>NIP</td><td>: {{ $ajuan->guru->nip ?? '-' }}</td></tr>
+        @endif
         <tr><td>Tanggal Ajuan</td><td>: {{ $ajuan->created_at->translatedFormat('d F Y, H:i') }}</td></tr>
         <tr><td>Status</td><td>: <span class="badge {{ $ajuan->status === 'selesai' ? 'bg-success' : 'bg-secondary' }}">{{ $ajuan->labelStatus() }}</span></td></tr>
     </table>
@@ -36,14 +43,23 @@
     <hr>
     <h6 class="mb-3">Detail Isian</h6>
     <table class="table table-sm table-bordered">
-        <tr><td width="200">Isian Surat Undangan</td><td>{{ $ajuan->data['isian_form'] ?? '-' }}</td></tr>
-        <tr><td>Tanggal/Nomor Surat Undangan</td><td>{{ $ajuan->data['tanggal_dasar'] ?? '-' }} / {{ $ajuan->data['nomor_surat_dasar'] ?? '-' }}</td></tr>
-        <tr><td>Hari, Tanggal Berangkat</td><td>{{ $ajuan->data['hari'] ?? '-' }}, {{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
-        <tr><td>Tanggal Kembali</td><td>{{ $ajuan->data['tanggal_selesai'] ?? '-' }}</td></tr>
-        <tr><td>Jam</td><td>{{ $ajuan->data['jam_mulai'] ?? '-' }} s.d. {{ $ajuan->data['jam_selesai'] ?? 'selesai' }}</td></tr>
-        <tr><td>Total Hari</td><td>{{ $ajuan->data['total_hari'] ?? 1 }}</td></tr>
-        <tr><td>Tempat Tujuan</td><td>{{ $ajuan->data['tempat_tujuan'] ?? '-' }}</td></tr>
-        <tr><td>Tema/Perihal</td><td>{{ $ajuan->data['tema'] ?? '-' }}</td></tr>
+        @if ($ajuan->jenis_surat === 'surat_permohonan')
+            <tr><td width="200">Alamat/Kota Tujuan</td><td>{{ $ajuan->data['alamat'] ?? '-' }}, {{ $ajuan->data['kota'] ?? '-' }}</td></tr>
+            <tr><td>Kegiatan</td><td>{{ $ajuan->data['kegiatan'] ?? '-' }}</td></tr>
+            <tr><td>Hari, Tanggal</td><td>{{ $ajuan->data['hari'] ?? '-' }}, {{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
+            <tr><td>Waktu</td><td>{{ $ajuan->data['waktu'] ?? '-' }}</td></tr>
+            <tr><td>Tempat</td><td>{{ $ajuan->data['tempat'] ?? '-' }}</td></tr>
+            <tr><td>Permohonan/Tindakan</td><td>{{ $ajuan->data['tindakan'] ?? '-' }}</td></tr>
+        @else
+            <tr><td width="200">Isian Surat Undangan</td><td>{{ $ajuan->data['isian_form'] ?? '-' }}</td></tr>
+            <tr><td>Tanggal/Nomor Surat Undangan</td><td>{{ $ajuan->data['tanggal_dasar'] ?? '-' }} / {{ $ajuan->data['nomor_surat_dasar'] ?? '-' }}</td></tr>
+            <tr><td>Hari, Tanggal Berangkat</td><td>{{ $ajuan->data['hari'] ?? '-' }}, {{ $ajuan->data['tanggal'] ?? '-' }}</td></tr>
+            <tr><td>Tanggal Kembali</td><td>{{ $ajuan->data['tanggal_selesai'] ?? '-' }}</td></tr>
+            <tr><td>Jam</td><td>{{ $ajuan->data['jam_mulai'] ?? '-' }} s.d. {{ $ajuan->data['jam_selesai'] ?? 'selesai' }}</td></tr>
+            <tr><td>Total Hari</td><td>{{ $ajuan->data['total_hari'] ?? 1 }}</td></tr>
+            <tr><td>Tempat Tujuan</td><td>{{ $ajuan->data['tempat_tujuan'] ?? '-' }}</td></tr>
+            <tr><td>Tema/Perihal</td><td>{{ $ajuan->data['tema'] ?? '-' }}</td></tr>
+        @endif
     </table>
 
     @if ($ajuan->status === 'selesai')
@@ -55,7 +71,7 @@
         </div>
     @endif
 
-    <a href="{{ route('ajuan-surat.sppd.edit', $ajuan) }}" class="btn btn-outline-secondary mt-2 mb-2">
+    <a href="{{ $ajuan->jenis_surat === 'surat_permohonan' ? route('ajuan-surat.permohonan.edit', $ajuan) : route('ajuan-surat.sppd.edit', $ajuan) }}" class="btn btn-outline-secondary mt-2 mb-2">
         <i class="fas fa-edit me-1"></i> Edit Data Ajuan
     </a>
     <form method="POST" action="{{ route('surat-tu.buat-surat', $ajuan) }}" class="mt-3">

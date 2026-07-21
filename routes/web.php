@@ -151,11 +151,15 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // middleware di sini cuma auth umum, bukan role spesifik.
     Route::get('/ajuan-surat/{ajuanSurat}/sppd/edit', [\App\Http\Controllers\AjuanSuratController::class, 'editSppd'])->name('ajuan-surat.sppd.edit');
     Route::put('/ajuan-surat/{ajuanSurat}/sppd', [\App\Http\Controllers\AjuanSuratController::class, 'updateSppd'])->name('ajuan-surat.sppd.update');
+    Route::get('/ajuan-surat/{ajuanSurat}/permohonan/edit', [\App\Http\Controllers\AjuanSuratController::class, 'editPermohonan'])->name('ajuan-surat.permohonan.edit');
+    Route::put('/ajuan-surat/{ajuanSurat}/permohonan', [\App\Http\Controllers\AjuanSuratController::class, 'updatePermohonan'])->name('ajuan-surat.permohonan.update');
 
     Route::prefix('surat-tu')->name('surat-tu.')->middleware('role:tata_usaha,kepsek')->group(function () {
         Route::get('/', [\App\Http\Controllers\SuratTuguController::class, 'index'])->name('index');
         Route::get('/sppd/tambah', [\App\Http\Controllers\SuratTuguController::class, 'createSppd'])->name('sppd.create');
         Route::post('/sppd', [\App\Http\Controllers\SuratTuguController::class, 'storeSppd'])->name('sppd.store');
+        Route::get('/permohonan/tambah', [\App\Http\Controllers\SuratTuguController::class, 'createPermohonan'])->name('permohonan.create');
+        Route::post('/permohonan', [\App\Http\Controllers\SuratTuguController::class, 'storePermohonan'])->name('permohonan.store');
         Route::get('/{ajuanSurat}', [\App\Http\Controllers\SuratTuguController::class, 'show'])->name('show');
         Route::post('/{ajuanSurat}/buat-surat', [\App\Http\Controllers\SuratTuguController::class, 'buatSurat'])->name('buat-surat');
     });
