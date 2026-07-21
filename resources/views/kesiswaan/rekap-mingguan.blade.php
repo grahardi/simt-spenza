@@ -20,7 +20,10 @@
     <p class="text-muted small mt-2 mb-0">
         Periode <strong>{{ $awalMinggu->translatedFormat('d F Y') }}</strong> s/d <strong>{{ $akhirMinggu->translatedFormat('d F Y') }}</strong>.
         Kolom S/I/A = Sakit/Ijin/Alfa (Dispensasi tidak dihitung sebagai tidak masuk).
-        Baris dengan total 3 atau lebih ditandai warna kuning.
+        Warna baris mengikuti kategori terbanyak: <span class="badge" style="background:#fcebeb;color:#a32d2d;">merah = Alfa</span>
+        <span class="badge" style="background:#fff3cd;color:#7a5c00;">kuning = Sakit</span>
+        <span class="badge" style="background:#eaf3de;color:#3b6d11;">hijau = Ijin</span>
+        (kalau seri, prioritas Alfa &gt; Sakit &gt; Ijin). Ikon ⚠ muncul kalau total 3 hari atau lebih.
     </p>
 </div>
 
@@ -44,8 +47,21 @@
             </thead>
             <tbody>
                 @foreach ($rekap as $r)
-                    @php $total = $r->sakit + $r->ijin + $r->alfa; @endphp
-                    <tr style="{{ $total >= 3 ? 'background:#fff3cd;' : '' }}">
+                    @php
+                        $total = $r->sakit + $r->ijin + $r->alfa;
+
+                        // Prioritas: Alfa - Sakit - Ijin (kalau seri, yang diprioritaskan menang)
+                        if ($r->alfa >= $r->sakit && $r->alfa >= $r->ijin && $r->alfa > 0) {
+                            $warnaBaris = '#fcebeb'; // merah light
+                        } elseif ($r->sakit >= $r->ijin && $r->sakit > 0) {
+                            $warnaBaris = '#fff3cd'; // kuning light
+                        } elseif ($r->ijin > 0) {
+                            $warnaBaris = '#eaf3de'; // hijau light
+                        } else {
+                            $warnaBaris = 'transparent';
+                        }
+                    @endphp
+                    <tr style="background:{{ $warnaBaris }};">
                         <td>{{ $r->siswa->nama_lengkap ?? '-' }}</td>
                         <td>{{ $r->siswa->kelas ?? '-' }}</td>
                         <td class="text-center">{{ $r->sakit }}</td>
