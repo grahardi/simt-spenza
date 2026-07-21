@@ -19,11 +19,6 @@
     </form>
     <p class="text-muted small mt-2 mb-0">
         Periode <strong>{{ $awalMinggu->translatedFormat('d F Y') }}</strong> s/d <strong>{{ $akhirMinggu->translatedFormat('d F Y') }}</strong>.
-        Kolom S/I/A = Sakit/Ijin/Alfa (Dispensasi tidak dihitung sebagai tidak masuk).
-        Warna baris mengikuti kategori terbanyak: <span class="badge" style="background:#fcebeb;color:#a32d2d;">merah = Alfa</span>
-        <span class="badge" style="background:#fff3cd;color:#7a5c00;">kuning = Sakit</span>
-        <span class="badge" style="background:#eaf3de;color:#3b6d11;">hijau = Ijin</span>
-        (kalau seri, prioritas Alfa &gt; Sakit &gt; Ijin). Ikon ⚠ muncul kalau total 3 hari atau lebih.
     </p>
 </div>
 
@@ -34,7 +29,7 @@
         </div>
     @else
         <div class="table-responsive">
-        <table class="table table-bordered mb-0 align-middle">
+        <table class="table table-striped mb-0 align-middle">
             <thead>
                 <tr>
                     <th>Nama</th>
@@ -51,22 +46,25 @@
                         $total = $r->sakit + $r->ijin + $r->alfa;
 
                         // Prioritas: Alfa - Sakit - Ijin (kalau seri, yang diprioritaskan menang)
+                        $dominan = null;
                         if ($r->alfa >= $r->sakit && $r->alfa >= $r->ijin && $r->alfa > 0) {
-                            $warnaBaris = '#fcebeb'; // merah light
+                            $dominan = 'a';
                         } elseif ($r->sakit >= $r->ijin && $r->sakit > 0) {
-                            $warnaBaris = '#fff3cd'; // kuning light
+                            $dominan = 's';
                         } elseif ($r->ijin > 0) {
-                            $warnaBaris = '#eaf3de'; // hijau light
-                        } else {
-                            $warnaBaris = 'transparent';
+                            $dominan = 'i';
                         }
+
+                        $warnaSel = fn ($kode) => $dominan === $kode
+                            ? ($kode === 'a' ? 'background:#fcebeb;color:#a32d2d;font-weight:600;' : ($kode === 's' ? 'background:#fff3cd;color:#7a5c00;font-weight:600;' : 'background:#eaf3de;color:#3b6d11;font-weight:600;'))
+                            : '';
                     @endphp
-                    <tr style="background:{{ $warnaBaris }};">
+                    <tr>
                         <td>{{ $r->siswa->nama_lengkap ?? '-' }}</td>
                         <td>{{ $r->siswa->kelas ?? '-' }}</td>
-                        <td class="text-center">{{ $r->sakit }}</td>
-                        <td class="text-center">{{ $r->ijin }}</td>
-                        <td class="text-center">{{ $r->alfa }}</td>
+                        <td class="text-center" style="{{ $warnaSel('s') }}">{{ $r->sakit }}</td>
+                        <td class="text-center" style="{{ $warnaSel('i') }}">{{ $r->ijin }}</td>
+                        <td class="text-center" style="{{ $warnaSel('a') }}">{{ $r->alfa }}</td>
                         <td class="text-center fw-bold">
                             {{ $total }}
                             @if ($total >= 3)
