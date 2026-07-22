@@ -11,6 +11,9 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title">Nomor WhatsApp Terdaftar</h3>
         <div>
+            <a href="{{ route('superadmin.whatsapp-nomor.rekap-perkelas') }}" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-chart-bar me-1"></i> Rekap Perkelas
+            </a>
             <a href="{{ route('superadmin.whatsapp-nomor.export-vcf') }}" class="btn btn-outline-success btn-sm">
                 <i class="fas fa-address-card me-1"></i> Export Kontak (VCF)
             </a>

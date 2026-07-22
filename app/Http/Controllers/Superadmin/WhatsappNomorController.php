@@ -30,6 +30,30 @@ class WhatsappNomorController extends Controller
         return view('superadmin.whatsapp-nomor.index', compact('nomor', 'daftarKelas'));
     }
 
+    /** Rekap Perkelas - total siswa sudah/belum registrasi WA (1 siswa dihitung 1x meski Ayah+Ibu terdaftar). */
+    public function rekapPerkelas()
+    {
+        $rekap = Siswa::select('kelas')
+            ->selectRaw('count(*) as total_siswa')
+            ->selectRaw('sum(case when exists (select 1 from siswa_whatsapp where siswa_whatsapp.id_siswa = datasiswa.id_member) then 1 else 0 end) as sudah_daftar')
+            ->groupBy('kelas')
+            ->orderBy('kelas')
+            ->get()
+            ->map(function ($row) {
+                $row->belum_daftar = $row->total_siswa - $row->sudah_daftar;
+
+                return $row;
+            });
+
+        $totalKeseluruhan = (object) [
+            'total_siswa' => $rekap->sum('total_siswa'),
+            'sudah_daftar' => $rekap->sum('sudah_daftar'),
+            'belum_daftar' => $rekap->sum('belum_daftar'),
+        ];
+
+        return view('superadmin.whatsapp-nomor.rekap-perkelas', compact('rekap', 'totalKeseluruhan'));
+    }
+
     /**
      * Export semua nomor jadi file vCard (.vcf) - untuk di-import manual ke
      * kontak HP yang dipakai bot (Baileys tidak bisa simpan kontak otomatis,

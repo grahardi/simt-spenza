@@ -314,6 +314,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::put('/whatsapp-template/{whatsappTemplate}', [\App\Http\Controllers\Superadmin\WhatsappTemplateController::class, 'update'])->name('whatsapp-template.update');
 
         Route::get('/whatsapp-nomor', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'index'])->name('whatsapp-nomor.index');
+        Route::get('/whatsapp-nomor/rekap-perkelas', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'rekapPerkelas'])->name('whatsapp-nomor.rekap-perkelas');
         Route::get('/whatsapp-nomor/tambah', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'create'])->name('whatsapp-nomor.create');
         Route::post('/whatsapp-nomor', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'store'])->name('whatsapp-nomor.store');
         Route::get('/whatsapp-nomor/export-vcf', [\App\Http\Controllers\Superadmin\WhatsappNomorController::class, 'exportVcf'])->name('whatsapp-nomor.export-vcf');
