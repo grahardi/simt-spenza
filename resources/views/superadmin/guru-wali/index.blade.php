@@ -11,10 +11,10 @@
     <div class="card-header"><h3 class="card-title">Guru Wali - Assign Siswa</h3></div>
     <div class="card-body">
         <form method="GET" class="row g-2 mb-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="text" name="cari" class="form-control" placeholder="Cari nama siswa..." value="{{ request('cari') }}">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <select name="kelas" class="form-control">
                     <option value="">Semua kelas</option>
                     @foreach ($daftarKelas as $k)
@@ -23,6 +23,14 @@
                 </select>
             </div>
             <div class="col-md-3">
+                <select name="id_guru_wali" class="form-control">
+                    <option value="">Semua guru wali</option>
+                    @foreach ($daftarGuru as $g)
+                        <option value="{{ $g->id_guru }}" @selected(request('id_guru_wali') == $g->id_guru)>{{ $g->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
                 <select name="status" class="form-control">
                     <option value="">Semua status</option>
                     <option value="belum" @selected(request('status') === 'belum')>Belum ada wali</option>
@@ -32,6 +40,16 @@
                 <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Cari</button>
             </div>
         </form>
+
+        <p class="text-muted mb-3">
+            Menampilkan <strong>{{ $siswa->total() }}</strong> siswa
+            @if (request('id_guru_wali'))
+                dengan wali <strong>{{ $daftarGuru->firstWhere('id_guru', request('id_guru_wali'))->nama ?? '-' }}</strong>
+            @endif
+            @if (request('kelas')) &middot; kelas <strong>{{ request('kelas') }}</strong> @endif
+            @if (request('status') === 'belum') &middot; <strong>belum ada wali</strong> @endif
+            - diurutkan berdasarkan nama guru wali.
+        </p>
 
         <form method="POST" action="{{ route('superadmin.guru-wali.assign') }}">
             @csrf
@@ -59,7 +77,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php $waliSebelumnya = null; @endphp
                     @forelse ($siswa as $s)
+                        @php $waliSekarang = $s->guruWali->nama ?? '(Belum ada wali)'; @endphp
+                        @if ($waliSekarang !== $waliSebelumnya)
+                            <tr class="bg-light">
+                                <td colspan="6"><strong>{{ $waliSekarang }}</strong></td>
+                            </tr>
+                            @php $waliSebelumnya = $waliSekarang; @endphp
+                        @endif
                         <tr>
                             <td><input type="checkbox" name="siswa_id[]" value="{{ $s->id_member }}" class="cb-siswa"></td>
                             <td>{{ $s->id_member }}</td>

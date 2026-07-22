@@ -11,14 +11,22 @@ class GuruWaliController extends Controller
 {
     public function index(Request $request)
     {
-        $siswa = Siswa::with('guruWali')
+        $query = Siswa::with('guruWali')
             ->when($request->filled('cari'), fn ($q) => $q->where('nama_lengkap', 'like', '%'.$request->input('cari').'%'))
             ->when($request->filled('kelas'), fn ($q) => $q->where('kelas', $request->input('kelas')))
-            ->when($request->input('status') === 'belum', fn ($q) => $q->whereNull('id_guru_wali'))
-            ->orderBy('kelas')
-            ->orderBy('nama_lengkap')
-            ->paginate(30)
-            ->withQueryString();
+            ->when($request->filled('id_guru_wali'), fn ($q) => $q->where('id_guru_wali', $request->input('id_guru_wali')))
+            ->when($request->input('status') === 'belum', fn ($q) => $q->whereNull('id_guru_wali'));
+
+        // Urut berdasarkan nama guru wali (siswa tanpa wali ditaruh di akhir),
+        // baru diikutkan urut kelas & nama sebagai pengurut kedua.
+        $query->leftJoin('guru', 'datasiswa.id_guru_wali', '=', 'guru.id_guru')
+            ->orderByRaw('guru.nama IS NULL')
+            ->orderBy('guru.nama')
+            ->orderBy('datasiswa.kelas')
+            ->orderBy('datasiswa.nama_lengkap')
+            ->select('datasiswa.*');
+
+        $siswa = $query->paginate(30)->withQueryString();
 
         $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
         $daftarGuru = Guru::orderBy('nama')->get();
