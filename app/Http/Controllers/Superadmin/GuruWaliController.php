@@ -31,7 +31,83 @@ class GuruWaliController extends Controller
         $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
         $daftarGuru = Guru::orderBy('nama')->get();
 
-        return view('superadmin.guru-wali.index', compact('siswa', 'daftarKelas', 'daftarGuru'));
+        // Rekap jumlah siswa per guru wali (dari SELURUH data, bukan cuma halaman ini)
+        $rekapJumlah = Siswa::whereNotNull('id_guru_wali')
+            ->selectRaw('id_guru_wali, count(*) as jumlah')
+            ->groupBy('id_guru_wali')
+            ->get()
+            ->map(function ($row) use ($daftarGuru) {
+                $row->guru = $daftarGuru->firstWhere('id_guru', $row->id_guru_wali);
+                return $row;
+            })
+            ->sortBy(fn ($r) => $r->guru->nama ?? '')
+            ->values();
+
+        return view('superadmin.guru-wali.index', compact('siswa', 'daftarKelas', 'daftarGuru', 'rekapJumlah'));
+    }
+
+    /** Export Excel - list semua siswa dikelompokkan per guru wali, format sama seperti contoh referensi. */
+    public function exportExcel()
+    {
+        $siswa = Siswa::with('guruWali')
+            ->whereNotNull('id_guru_wali')
+            ->join('guru', 'datasiswa.id_guru_wali', '=', 'guru.id_guru')
+            ->orderBy('guru.nama')
+            ->orderBy('datasiswa.kelas')
+            ->orderBy('datasiswa.nama_lengkap')
+            ->select('datasiswa.*')
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->fromArray(['NO.', 'GURU WALI', 'NO', 'NAMA SISWA', 'KELAS'], null, 'A1');
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+
+        $baris = 2;
+        $noGuru = 0;
+        $guruSebelumnya = null;
+
+        foreach ($siswa->groupBy('id_guru_wali') as $grup) {
+            $guru = $grup->first()->guruWali;
+            $noGuru++;
+            $baseRow = $baris;
+
+            foreach ($grup->values() as $i => $s) {
+                $sheet->setCellValue('C'.$baris, $i + 1);
+                $sheet->setCellValue('D'.$baris, strtoupper($s->nama_lengkap));
+                $sheet->setCellValue('E'.$baris, str_replace(' - ', '-', $s->kelas));
+                $baris++;
+            }
+
+            $barisAkhir = $baris - 1;
+
+            $sheet->setCellValue('A'.$baseRow, $noGuru);
+            $sheet->setCellValue('B'.$baseRow, $guru->nama ?? '-');
+
+            if ($barisAkhir > $baseRow) {
+                $sheet->mergeCells('A'.$baseRow.':A'.$barisAkhir);
+                $sheet->mergeCells('B'.$baseRow.':B'.$barisAkhir);
+            }
+            $sheet->getStyle('A'.$baseRow)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+            $sheet->getStyle('B'.$baseRow)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP)->setWrapText(true);
+
+            // Baris NIP/NIPPPK di bawah nama guru (baris kedua kelompok, kalau ada)
+            if ($guru && $guru->nip && $baseRow + 1 <= $barisAkhir) {
+                $labelNip = str_contains(strtolower($guru->status ?? ''), 'pppk') ? 'NIPPPK ' : 'NIP ';
+                $sheet->setCellValue('B'.($baseRow + 1), $labelNip.$guru->nip);
+            }
+        }
+
+        foreach (['A' => 6, 'B' => 30, 'C' => 6, 'D' => 40, 'E' => 10] as $kolom => $lebar) {
+            $sheet->getColumnDimension($kolom)->setWidth($lebar);
+        }
+
+        $namaFile = 'Rekap_Guru_Wali_'.now()->format('Ymd').'.xlsx';
+        $path = storage_path('app/public/'.$namaFile);
+        (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save($path);
+
+        return response()->download($path)->deleteFileAfterSend(true);
     }
 
     /** Assign guru wali ke banyak siswa sekaligus (checkbox + pilih guru). */
