@@ -31,7 +31,14 @@ class GuruWaliController extends Controller
         $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
         $daftarGuru = Guru::orderBy('nama')->get();
 
-        // Rekap jumlah siswa per guru wali (dari SELURUH data, bukan cuma halaman ini)
+        return view('superadmin.guru-wali.index', compact('siswa', 'daftarKelas', 'daftarGuru'));
+    }
+
+    /** Halaman terpisah - rekap jumlah siswa per guru wali. */
+    public function rekap()
+    {
+        $daftarGuru = Guru::orderBy('nama')->get();
+
         $rekapJumlah = Siswa::whereNotNull('id_guru_wali')
             ->selectRaw('id_guru_wali, count(*) as jumlah')
             ->groupBy('id_guru_wali')
@@ -43,7 +50,7 @@ class GuruWaliController extends Controller
             ->sortBy(fn ($r) => $r->guru->nama ?? '')
             ->values();
 
-        return view('superadmin.guru-wali.index', compact('siswa', 'daftarKelas', 'daftarGuru', 'rekapJumlah'));
+        return view('superadmin.guru-wali.rekap', compact('rekapJumlah'));
     }
 
     /** Export Excel - list semua siswa dikelompokkan per guru wali, format sama seperti contoh referensi. */

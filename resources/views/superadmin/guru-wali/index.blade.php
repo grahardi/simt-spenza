@@ -7,33 +7,18 @@
     <div class="alert alert-info">{{ session('status') }}</div>
 @endif
 
-<div class="card mb-3">
+<div class="card">
     <div class="card-header">
-        <h3 class="card-title">Rekap Jumlah Siswa per Guru Wali</h3>
+        <h3 class="card-title">Guru Wali - Assign Siswa</h3>
         <div class="card-tools">
+            <a href="{{ route('superadmin.guru-wali.rekap') }}" class="btn btn-sm btn-info">
+                <i class="fas fa-chart-bar me-1"></i> Rekap Jumlah
+            </a>
             <a href="{{ route('superadmin.guru-wali.export') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-file-excel me-1"></i> Export Excel
             </a>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            @foreach ($rekapJumlah as $r)
-                <div class="col-md-3 mb-2">
-                    <a href="{{ route('superadmin.guru-wali.index', ['id_guru_wali' => $r->id_guru_wali]) }}" class="text-decoration-none">
-                        {{ $r->guru->nama ?? '-' }} <span class="badge badge-primary">{{ $r->jumlah }}</span>
-                    </a>
-                </div>
-            @endforeach
-            @if ($rekapJumlah->isEmpty())
-                <div class="col-12 text-muted">Belum ada siswa yang di-assign ke guru wali manapun.</div>
-            @endif
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header"><h3 class="card-title">Guru Wali - Assign Siswa</h3></div>
     <div class="card-body">
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-3">

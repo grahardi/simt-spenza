@@ -276,6 +276,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/karyawan/{karyawan}/reset-password', [SuperadminKaryawanController::class, 'resetPassword'])->name('karyawan.reset-password');
 
         Route::get('/guru-wali', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'index'])->name('guru-wali.index');
+        Route::get('/guru-wali/rekap', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'rekap'])->name('guru-wali.rekap');
         Route::get('/guru-wali/export', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'exportExcel'])->name('guru-wali.export');
         Route::post('/guru-wali/assign', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'assign'])->name('guru-wali.assign');
         Route::post('/guru-wali/lepas-massal', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'lepasMassal'])->name('guru-wali.lepas-massal');

@@ -165,9 +165,15 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('superadmin.guru-wali.index') }}" class="nav-link {{ request()->routeIs('superadmin.guru-wali.*') ? 'active' : '' }}">
+                                <a href="{{ route('superadmin.guru-wali.index') }}" class="nav-link {{ request()->routeIs('superadmin.guru-wali.index') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Guru Wali</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.guru-wali.rekap') }}" class="nav-link {{ request()->routeIs('superadmin.guru-wali.rekap') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Rekap Guru Wali</p>
                                 </a>
                             </li>
                         </ul>
