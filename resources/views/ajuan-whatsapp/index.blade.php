@@ -56,6 +56,9 @@
                                 <i class="fas fa-user me-1"></i> Lihat Selfie Wali
                             </button>
                         @endif
+                        <a href="https://wa.me/{{ $a->nomor_wa }}" target="_blank" class="btn btn-sm btn-success">
+                            <i class="fab fa-whatsapp me-1"></i> Kirim WA
+                        </a>
                     </div>
                     @if ($a->status === 'ditolak' && $a->alasan_tolak)
                         <div class="text-muted small mt-1">
@@ -64,7 +67,7 @@
                     @endif
                 </div>
 
-                @if ($status === 'menunggu')
+                @if ($status === 'menunggu' && auth('member')->user()->hasRole('piket'))
                     <div class="ajuan-wa-aksi mt-2 mt-md-0">
                         <form method="POST" action="{{ route('ajuan-whatsapp.acc', $a) }}" class="d-inline">
                             @csrf

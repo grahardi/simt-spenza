@@ -91,6 +91,7 @@
                 ['label' => 'Data Bimbingan', 'icon' => 'fas fa-hands-helping', 'color' => 'pink', 'href' => route('bimbingan.index')],
                 ['label' => 'Pelanggaran Tata Tertib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Absensi Hari Ini', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
+                ['label' => 'Ajuan WhatsApp', 'icon' => 'fab fa-whatsapp', 'color' => 'green', 'href' => route('ajuan-whatsapp.index')],
                 ['label' => 'Rekap Absen Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'purple', 'href' => route('kesiswaan.rekap-mingguan')],
             ],
         ],

@@ -112,7 +112,9 @@
                                     @if ($nomorWali->isEmpty())
                                         <span class="text-muted small d-block">Wali belum registrasi WA</span>
                                     @elseif (!$a->status_wa)
-                                        @if ($nomorWali->count() === 1)
+                                        @if (!auth('member')->user()->hasRole('piket'))
+                                            <span class="text-muted small d-block">Belum dikirim WA</span>
+                                        @elseif ($nomorWali->count() === 1)
                                             <form method="POST" action="{{ route('absensi.kirim-wa-alfa', $a) }}" class="d-inline mt-1">
                                                 @csrf
                                                 <input type="hidden" name="nomor" value="{{ $nomorWali->first()->nomor }}">
