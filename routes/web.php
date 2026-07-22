@@ -277,6 +277,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
         Route::get('/guru-wali', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'index'])->name('guru-wali.index');
         Route::post('/guru-wali/assign', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'assign'])->name('guru-wali.assign');
+        Route::post('/guru-wali/lepas-massal', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'lepasMassal'])->name('guru-wali.lepas-massal');
         Route::delete('/guru-wali/{siswa}/lepas', [\App\Http\Controllers\Superadmin\GuruWaliController::class, 'lepas'])->name('guru-wali.lepas');
 
         Route::get('/absensi', [SuperadminAbsensiController::class, 'index'])->name('absensi.index');

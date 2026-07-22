@@ -57,4 +57,17 @@ class GuruWaliController extends Controller
 
         return back()->with('status', 'Wali '.$siswa->nama_lengkap.' berhasil dilepas.');
     }
+
+    /** Lepas wali dari banyak siswa sekaligus (checkbox). */
+    public function lepasMassal(Request $request)
+    {
+        $data = $request->validate([
+            'siswa_id' => ['required', 'array', 'min:1'],
+            'siswa_id.*' => ['integer'],
+        ]);
+
+        Siswa::whereIn('id_member', $data['siswa_id'])->update(['id_guru_wali' => null]);
+
+        return back()->with('status', count($data['siswa_id']).' siswa berhasil dilepas dari wali.');
+    }
 }

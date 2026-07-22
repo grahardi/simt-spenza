@@ -53,7 +53,7 @@
 
         <form method="POST" action="{{ route('superadmin.guru-wali.assign') }}">
             @csrf
-            <div class="d-flex align-items-center gap-2 mb-3 p-2 bg-light rounded">
+            <div class="d-flex align-items-center gap-2 mb-3 p-2 bg-light rounded flex-wrap">
                 <label class="mb-0">Assign siswa terpilih ke wali:</label>
                 <select name="id_guru" class="form-control" style="max-width:320px" required>
                     <option value="">- Pilih guru -</option>
@@ -62,6 +62,11 @@
                     @endforeach
                 </select>
                 <button type="submit" class="btn btn-success"><i class="fas fa-user-check me-1"></i> Assign</button>
+                <button type="submit" formaction="{{ route('superadmin.guru-wali.lepas-massal') }}" formnovalidate
+                        class="btn btn-outline-danger ms-2"
+                        onclick="return confirm('Yakin lepas wali dari semua siswa yang dicentang?')">
+                    <i class="fas fa-user-times me-1"></i> Lepas Massal
+                </button>
             </div>
 
             <div class="table-responsive">
