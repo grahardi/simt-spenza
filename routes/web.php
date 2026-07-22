@@ -85,9 +85,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/profil', function () {
-        return view('profil');
-    })->name('profil');
+    Route::get('/profil', [\App\Http\Controllers\ProfilController::class, 'edit'])->name('profil');
+    Route::put('/profil', [\App\Http\Controllers\ProfilController::class, 'update'])->name('profil.update');
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::post('/notifikasi/{warning}/konfirmasi', [AjuanGuruController::class, 'konfirmasi'])->name('notifikasi.konfirmasi');
