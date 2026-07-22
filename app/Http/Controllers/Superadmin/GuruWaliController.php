@@ -58,55 +58,55 @@ class GuruWaliController extends Controller
     {
         $siswa = Siswa::with('guruWali')
             ->whereNotNull('id_guru_wali')
-            ->join('guru', 'datasiswa.id_guru_wali', '=', 'guru.id_guru')
-            ->orderBy('guru.nama')
-            ->orderBy('datasiswa.kelas')
-            ->orderBy('datasiswa.nama_lengkap')
-            ->select('datasiswa.*')
-            ->get();
+            ->get()
+            ->sortBy(function ($s) {
+                // Urutan alami kelas: 7-A, 7-B, ... 9-J (bukan abjad biasa yang
+                // salah urut jadi 7-A, 8-A, 9-A, 7-B, dst)
+                preg_match('/(\d+)\s*-\s*([A-Za-z]+)/', $s->kelas, $m);
+                $angka = $m[1] ?? 0;
+                $huruf = $m[2] ?? 'Z';
+                return sprintf('%02d-%s', $angka, $huruf);
+            })
+            ->values();
+
+        // Sub-urut per kelas berdasarkan Nomor Induk (id_member) - standar list sistem
+        $siswaPerKelas = $siswa->groupBy('kelas')->map(fn ($grup) => $grup->sortBy('id_member')->values());
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->fromArray(['NO.', 'GURU WALI', 'NO', 'NAMA SISWA', 'KELAS'], null, 'A1');
-        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+        $sheet->fromArray(['NO.', 'KELAS', 'NO', 'NOMOR INDUK', 'NAMA SISWA', 'GURU WALI'], null, 'A1');
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
 
         $baris = 2;
-        $noGuru = 0;
-        $guruSebelumnya = null;
+        $noKelas = 0;
 
-        foreach ($siswa->groupBy('id_guru_wali') as $grup) {
-            $guru = $grup->first()->guruWali;
-            $noGuru++;
+        foreach ($siswaPerKelas as $kelas => $grup) {
+            $noKelas++;
             $baseRow = $baris;
 
-            foreach ($grup->values() as $i => $s) {
+            foreach ($grup as $i => $s) {
                 $sheet->setCellValue('C'.$baris, $i + 1);
-                $sheet->setCellValue('D'.$baris, strtoupper($s->nama_lengkap));
-                $sheet->setCellValue('E'.$baris, str_replace(' - ', '-', $s->kelas));
+                $sheet->setCellValue('D'.$baris, $s->id_member);
+                $sheet->setCellValue('E'.$baris, strtoupper($s->nama_lengkap));
+                $sheet->setCellValue('F'.$baris, $s->guruWali->nama ?? '-');
                 $baris++;
             }
 
             $barisAkhir = $baris - 1;
 
-            $sheet->setCellValue('A'.$baseRow, $noGuru);
-            $sheet->setCellValue('B'.$baseRow, $guru->nama ?? '-');
+            $sheet->setCellValue('A'.$baseRow, $noKelas);
+            $sheet->setCellValue('B'.$baseRow, str_replace(' - ', '-', $kelas));
 
             if ($barisAkhir > $baseRow) {
                 $sheet->mergeCells('A'.$baseRow.':A'.$barisAkhir);
                 $sheet->mergeCells('B'.$baseRow.':B'.$barisAkhir);
             }
             $sheet->getStyle('A'.$baseRow)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
-            $sheet->getStyle('B'.$baseRow)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP)->setWrapText(true);
-
-            // Baris NIP/NIPPPK di bawah nama guru (baris kedua kelompok, kalau ada)
-            if ($guru && $guru->nip && $baseRow + 1 <= $barisAkhir) {
-                $labelNip = str_contains(strtolower($guru->status ?? ''), 'pppk') ? 'NIPPPK ' : 'NIP ';
-                $sheet->setCellValue('B'.($baseRow + 1), $labelNip.$guru->nip);
-            }
+            $sheet->getStyle('B'.$baseRow)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
         }
 
-        foreach (['A' => 6, 'B' => 30, 'C' => 6, 'D' => 40, 'E' => 10] as $kolom => $lebar) {
+        foreach (['A' => 6, 'B' => 12, 'C' => 6, 'D' => 14, 'E' => 40, 'F' => 30] as $kolom => $lebar) {
             $sheet->getColumnDimension($kolom)->setWidth($lebar);
         }
 
