@@ -138,6 +138,9 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::get('/guru-wali', [GuruController::class, 'waliSiswa'])->name('guru.wali-siswa')
         ->middleware('role:guru');
 
+    Route::get('/guru-wali-whatsapp', [GuruController::class, 'manajemenWhatsapp'])->name('guru.wali-whatsapp')
+        ->middleware('role:guru');
+
     // Ajuan Surat - guru ajukan (SPPD dulu), Tata Usaha proses jadi PDF
     Route::prefix('ajuan-surat')->name('ajuan-surat.')->middleware('role:guru')->group(function () {
         Route::get('/', [\App\Http\Controllers\AjuanSuratController::class, 'index'])->name('index');

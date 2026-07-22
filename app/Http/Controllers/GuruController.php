@@ -39,6 +39,22 @@ class GuruController extends Controller
         return view('guru.form', ['guru' => new Guru()]);
     }
 
+    /** Manajemen WhatsApp - list anak wali + nomor WA terdaftar (Ayah/Ibu/Wali), link wa.me langsung. */
+    public function manajemenWhatsapp()
+    {
+        $member = \Illuminate\Support\Facades\Auth::guard('member')->user();
+        $guru = $member->dataGuru;
+
+        abort_if(!$guru, 403, 'Akun ini tidak terhubung ke data guru manapun.');
+
+        $siswa = \App\Models\Siswa::where('id_guru_wali', $guru->id_guru)
+            ->with('nomorWhatsapp')
+            ->orderBy('nama_lengkap')
+            ->get();
+
+        return view('guru.manajemen-whatsapp', compact('guru', 'siswa'));
+    }
+
     /** Guru Wali - list siswa yang jadi anak wali guru yang sedang login. */
     public function waliSiswa()
     {
