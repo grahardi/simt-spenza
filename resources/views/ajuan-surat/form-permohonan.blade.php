@@ -55,7 +55,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label">Waktu</label>
-                <input type="time" name="waktu" class="form-control" value="{{ $isi('waktu') }}" required>
+                <input type="time" name="waktu" class="form-control" value="{{ $isi('waktu', '08:00') }}" lang="id" step="60" required>
             </div>
             <div class="col-12">
                 <label class="form-label">Tempat</label>

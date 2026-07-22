@@ -86,15 +86,15 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Jam Mulai</label>
-                <input type="time" name="jam_mulai" class="form-control" value="{{ $isi('jam_mulai') }}" required>
+                <input type="time" name="jam_mulai" class="form-control" value="{{ $isi('jam_mulai', '08:00') }}" lang="id" step="60" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Jam Selesai (opsional)</label>
-                <input type="time" name="jam_selesai" class="form-control" value="{{ $isi('jam_selesai') }}">
+                <input type="time" name="jam_selesai" class="form-control" value="{{ $isi('jam_selesai') }}" lang="id" step="60">
             </div>
             <div class="col-12">
-                <label class="form-label">Tempat Tujuan</label>
-                <input type="text" name="tempat_tujuan" class="form-control" value="{{ $isi('tempat_tujuan') }}" placeholder="contoh: SMP Negeri 1 Tajinan, Jl. ..." required>
+                <label class="form-label">Tempat Tujuan <span class="text-muted">(nama tempat saja, tanpa alamat lengkap)</span></label>
+                <input type="text" name="tempat_tujuan" class="form-control" value="{{ $isi('tempat_tujuan') }}" placeholder="contoh: SMP Negeri 1 Tajinan" required>
             </div>
             <div class="col-12">
                 <label class="form-label">Tema / Perihal Kegiatan</label>
