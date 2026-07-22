@@ -351,6 +351,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         ->name('aktivitas-kelas.rekap-mingguan')
         ->middleware('role:walikelas');
 
+    Route::get('/aktivitas-kelas/pelanggaran-siswa', [AktivitasKelasController::class, 'pelanggaranSiswa'])
+        ->name('aktivitas-kelas.pelanggaran-siswa')
+        ->middleware('role:walikelas');
+
     Route::get('/walikelas-whatsapp', [\App\Http\Controllers\WalikelasWhatsappController::class, 'index'])
         ->name('walikelas.whatsapp')
         ->middleware('role:walikelas');

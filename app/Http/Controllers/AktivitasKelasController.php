@@ -85,4 +85,31 @@ class AktivitasKelasController extends Controller
 
         return view('kelas.rekap-mingguan', compact('rekap', 'kelas', 'awalMinggu', 'akhirMinggu'));
     }
+
+    /** Data Pelanggaran Siswa - akumulasi poin pelanggaran per siswa, khusus kelas yang diampu. */
+    public function pelanggaranSiswa()
+    {
+        /** @var Member $member */
+        $member = Auth::guard('member')->user();
+        $kelas = trim((string) $member->walikelas);
+
+        $idSiswaKelas = Siswa::where('kelas', $kelas)->pluck('id_member');
+
+        $rekap = \App\Models\Pelanggaran::with('siswa')
+            ->whereIn('id_siswa', $idSiswaKelas)
+            ->get()
+            ->groupBy('id_siswa')
+            ->map(function ($grup) {
+                return (object) [
+                    'siswa' => $grup->first()->siswa,
+                    'totalPoin' => $grup->sum('poin'),
+                    'jumlahKasus' => $grup->count(),
+                    'daftar' => $grup->sortByDesc('tgl_pelanggaran')->values(),
+                ];
+            })
+            ->sortByDesc('totalPoin')
+            ->values();
+
+        return view('kelas.pelanggaran-siswa', compact('rekap', 'kelas'));
+    }
 }
