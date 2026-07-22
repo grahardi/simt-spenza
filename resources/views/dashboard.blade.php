@@ -33,7 +33,7 @@
                 ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('aktivitas-kelas')],
                 ['label' => 'Pelanggaran Absensi', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Pelanggaran Tatib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
-                ['label' => 'DKN Kelas', 'icon' => 'fas fa-list-ol', 'color' => 'purple', 'href' => route('dkn.index')],
+                ['label' => 'Manajemen WhatsApp', 'icon' => 'fab fa-whatsapp', 'color' => 'green', 'href' => route('walikelas.whatsapp')],
             ],
         ],
         'kepsek' => [

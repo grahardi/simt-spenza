@@ -347,6 +347,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         ->name('aktivitas-kelas')
         ->middleware('role:walikelas');
 
+    Route::get('/walikelas-whatsapp', [\App\Http\Controllers\WalikelasWhatsappController::class, 'index'])
+        ->name('walikelas.whatsapp')
+        ->middleware('role:walikelas');
+
     // Kebersihan Kelas - guru (siapa saja yang mengajar) bisa lapor kelas kotor,
     // role kebersihan yang tindak lanjuti & lihat galeri.
     Route::prefix('kebersihan')->name('kebersihan.')->group(function () {
