@@ -32,8 +32,7 @@
             'items' => [
                 ['label' => 'Aktivitas Kelas', 'icon' => 'fas fa-people-group', 'color' => 'pink', 'href' => route('aktivitas-kelas')],
                 ['label' => 'Rekap Absensi Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'blue', 'href' => route('aktivitas-kelas.rekap-mingguan')],
-                ['label' => 'Pelanggaran Tatib', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
-                ['label' => 'Data Pelanggaran Siswa', 'icon' => 'fas fa-exclamation-circle', 'color' => 'red', 'href' => route('aktivitas-kelas.pelanggaran-siswa')],
+                ['label' => 'Data Pelanggaran', 'icon' => 'fas fa-exclamation-circle', 'color' => 'red', 'href' => route('aktivitas-kelas.pelanggaran-siswa')],
                 ['label' => 'Manajemen WhatsApp', 'icon' => 'fab fa-whatsapp', 'color' => 'green', 'href' => route('walikelas.whatsapp')],
             ],
         ],
