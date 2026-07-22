@@ -416,12 +416,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     });
 
     // Ajuan WhatsApp - dari bot, khusus piket yang ACC/Tolak
-    Route::prefix('ajuan-whatsapp')->name('ajuan-whatsapp.')->middleware('role:piket,bk')->group(function () {
+    Route::prefix('ajuan-whatsapp')->name('ajuan-whatsapp.')->middleware('role:piket')->group(function () {
         Route::get('/', [AjuanWhatsappController::class, 'index'])->name('index');
-        Route::middleware('role:piket')->group(function () {
-            Route::post('/{ajuan}/acc', [AjuanWhatsappController::class, 'acc'])->name('acc');
-            Route::post('/{ajuan}/tolak', [AjuanWhatsappController::class, 'tolak'])->name('tolak');
-        });
+        Route::post('/{ajuan}/acc', [AjuanWhatsappController::class, 'acc'])->name('acc');
+        Route::post('/{ajuan}/tolak', [AjuanWhatsappController::class, 'tolak'])->name('tolak');
     });
 
     // Placeholder modul lain, supaya link di bottom-nav tidak 404 dulu.
