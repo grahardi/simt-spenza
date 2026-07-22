@@ -29,19 +29,9 @@
 </div>
 
 <div class="tab-panel-utama" id="panelPelanggaran">
-    {{-- Sub-tab tahun ajaran (arsip per tahun, aplikasi mulai 2025/2026) - link reload,
-         karena datanya dipaginasi per tahun. --}}
-    <ul class="nav nav-pills mb-3 gap-2">
-        @foreach ($daftarTahunAjaran as $th)
-            <li class="nav-item">
-                <a href="{{ route('tatib.index', ['tahun' => $th]) }}"
-                   class="nav-link {{ $th === $tahunAjaran ? 'active' : '' }}"
-                   style="{{ $th === $tahunAjaran ? 'background:#4b0082;' : 'background:#f0f0f0;color:#555;' }}">
-                    {{ $th }}/{{ $th + 1 }}
-                </a>
-            </li>
-        @endforeach
-    </ul>
+    {{-- Selector tahun ajaran disembunyikan sementara - cuma tampilkan tahun
+         berjalan. Data tahun lalu tetap ada di database (arsip), tidak dihapus,
+         cuma tidak ditampilkan dulu. --}}
 
     <div class="p-4 bg-white rounded shadow">
         <h3 class="h6 text-muted mb-3">Tahun Ajaran {{ $tahunAjaran }}/{{ $tahunAjaran + 1 }}</h3>
