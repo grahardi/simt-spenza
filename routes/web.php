@@ -380,14 +380,24 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
     // Tata Tertib - guru/walikelas/piket bisa lapor, role tatib yang tindak lanjuti
     Route::prefix('tatib')->name('tatib.')->group(function () {
-        Route::get('/cari', [TatibController::class, 'cari'])->name('cari');
-        Route::get('/lapor/{siswa}', [TatibController::class, 'lapor'])->name('lapor');
-        Route::get('/lapor-pelanggaran/{siswa}', [TatibController::class, 'laporPelanggaran'])->name('lapor-pelanggaran');
-        Route::post('/lapor/{siswa}', [TatibController::class, 'simpan'])->name('simpan');
-        Route::post('/notif-walikelas/{siswa}', [TatibController::class, 'notifWaliKelas'])->name('notif-walikelas');
-        Route::post('/ajukan-bk/{siswa}', [TatibController::class, 'ajukanBk'])->name('ajukan-bk');
+        // List Pelanggaran - VIEW saja, boleh siapa aja yang punya akses menu (termasuk Kesiswaan/BK)
         Route::get('/', [TatibController::class, 'index'])->name('index');
-        Route::post('/{pelanggaran}/tindak', [TatibController::class, 'tindak'])->name('tindak');
+
+        // Lapor/tindak lanjut - guru/walikelas/piket/tatib bisa lapor pelanggaran (sesuai desain awal),
+        // tapi Kesiswaan/BK TIDAK termasuk - mereka cuma boleh lihat List Pelanggaran di atas.
+        Route::middleware('role:tatib,guru,walikelas,piket')->group(function () {
+            Route::get('/cari', [TatibController::class, 'cari'])->name('cari');
+            Route::get('/lapor/{siswa}', [TatibController::class, 'lapor'])->name('lapor');
+            Route::get('/lapor-pelanggaran/{siswa}', [TatibController::class, 'laporPelanggaran'])->name('lapor-pelanggaran');
+            Route::post('/lapor/{siswa}', [TatibController::class, 'simpan'])->name('simpan');
+        });
+
+        // Notif Wali Kelas, Ajukan BK, dan tindak lanjuti pelanggaran - KHUSUS tatib.
+        Route::middleware('role:tatib')->group(function () {
+            Route::post('/notif-walikelas/{siswa}', [TatibController::class, 'notifWaliKelas'])->name('notif-walikelas');
+            Route::post('/ajukan-bk/{siswa}', [TatibController::class, 'ajukanBk'])->name('ajukan-bk');
+            Route::post('/{pelanggaran}/tindak', [TatibController::class, 'tindak'])->name('tindak');
+        });
     });
 
     // Bimbingan Konseling

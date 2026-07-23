@@ -9,9 +9,11 @@
         <i class="fas fa-gavel fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Data Pelanggaran Siswa</h1>
     </div>
-    <a href="{{ route('tatib.cari') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
-        <i class="fas fa-plus me-1"></i> Tindak Lanjut
-    </a>
+    @if (auth('member')->user()->hasRole('tatib'))
+        <a href="{{ route('tatib.cari') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+            <i class="fas fa-plus me-1"></i> Tindak Lanjut
+        </a>
+    @endif
 </div>
 
 @if (session('status'))
@@ -78,7 +80,7 @@
                                     @endif
                                 </td>
                                 <td class="text-end">
-                                    @if ($belumDitangani)
+                                    @if ($belumDitangani && auth('member')->user()->hasRole('tatib'))
                                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalTindak{{ $p->id_langgar }}">
                                             <i class="fas fa-check me-1"></i> Tindak
                                         </button>
