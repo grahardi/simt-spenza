@@ -20,7 +20,7 @@ class KesiswaanController extends Controller
         $awalMinggu = Carbon::parse($mingguDipilih)->startOfWeek(Carbon::MONDAY);
         $akhirMinggu = $awalMinggu->copy()->endOfWeek(Carbon::SUNDAY);
 
-        $daftar = AbsenSiswa::with('siswa')
+        $daftar = AbsenSiswa::with('siswa.nomorWhatsapp')
             ->whereIn('keterangan', ['a', 's'])
             ->whereBetween('tgl_absen', [$awalMinggu->format('Y-m-d'), $akhirMinggu->format('Y-m-d')])
             ->orderBy('tgl_absen')

@@ -99,7 +99,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     });
 
     // Modul Absensi Siswa - semua role yang dulu bisa akses absenjelas.php
-    Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin,kesiswaan,bk')->group(function () {
+    Route::prefix('absensi')->name('absensi.')->middleware('role:guru,walikelas,kepsek,piket,admin,kesiswaan,bk,tatib')->group(function () {
         Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
         Route::get('/foto/{absen}', [AbsensiSiswaController::class, 'foto'])->name('foto');
         Route::post('/kirim-wa-alfa/{absen}', [AbsensiSiswaController::class, 'kirimWaAlfa'])->name('kirim-wa-alfa');
@@ -204,7 +204,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
     // Modul Kesiswaan - Absensi Hari Ini & Keterlambatan pakai route absensi yang sudah ada,
     // Pelanggaran pakai route tatib yang sudah ada, ini cuma 2 fitur barunya
-    Route::prefix('kesiswaan')->name('kesiswaan.')->middleware('role:kesiswaan,kepsek,bk')->group(function () {
+    Route::prefix('kesiswaan')->name('kesiswaan.')->middleware('role:kesiswaan,kepsek,bk,tatib')->group(function () {
         Route::get('/tidak-masuk', [KesiswaanController::class, 'tidakMasuk'])->name('tidak-masuk');
         Route::get('/rekap-mingguan', [KesiswaanController::class, 'rekapMingguan'])->name('rekap-mingguan');
     });

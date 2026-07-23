@@ -43,7 +43,7 @@
         </div>
         <div class="mb-4">
             <label class="form-label fw-semibold">Keterangan Pelanggaran</label>
-            <textarea name="keterangan" class="form-control" rows="3" placeholder="Ceritakan kejadiannya..."></textarea>
+            <textarea name="keterangan" class="form-control" rows="3" placeholder="Ceritakan kejadiannya...">{{ old('keterangan', request('keterangan')) }}</textarea>
         </div>
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary flex-grow-1"><i class="fas fa-save me-1"></i> Simpan Laporan</button>
