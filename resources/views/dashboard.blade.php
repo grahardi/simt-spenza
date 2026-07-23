@@ -82,7 +82,7 @@
                 ['label' => 'Absensi Hari Ini', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Keterlambatan', 'icon' => 'fas fa-clock', 'color' => 'amber', 'href' => route('absensi.telat.list')],
                 ['label' => 'Tidak Masuk 3+ Hari', 'icon' => 'fas fa-user-clock', 'color' => 'red', 'href' => route('kesiswaan.tidak-masuk')],
-                ['label' => 'Lapor Pelanggaran', 'icon' => 'fas fa-plus', 'color' => 'coral', 'href' => route('tatib.cari')],
+                ['label' => 'Tindak Lanjut', 'icon' => 'fas fa-plus', 'color' => 'coral', 'href' => route('tatib.cari')],
                 ['label' => 'Pelanggaran', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Rekap Absen Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'purple', 'href' => route('kesiswaan.rekap-mingguan')],
                 ['label' => 'Absensi Bulanan', 'icon' => 'fas fa-calendar-alt', 'color' => 'blue', 'href' => route('absensi-bulanan')],

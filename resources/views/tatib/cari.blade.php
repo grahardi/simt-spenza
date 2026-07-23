@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Lapor Pelanggaran')
+@section('title', 'Tindak Lanjut')
 
 @section('content')
 @include('partials.menu-kesiswaan')
 <div class="d-flex flex-column flex-md-row px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <div class="d-flex align-items-center me-md-auto">
         <i class="fas fa-gavel fa-lg me-3"></i>
-        <h1 class="h5 pt-2 mb-0">Lapor Pelanggaran Siswa</h1>
+        <h1 class="h5 pt-2 mb-0">Tindak Lanjut Siswa</h1>
     </div>
 </div>
 

@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Lapor Pelanggaran - ' . $siswa->nama_lengkap)
+@section('title', 'Ajukan Pelanggaran - ' . $siswa->nama_lengkap)
 
 @section('content')
 @include('partials.menu-kesiswaan')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0"><i class="fas fa-gavel me-2"></i>Lapor Pelanggaran</h1>
+    <h1 class="h5 pt-2 mb-0"><i class="fas fa-gavel me-2"></i>Ajukan Pelanggaran</h1>
 </div>
 
 <div class="p-4 bg-white rounded shadow mx-auto" style="max-width:520px;">

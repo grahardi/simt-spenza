@@ -57,7 +57,7 @@
                                     <span class="text-muted small d-block">Wali belum registrasi WA</span>
                                 @endforelse
                                 <a href="{{ route('tatib.lapor', $d->siswa) }}?keterangan={{ urlencode('Tidak masuk (Sakit/Alfa) '.$d->jumlah.' hari dalam seminggu ini.') }}" class="btn btn-sm btn-outline-danger mb-1">
-                                    <i class="fas fa-gavel me-1"></i> Lapor Pelanggaran
+                                    <i class="fas fa-gavel me-1"></i> Tindak Lanjut
                                 </a>
                             </td>
                         @endif
