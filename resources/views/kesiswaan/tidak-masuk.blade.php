@@ -19,20 +19,20 @@
     </form>
     <p class="text-muted small mt-2 mb-0">
         Menampilkan periode <strong>{{ $awalMinggu->translatedFormat('d F Y') }}</strong> s/d <strong>{{ $akhirMinggu->translatedFormat('d F Y') }}</strong>.
-        Dihitung dari gabungan <strong>Sakit + Alfa</strong>. Klik baris untuk lihat rincian tanggal.
+        Dihitung dari gabungan <strong>Sakit + Ijin + Alfa</strong> (Dispensasi tidak dihitung - itu tidak di tempat karena tugas, bukan absen). Klik baris untuk lihat rincian tanggal.
     </p>
 </div>
 
 <div class="p-4 bg-white rounded shadow">
     @if ($daftar->isEmpty())
         <div class="text-muted text-center py-4">
-            <i class="far fa-question-circle me-1"></i> Tidak ada siswa yang Sakit/Alfa 3 hari atau lebih di minggu ini.
+            <i class="far fa-question-circle me-1"></i> Tidak ada siswa yang Sakit/Ijin/Alfa 3 hari atau lebih di minggu ini.
         </div>
     @else
         <div class="table-responsive">
         <table class="table table-striped align-middle">
             <thead>
-                <tr><th>No</th><th>Nama</th><th>Kelas</th><th>Jumlah (Sakit+Alfa)</th><th></th>
+                <tr><th>No</th><th>Nama</th><th>Kelas</th><th>Jumlah (S+I+A)</th><th></th>
                     @if (auth('member')->user()->hasRole('tatib'))
                         <th>Aksi</th>
                     @endif
@@ -56,7 +56,7 @@
                                 @empty
                                     <span class="text-muted small d-block">Wali belum registrasi WA</span>
                                 @endforelse
-                                <a href="{{ route('tatib.lapor', $d->siswa) }}?keterangan={{ urlencode('Tidak masuk (Sakit/Alfa) '.$d->jumlah.' hari dalam seminggu ini.') }}" class="btn btn-sm btn-outline-danger mb-1">
+                                <a href="{{ route('tatib.lapor', $d->siswa) }}?keterangan={{ urlencode('Tidak masuk (Sakit/Ijin/Alfa) '.$d->jumlah.' hari dalam seminggu ini.') }}" class="btn btn-sm btn-outline-danger mb-1">
                                     <i class="fas fa-gavel me-1"></i> Tindak Lanjut
                                 </a>
                             </td>

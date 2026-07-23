@@ -21,7 +21,7 @@ class KesiswaanController extends Controller
         $akhirMinggu = $awalMinggu->copy()->endOfWeek(Carbon::SUNDAY);
 
         $daftar = AbsenSiswa::with('siswa.nomorWhatsapp')
-            ->whereIn('keterangan', ['a', 's'])
+            ->whereIn('keterangan', ['a', 's', 'i']) // dispensasi (d) dikecualikan - itu tidak di tempat karena tugas, bukan absen
             ->whereBetween('tgl_absen', [$awalMinggu->format('Y-m-d'), $akhirMinggu->format('Y-m-d')])
             ->orderBy('tgl_absen')
             ->get()
