@@ -21,17 +21,37 @@ class GuruController extends Controller
     }
 
     /** Pengganti panel "Absen Guru" piket - list guru, link ke jadwal masing-masing (bukan CRUD). */
+    /** List guru yang tercatat ABSEN hari ini saja (bukan semua guru) - klik buat lihat jadwal+tugas. */
     public function absenList(Request $request)
     {
-        $guru = Guru::query()
-            ->when($request->filled('cari'), function ($query) use ($request) {
-                $query->where('nama', 'like', '%'.$request->input('cari').'%');
-            })
-            ->orderBy('nama')
-            ->paginate(20)
-            ->withQueryString();
+        $hariIni = \App\Models\Member::namaHariJakartaHuruBesar();
+        $tanggalHariIni = now('Asia/Jakarta')->toDateString();
 
-        return view('guru.absen-list', compact('guru'));
+        $absensiGuru = \App\Models\AbsensiGuru::with('guru')
+            ->whereDate('tanggal', $tanggalHariIni)
+            ->get()
+            ->filter(fn ($a) => $a->guru !== null);
+
+        $daftar = $absensiGuru->map(function ($absen) use ($hariIni, $tanggalHariIni) {
+            $jadwalHariIni = \App\Models\DataJadwal::where('kodeguru', $absen->id_guru)
+                ->where('hari', $hariIni)
+                ->orderBy('jamhari')
+                ->get();
+
+            $tugasHariIni = \App\Models\Tugas::where('idguru', $absen->id_guru)
+                ->whereDate('tgl_tugas', $tanggalHariIni)
+                ->get()
+                ->keyBy('kelas');
+
+            return (object) [
+                'absen' => $absen,
+                'guru' => $absen->guru,
+                'jadwal' => $jadwalHariIni,
+                'tugas' => $tugasHariIni,
+            ];
+        })->values();
+
+        return view('guru.absen-list', compact('daftar'));
     }
 
     public function create()
