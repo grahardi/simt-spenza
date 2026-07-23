@@ -1,12 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Ajukan Absen Diri')
+@php $dariPiket = $dariPiket ?? false; @endphp
+@section('title', $dariPiket ? 'Ajuan Piket Guru' : 'Ajukan Absen Diri')
 
 @php $palet = ['blue', 'teal', 'amber', 'coral', 'pink', 'green', 'purple']; @endphp
 
 @section('content')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0"><i class="fas fa-user-clock me-2"></i>Ajukan Absen Diri</h1>
+    <h1 class="h5 pt-2 mb-0">
+        <i class="fas fa-user-clock me-2"></i>{{ $dariPiket ? 'Ajuan Piket Guru - '.$guru->nama : 'Ajukan Absen Diri' }}
+    </h1>
 </div>
 
 @if (session('status'))
@@ -50,6 +53,9 @@
         <div class="modal-dialog">
             <form method="POST" action="{{ route('ajuan-absen-guru.simpan') }}" class="modal-content">
                 @csrf
+                @if ($dariPiket)
+                    <input type="hidden" name="id_guru" value="{{ $guru->id_guru }}">
+                @endif
                 <input type="hidden" name="tanggal" value="{{ $tanggal->toDateString() }}">
                 <input type="hidden" name="status" value="{{ $kode }}">
                 <div class="modal-header">
@@ -99,7 +105,7 @@
                     <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
                     <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
                     @if ($tampilkanTombolTugas)
-                        <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}?tanggal={{ $tanggal->toDateString() }}&dari_ajuan_sendiri=1" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
+                        <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}?tanggal={{ $tanggal->toDateString() }}&dari_ajuan_sendiri=1{{ $dariPiket ? '&dari_piket=1' : '' }}" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
                             @if ($tugasSudahAda)
                                 <i class="fas fa-eye me-1"></i> Lihat Tugas
                             @else

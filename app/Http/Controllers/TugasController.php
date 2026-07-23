@@ -57,9 +57,11 @@ class TugasController extends Controller
             $atribut
         );
 
-        $kembali = $request->boolean('dari_ajuan_sendiri')
-            ? route('ajuan-absen-guru.index', ['tanggal' => $tanggal])
-            : route('jadwal.guru', $guru);
+        $kembali = match (true) {
+            $request->boolean('dari_piket') => route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal]),
+            $request->boolean('dari_ajuan_sendiri') => route('ajuan-absen-guru.index', ['tanggal' => $tanggal]),
+            default => route('jadwal.guru', $guru),
+        };
 
         return redirect($kembali)->with('status', 'Tugas untuk kelas '.$kelas.' berhasil diupload.');
     }

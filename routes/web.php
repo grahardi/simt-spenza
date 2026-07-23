@@ -443,8 +443,18 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Ajukan Absen Diri - guru ajukan sendiri Sakit/Ijin/Dispensasi, pilih tanggal
     Route::prefix('ajuan-absen-guru')->name('ajuan-absen-guru.')->middleware('role:guru')->group(function () {
         Route::get('/', [AjuanAbsenGuruController::class, 'index'])->name('index');
-        Route::post('/', [AjuanAbsenGuruController::class, 'simpan'])->name('simpan');
     });
+
+    // Ajuan Piket Guru - piket/admin/kesiswaan ajukan absen ATAS NAMA guru tertentu (pilih dulu gurunya)
+    Route::prefix('ajuan-piket-guru')->name('ajuan-absen-guru.piket.')->middleware('role:piket,admin,kesiswaan')->group(function () {
+        Route::get('/', [AjuanAbsenGuruController::class, 'pilihGuru'])->name('pilih');
+        Route::get('/{guru}', [AjuanAbsenGuruController::class, 'index'])->name('form');
+    });
+
+    // Simpan dipakai bersama oleh guru (ajukan sendiri) maupun piket (ajukan atas nama guru lain)
+    Route::post('/ajuan-absen-guru', [AjuanAbsenGuruController::class, 'simpan'])
+        ->name('ajuan-absen-guru.simpan')
+        ->middleware('role:guru,piket,admin,kesiswaan');
 
     // Jadwal Pelajaran - lihat berdasarkan Kelas atau Guru, siapa saja yang login boleh lihat
     Route::prefix('jadwal')->name('jadwal.')->group(function () {

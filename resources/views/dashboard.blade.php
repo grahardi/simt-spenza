@@ -68,6 +68,7 @@
                 ['label' => 'Absensi Siswa', 'icon' => 'fas fa-clipboard-check', 'color' => 'blue', 'href' => route('absensi.index')],
                 ['label' => 'Arsip Surat', 'icon' => 'fas fa-envelope-open-text', 'color' => 'amber', 'href' => route('arsip-surat')],
                 ['label' => 'Ajuan Absensi Masuk', 'icon' => 'fas fa-door-open', 'color' => 'purple', 'href' => route('ajuan-absensi.index')],
+                ['label' => 'Ajuan Piket Guru', 'icon' => 'fas fa-user-clock', 'color' => 'coral', 'href' => route('ajuan-absen-guru.piket.pilih')],
                 ['label' => 'Ajuan WhatsApp', 'icon' => 'fab fa-whatsapp', 'color' => 'green', 'href' => route('ajuan-whatsapp.index')],
                 ['label' => 'Absensi Guru', 'icon' => 'fas fa-chalkboard-teacher', 'color' => 'green', 'href' => route('guru.absen-list')],
                 // Guru absen -> guru upload tugas -> piket sampaikan ke siswa di kelas

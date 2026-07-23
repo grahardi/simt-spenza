@@ -33,6 +33,9 @@
         @if (request('dari_ajuan_sendiri'))
             <input type="hidden" name="dari_ajuan_sendiri" value="1">
         @endif
+        @if (request('dari_piket'))
+            <input type="hidden" name="dari_piket" value="1">
+        @endif
         <div class="mb-3">
             <label class="form-label">Tugas</label>
             <input type="text" name="tugas" class="form-control" value="{{ old('tugas', $tugas->tugas ?? '') }}" placeholder="contoh: Kerjakan LKS hal. 20-22" required>
@@ -50,7 +53,7 @@
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-upload me-1"></i> {{ $tugas ? 'Simpan Perubahan' : 'Upload' }}
             </button>
-            <a href="{{ request('dari_ajuan_sendiri') ? route('ajuan-absen-guru.index', ['tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru) }}" class="btn btn-outline-secondary">Kembali</a>
+            <a href="{{ request('dari_piket') ? route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal->toDateString()]) : (request('dari_ajuan_sendiri') ? route('ajuan-absen-guru.index', ['tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru)) }}" class="btn btn-outline-secondary">Kembali</a>
         </div>
     </form>
 </div>
