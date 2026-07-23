@@ -356,6 +356,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         ->name('aktivitas-kelas.pelanggaran-siswa')
         ->middleware('role:walikelas');
 
+    Route::post('/aktivitas-kelas/rujukan/{rujukanSiswa}/tindak', [AktivitasKelasController::class, 'tindakLanjutRujukan'])
+        ->name('aktivitas-kelas.rujukan.tindak')
+        ->middleware('role:walikelas');
+
     Route::get('/walikelas-whatsapp', [\App\Http\Controllers\WalikelasWhatsappController::class, 'index'])
         ->name('walikelas.whatsapp')
         ->middleware('role:walikelas');
@@ -378,7 +382,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::prefix('tatib')->name('tatib.')->group(function () {
         Route::get('/cari', [TatibController::class, 'cari'])->name('cari');
         Route::get('/lapor/{siswa}', [TatibController::class, 'lapor'])->name('lapor');
+        Route::get('/lapor-pelanggaran/{siswa}', [TatibController::class, 'laporPelanggaran'])->name('lapor-pelanggaran');
         Route::post('/lapor/{siswa}', [TatibController::class, 'simpan'])->name('simpan');
+        Route::post('/notif-walikelas/{siswa}', [TatibController::class, 'notifWaliKelas'])->name('notif-walikelas');
+        Route::post('/ajukan-bk/{siswa}', [TatibController::class, 'ajukanBk'])->name('ajukan-bk');
         Route::get('/', [TatibController::class, 'index'])->name('index');
         Route::post('/{pelanggaran}/tindak', [TatibController::class, 'tindak'])->name('tindak');
     });

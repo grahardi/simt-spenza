@@ -31,10 +31,85 @@ class TatibController extends Controller
         return view('tatib.cari', ['siswa' => $siswa, 'cari' => $cari]);
     }
 
-    /** Pengganti tatibentry.php - form lapor pelanggaran untuk 1 siswa. */
+    /** Halaman pilih jenis - Notif Wali Kelas / Ajukan BK / Ajukan Pelanggaran. */
     public function lapor(Siswa $siswa)
     {
+        return view('tatib.pilih-jenis', compact('siswa'));
+    }
+
+    /** Form lapor pelanggaran formal (kategori+poin) - sebelumnya jadi halaman utama, sekarang salah satu dari 3 opsi. */
+    public function laporPelanggaran(Siswa $siswa)
+    {
         return view('tatib.lapor', compact('siswa'));
+    }
+
+    /** Kirim Notif Wali Kelas - bikin rujukan + kirim WA ke wali kelas kalau nomornya terdaftar. */
+    public function notifWaliKelas(Request $request, Siswa $siswa)
+    {
+        $data = $request->validate(['alasan' => ['required', 'string', 'max:255']]);
+
+        /** @var Member $member */
+        $member = Auth::guard('member')->user();
+
+        $rujukan = \App\Models\RujukanSiswa::create([
+            'id_siswa' => $siswa->id_member,
+            'jenis' => 'walikelas',
+            'alasan' => $data['alasan'],
+            'status' => 'menunggu',
+            'dilaporkan_oleh' => $member->id,
+        ]);
+
+        $terkirim = $this->kirimWaKeWaliKelas($siswa, $data['alasan']);
+
+        \App\Models\LogAktivitas::catat(
+            'pelanggaran',
+            $member->nama.' mengirim notif wali kelas untuk '.$siswa->nama_lengkap.' - '.$data['alasan']
+        );
+
+        return redirect()->route('tatib.cari')->with('status',
+            'Notif wali kelas '.$siswa->nama_lengkap.' berhasil dikirim'.($terkirim ? ' (WA terkirim).' : ', tapi WA GAGAL terkirim (wali kelas mungkin belum registrasi nomor).'));
+    }
+
+    /** Ajukan BK - bikin rujukan ke BK (tanpa WA, cukup muncul di daftar BK). */
+    public function ajukanBk(Request $request, Siswa $siswa)
+    {
+        $data = $request->validate(['alasan' => ['required', 'string', 'max:255']]);
+
+        /** @var Member $member */
+        $member = Auth::guard('member')->user();
+
+        \App\Models\RujukanSiswa::create([
+            'id_siswa' => $siswa->id_member,
+            'jenis' => 'bk',
+            'alasan' => $data['alasan'],
+            'status' => 'menunggu',
+            'dilaporkan_oleh' => $member->id,
+        ]);
+
+        \App\Models\LogAktivitas::catat(
+            'pelanggaran',
+            $member->nama.' mengajukan '.$siswa->nama_lengkap.' ke BK - '.$data['alasan']
+        );
+
+        return redirect()->route('tatib.cari')->with('status', 'Ajuan BK untuk '.$siswa->nama_lengkap.' berhasil dikirim.');
+    }
+
+    /** Cari nomor WA wali kelas dari kelas siswa, kirim pesan lewat bot Meta. */
+    private function kirimWaKeWaliKelas(Siswa $siswa, string $alasan): bool
+    {
+        $waliKelasMember = Member::where('walikelas', $siswa->kelas)->first();
+        if (!$waliKelasMember || !$waliKelasMember->dataGuru) {
+            return false;
+        }
+
+        $nomorWa = \App\Models\GuruWhatsapp::where('id_guru', $waliKelasMember->dataGuru->id_guru)->value('nomor');
+        if (!$nomorWa) {
+            return false;
+        }
+
+        $pesan = "Ada ajuan Tatib untuk Kelas {$siswa->kelas} atas nama {$siswa->nama_lengkap} dikarenakan {$alasan}. Mohon untuk ditindaklanjuti di aplikasi.";
+
+        return (new \App\Services\WhatsappMetaService())->kirimPesan($nomorWa, $pesan);
     }
 
     /** Pengganti prosestatib.php - simpan laporan pelanggaran. */

@@ -47,7 +47,7 @@
         </div>
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary flex-grow-1"><i class="fas fa-save me-1"></i> Simpan Laporan</button>
-            <a href="{{ route('tatib.cari') }}" class="btn btn-outline-secondary">Batal</a>
+            <a href="{{ route('tatib.lapor', $siswa) }}" class="btn btn-outline-secondary">Batal</a>
         </div>
     </form>
 </div>

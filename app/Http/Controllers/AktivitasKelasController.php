@@ -95,6 +95,13 @@ class AktivitasKelasController extends Controller
 
         $idSiswaKelas = Siswa::where('kelas', $kelas)->pluck('id_member');
 
+        $rujukanMenunggu = \App\Models\RujukanSiswa::with('siswa.nomorWhatsapp')
+            ->whereIn('id_siswa', $idSiswaKelas)
+            ->where('jenis', 'walikelas')
+            ->where('status', 'menunggu')
+            ->orderByDesc('created_at')
+            ->get();
+
         $rekap = \App\Models\Pelanggaran::with('siswa')
             ->whereIn('id_siswa', $idSiswaKelas)
             ->get()
@@ -110,6 +117,44 @@ class AktivitasKelasController extends Controller
             ->sortByDesc('totalPoin')
             ->values();
 
-        return view('kelas.pelanggaran-siswa', compact('rekap', 'kelas'));
+        return view('kelas.pelanggaran-siswa', compact('rekap', 'kelas', 'rujukanMenunggu'));
+    }
+
+    /** Tindak lanjut rujukan dari Tatib - Konfirmasi Saja / Hubungi Ortu / Ajukan BK / Ajukan Tatib. */
+    public function tindakLanjutRujukan(Request $request, \App\Models\RujukanSiswa $rujukanSiswa)
+    {
+        $data = $request->validate([
+            'tindak_lanjut' => ['required', 'in:konfirmasi,hubungi_ortu,ajukan_bk,ajukan_tatib'],
+            'catatan_tindak_lanjut' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        /** @var Member $member */
+        $member = Auth::guard('member')->user();
+
+        // "Ajukan BK" mengubah jenis rujukan jadi 'bk' supaya muncul di daftar BK (bukan ditutup).
+        $statusBaru = $data['tindak_lanjut'] === 'ajukan_bk' ? 'menunggu' : 'selesai';
+        $jenisBaru = $data['tindak_lanjut'] === 'ajukan_bk' ? 'bk' : $rujukanSiswa->jenis;
+
+        $rujukanSiswa->update([
+            'jenis' => $jenisBaru,
+            'status' => $statusBaru,
+            'tindak_lanjut' => $data['tindak_lanjut'],
+            'catatan_tindak_lanjut' => $data['catatan_tindak_lanjut'] ?? null,
+            'ditindak_oleh' => $member->id,
+            'ditindak_at' => now(),
+        ]);
+
+        \App\Models\LogAktivitas::catat(
+            'pelanggaran',
+            $member->nama.' menindaklanjuti rujukan '.($rujukanSiswa->siswa->nama_lengkap ?? '').' ('.\App\Models\RujukanSiswa::TINDAK_LABEL[$data['tindak_lanjut']].').'
+        );
+
+        // Kalau "Ajukan Tatib" - arahkan langsung ke form lapor pelanggaran formal.
+        if ($data['tindak_lanjut'] === 'ajukan_tatib') {
+            return redirect()->route('tatib.lapor-pelanggaran', $rujukanSiswa->siswa)
+                ->with('status', 'Silakan lengkapi laporan pelanggaran formal untuk '.($rujukanSiswa->siswa->nama_lengkap ?? '').'.');
+        }
+
+        return back()->with('status', 'Tindak lanjut untuk '.($rujukanSiswa->siswa->nama_lengkap ?? '').' berhasil disimpan.');
     }
 }
