@@ -21,6 +21,10 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
+@if (session('status_gagal'))
+    <div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-1"></i> {{ session('status_gagal') }}</div>
+@endif
+
 @if ($errors->any())
     <div class="alert alert-danger">
         <strong>Gagal menyimpan:</strong>

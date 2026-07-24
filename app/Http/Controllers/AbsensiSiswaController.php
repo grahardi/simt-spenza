@@ -155,6 +155,19 @@ class AbsensiSiswaController extends Controller
             'foto' => ['nullable', 'image', 'max:8192'],
         ]);
 
+        $absenSekarang = AbsenSiswa::where('id_siswa', $siswa->id_member)
+            ->whereDate('tgl_absen', Carbon::today())
+            ->first();
+
+        // Cegah Alfa menimpa entri Sakit/Ijin yang sudah ada (misal dari ajuan
+        // WhatsApp yang sudah di-ACC) - kejadian tidak sengaja tertimpa saat
+        // piket isi absensi manual tanpa sadar sudah ada entri sebelumnya.
+        if ($data['keterangan'] === 'a' && $absenSekarang && in_array($absenSekarang->keterangan, ['s', 'i'], true)) {
+            $labelSekarang = $absenSekarang->keterangan === 's' ? 'Sakit' : 'Ijin';
+
+            return back()->with('status_gagal', $siswa->nama_lengkap.' sudah tercatat '.$labelSekarang.' hari ini - tidak bisa ditimpa jadi Alfa. Kalau memang perlu dikoreksi, ubah manual ke status lain (bukan Alfa) dulu.');
+        }
+
         $atribut = [
             'keterangan' => $data['keterangan'],
             'tambahan' => $data['catatan'] ?? null,
