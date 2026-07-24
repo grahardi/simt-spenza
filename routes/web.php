@@ -400,6 +400,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
             Route::post('/notif-walikelas/{siswa}', [TatibController::class, 'notifWaliKelas'])->name('notif-walikelas');
             Route::post('/ajukan-bk/{siswa}', [TatibController::class, 'ajukanBk'])->name('ajukan-bk');
             Route::post('/{pelanggaran}/tindak', [TatibController::class, 'tindak'])->name('tindak');
+            Route::get('/{pelanggaran}/edit', [TatibController::class, 'editPelanggaran'])->name('pelanggaran.edit');
+            Route::put('/{pelanggaran}', [TatibController::class, 'updatePelanggaran'])->name('pelanggaran.update');
         });
     });
 

@@ -80,6 +80,11 @@
                                     @endif
                                 </td>
                                 <td class="text-end">
+                                    @if (auth('member')->user()->hasRole('tatib'))
+                                        <a href="{{ route('tatib.pelanggaran.edit', $p) }}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    @endif
                                     @if ($belumDitangani && auth('member')->user()->hasRole('tatib'))
                                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalTindak{{ $p->id_langgar }}">
                                             <i class="fas fa-check me-1"></i> Tindak

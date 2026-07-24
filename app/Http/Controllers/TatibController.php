@@ -200,4 +200,29 @@ class TatibController extends Controller
 
         return back()->with('status', 'Penanganan pelanggaran '.($pelanggaran->siswa->nama_lengkap ?? '').' berhasil disimpan.');
     }
+
+    /** Edit data pelanggaran yang sudah tercatat - khusus tatib. */
+    public function editPelanggaran(Pelanggaran $pelanggaran)
+    {
+        return view('tatib.edit-pelanggaran', compact('pelanggaran'));
+    }
+
+    public function updatePelanggaran(Request $request, Pelanggaran $pelanggaran)
+    {
+        $data = $request->validate([
+            'tgl_pelanggaran' => ['required', 'date'],
+            'kategori' => ['required', 'in:Peringatan,Ringan,Sedang,Berat'],
+            'poin' => ['required', 'numeric'],
+            'keterangan' => ['nullable', 'string', 'max:200'],
+        ]);
+
+        $pelanggaran->update($data);
+
+        \App\Models\LogAktivitas::catat(
+            'pelanggaran',
+            (Auth::guard('member')->user()->nama ?? 'Seseorang').' mengubah data pelanggaran '.($pelanggaran->siswa->nama_lengkap ?? '').'.'
+        );
+
+        return redirect()->route('tatib.index')->with('status', 'Data pelanggaran '.($pelanggaran->siswa->nama_lengkap ?? '').' berhasil diperbarui.');
+    }
 }
