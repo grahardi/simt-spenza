@@ -25,4 +25,9 @@ class PendampinganWali extends Model
     {
         return $this->belongsToMany(Siswa::class, 'pendampingan_peserta', 'id_pendampingan', 'id_siswa', 'id', 'id_member');
     }
+
+    public function fotoTambahan(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PendampinganFoto::class, 'id_pendampingan');
+    }
 }

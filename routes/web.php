@@ -172,6 +172,9 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/galeri', [\App\Http\Controllers\PendampinganController::class, 'galeri'])->name('galeri');
         Route::get('/tambah', [\App\Http\Controllers\PendampinganController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\PendampinganController::class, 'store'])->name('store');
+        Route::get('/{pendampingan}/edit', [\App\Http\Controllers\PendampinganController::class, 'edit'])->name('edit');
+        Route::put('/{pendampingan}', [\App\Http\Controllers\PendampinganController::class, 'update'])->name('update');
+        Route::delete('/foto-tambahan/{fotoTambahan}', [\App\Http\Controllers\PendampinganController::class, 'hapusFotoTambahan'])->name('foto-tambahan.hapus');
     });
 
     // Persuratan (Tata Usaha) - Surat Masuk & Surat Keluar

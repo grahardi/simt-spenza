@@ -44,7 +44,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <img src="{{ Storage::url($p->foto) }}" alt="Foto kegiatan" class="img-fluid rounded mb-3">
+                    <img src="{{ Storage::url($p->foto) }}" alt="Foto kegiatan" class="img-fluid rounded mb-2">
+                    @if ($p->fotoTambahan->isNotEmpty())
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            @foreach ($p->fotoTambahan as $ft)
+                                <img src="{{ Storage::url($ft->path) }}" class="rounded border" style="width:80px;height:80px;object-fit:cover;">
+                            @endforeach
+                        </div>
+                    @endif
                     <table class="table table-sm mb-0">
                         <tr><td width="120">Kategori</td><td>: {{ $p->kategori }}</td></tr>
                         <tr><td>Guru Wali</td><td>: {{ $p->guru->nama ?? '-' }}</td></tr>

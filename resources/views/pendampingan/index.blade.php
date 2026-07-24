@@ -43,6 +43,9 @@
                                     <i class="fas fa-image"></i>
                                 </button>
                             @endif
+                            <a href="{{ route('pendampingan.edit', $p) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
                         </td>
                     </tr>
                 @endforeach
@@ -65,6 +68,13 @@
                     </div>
                     <div class="modal-body text-center">
                         <img src="{{ Storage::url($p->foto) }}" alt="Foto kegiatan" class="img-fluid rounded">
+                        @if ($p->fotoTambahan->isNotEmpty())
+                            <div class="d-flex flex-wrap gap-2 justify-content-center mt-2">
+                                @foreach ($p->fotoTambahan as $ft)
+                                    <img src="{{ Storage::url($ft->path) }}" class="rounded border" style="width:70px;height:70px;object-fit:cover;">
+                                @endforeach
+                            </div>
+                        @endif
                         @if ($p->deskripsi)
                             <p class="text-start mt-3 mb-0">{{ $p->deskripsi }}</p>
                         @endif
