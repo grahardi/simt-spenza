@@ -178,7 +178,14 @@ class TatibController extends Controller
             ->paginate(10, ['*'], 'p_akumulasi')
             ->withQueryString();
 
-        return view('tatib.index', compact('pelanggaran', 'tahunAjaran', 'daftarTahunAjaran', 'akumulasiPoin'));
+        // Detail per kejadian - cuma untuk siswa yang tampil di halaman akumulasi ini (buat dropdown)
+        $idSiswaHalamanIni = collect($akumulasiPoin->items())->pluck('id_siswa');
+        $detailPelanggaranPerSiswa = Pelanggaran::whereIn('id_siswa', $idSiswaHalamanIni)
+            ->orderByDesc('tgl_pelanggaran')
+            ->get()
+            ->groupBy('id_siswa');
+
+        return view('tatib.index', compact('pelanggaran', 'tahunAjaran', 'daftarTahunAjaran', 'akumulasiPoin', 'detailPelanggaranPerSiswa'));
     }
 
     /** Pengganti updatetatib.php - tandai pelanggaran sudah ditangani. */

@@ -20,17 +20,20 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
-{{-- Tab utama: Pelanggaran (per tahun ajaran) vs Akumulasi (all-time) --}}
+{{-- Tab utama: Pelanggaran (per tahun ajaran) vs Akumulasi (all-time).
+     Tab aktif ditentukan dari keberadaan parameter p_akumulasi di URL -
+     supaya paginasi di tab Akumulasi tidak balik ke tab Pelanggaran. --}}
+@php $tabAwal = request()->has('p_akumulasi') ? 'panelAkumulasi' : 'panelPelanggaran'; @endphp
 <div class="d-flex gap-2 mb-3" id="tabUtama">
-    <button type="button" class="tab-tahun active" data-target="panelPelanggaran" onclick="gantiTabUtama(this)">
+    <button type="button" class="tab-tahun {{ $tabAwal === 'panelPelanggaran' ? 'active' : '' }}" data-target="panelPelanggaran" onclick="gantiTabUtama(this)">
         <i class="fas fa-gavel me-1"></i> Pelanggaran
     </button>
-    <button type="button" class="tab-tahun" data-target="panelAkumulasi" onclick="gantiTabUtama(this)">
+    <button type="button" class="tab-tahun {{ $tabAwal === 'panelAkumulasi' ? 'active' : '' }}" data-target="panelAkumulasi" onclick="gantiTabUtama(this)">
         <i class="fas fa-chart-bar me-1"></i> Akumulasi Poin
     </button>
 </div>
 
-<div class="tab-panel-utama" id="panelPelanggaran">
+<div class="tab-panel-utama" id="panelPelanggaran" style="{{ $tabAwal === 'panelPelanggaran' ? '' : 'display:none;' }}">
     {{-- Selector tahun ajaran disembunyikan sementara - cuma tampilkan tahun
          berjalan. Data tahun lalu tetap ada di database (arsip), tidak dihapus,
          cuma tidak ditampilkan dulu. --}}
@@ -102,7 +105,7 @@
     </div>
 </div>
 
-<div class="tab-panel-utama" id="panelAkumulasi" style="display:none;">
+<div class="tab-panel-utama" id="panelAkumulasi" style="{{ $tabAwal === 'panelAkumulasi' ? '' : 'display:none;' }}">
     <div class="p-4 bg-white rounded shadow">
         <h3 class="h6 mb-3">
             <i class="fas fa-chart-bar me-2"></i>Akumulasi Poin Selama Bersekolah
@@ -116,12 +119,32 @@
                     <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Jumlah Kejadian</th><th>Total Poin</th></tr></thead>
                     <tbody>
                         @foreach ($akumulasiPoin as $a)
-                            <tr>
+                            <tr role="button" data-bs-toggle="collapse" data-bs-target="#akumulasiDetail{{ $a->id_siswa }}" style="cursor:pointer;">
                                 <td>{{ $akumulasiPoin->firstItem() + $loop->index }}</td>
-                                <td>{{ $a->siswa->nama_lengkap ?? '-' }}</td>
+                                <td>{{ $a->siswa->nama_lengkap ?? '-' }} <i class="fas fa-chevron-down text-muted small ms-1"></i></td>
                                 <td>{{ $a->siswa->kelas ?? '-' }}</td>
                                 <td>{{ $a->jumlah_kejadian }}</td>
                                 <td class="fw-bold">{{ $a->total_poin }}</td>
+                            </tr>
+                            <tr class="collapse" id="akumulasiDetail{{ $a->id_siswa }}">
+                                <td colspan="5" class="bg-light p-0">
+                                    <table class="table table-sm mb-0">
+                                        <thead>
+                                            <tr><th class="ps-3">Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-center">Poin</th><th>Penanganan</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($detailPelanggaranPerSiswa[$a->id_siswa] ?? [] as $d)
+                                                <tr>
+                                                    <td class="ps-3">{{ $d->tgl_pelanggaran?->translatedFormat('d M Y') ?? '-' }}</td>
+                                                    <td>{{ $d->kategori }}</td>
+                                                    <td>{{ $d->keterangan }}</td>
+                                                    <td class="text-center">{{ $d->poin }}</td>
+                                                    <td>{{ $d->penanganan ?? '-' }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
