@@ -24,12 +24,21 @@ class TugasController extends Controller
             ->whereDate('tgl_tugas', $tanggal)
             ->first();
 
-        return view('tugas.upload', compact('guru', 'kelas', 'tugas', 'tanggal'));
+        // Cuma guru yang bersangkutan sendiri yang boleh upload/edit tugasnya.
+        // Piket/TU/dll yang buka halaman ini (misal dari Absen Guru atau Ajuan
+        // Piket Guru) cuma boleh LIHAT/DOWNLOAD tugas yang sudah diupload.
+        $member = \Illuminate\Support\Facades\Auth::guard('member')->user();
+        $bisaEdit = $member->dataGuru && $member->dataGuru->id_guru === $guru->id_guru;
+
+        return view('tugas.upload', compact('guru', 'kelas', 'tugas', 'tanggal', 'bisaEdit'));
     }
 
     /** Pengganti prosestugas.php - simpan tugas untuk kelas & tanggal tertentu. */
     public function simpan(Request $request, Guru $guru, string $kelas)
     {
+        $member = \Illuminate\Support\Facades\Auth::guard('member')->user();
+        abort_unless($member->dataGuru && $member->dataGuru->id_guru === $guru->id_guru, 403, 'Cuma guru yang bersangkutan sendiri yang bisa upload tugas.');
+
         $data = $request->validate([
             'tugas' => ['required', 'string', 'max:255'],
             'keterangan' => ['nullable', 'string', 'max:255'],
