@@ -26,6 +26,10 @@
             <span class="small text-muted">{{ $label }}</span>
         </div>
     @endforeach
+    <div class="d-flex align-items-center gap-1">
+        <span style="width:14px;height:14px;border-radius:3px;background:#fde9ec;border:1px solid #f5c2c7;display:inline-block;"></span>
+        <span class="small text-muted">Sabtu-Minggu (sekolah 5 hari kerja)</span>
+    </div>
 </div>
 
 <div class="p-3 bg-white rounded shadow">
@@ -63,6 +67,13 @@ document.addEventListener('DOMContentLoaded', function () {
         headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
         buttonText: { today: 'Hari Ini', month: 'Bulan', list: 'Daftar' },
         events: '{{ route('agenda.data') }}',
+        dayCellDidMount: function (info) {
+            // Sabtu (6) & Minggu (0) diberi warna pink muda - sekolah cuma 5 hari kerja
+            const hari = info.date.getDay();
+            if (hari === 0 || hari === 6) {
+                info.el.style.backgroundColor = '#fde9ec';
+            }
+        },
         eventClick: function (info) {
             document.getElementById('judulDetailAgenda').textContent = info.event.title;
             document.getElementById('kategoriDetailAgenda').textContent = info.event.extendedProps.kategori;
