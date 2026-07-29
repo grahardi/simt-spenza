@@ -62,7 +62,7 @@
                                                     @if ($tugasSudahAda)
                                                         <i class="fas fa-eye me-1"></i> Lihat Tugas
                                                     @else
-                                                        <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
+                                                        <i class="far fa-folder-open me-1"></i> Tugas Kosong
                                                     @endif
                                                 </a>
                                             @endif

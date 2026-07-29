@@ -108,6 +108,8 @@
                         <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}?tanggal={{ $tanggal->toDateString() }}&dari_ajuan_sendiri=1{{ $dariPiket ? '&dari_piket=1' : '' }}" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
                             @if ($tugasSudahAda)
                                 <i class="fas fa-eye me-1"></i> Lihat Tugas
+                            @elseif ($dariPiket)
+                                <i class="far fa-folder-open me-1"></i> Tugas Kosong
                             @else
                                 <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
                             @endif
@@ -118,7 +120,7 @@
         </div>
         @if (! $absenTanggalItu)
             <p class="text-muted small mt-3 mb-0">
-                <i class="fas fa-info-circle me-1"></i> Tombol Upload Tugas akan muncul di sini setelah ajuan absen dikirim.
+                <i class="fas fa-info-circle me-1"></i> Tombol {{ $dariPiket ? 'Tugas' : 'Upload Tugas' }} akan muncul di sini setelah ajuan absen dikirim.
             </p>
         @endif
     @endif
