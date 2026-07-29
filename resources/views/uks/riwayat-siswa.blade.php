@@ -10,7 +10,7 @@
 </div>
 
 <div class="p-4 bg-white rounded shadow">
-    <p class="text-muted small">Diurutkan dari yang paling sering ke UKS. Klik nama untuk lihat riwayat kunjungannya.</p>
+    <p class="text-muted small">Diurutkan dari yang paling sering ke UKS. Klik baris untuk lihat riwayat kunjungannya.</p>
 
     @if ($rekap->isEmpty())
         <div class="text-muted text-center py-4">
@@ -18,22 +18,22 @@
         </div>
     @else
         <div class="table-responsive">
-        <table class="table table-striped mb-0 align-middle">
+        <table class="table mb-0 align-middle">
             <thead>
-                <tr><th>No</th><th>Nama</th><th>Kelas</th><th class="text-center">Jumlah Kunjungan</th><th></th></tr>
+                <tr><th>No</th><th>Nama</th><th>Kelas</th><th class="text-center">Jumlah Kunjungan</th></tr>
             </thead>
             <tbody>
                 @foreach ($rekap as $i => $r)
                     @php $s = $siswaMap[$r->id_siswa] ?? null; @endphp
-                    <tr role="button" data-bs-toggle="collapse" data-bs-target="#riwayat{{ $r->id_siswa }}" style="cursor:pointer;">
+                    <tr role="button" data-bs-toggle="collapse" data-bs-target="#riwayat{{ $r->id_siswa }}"
+                        style="cursor:pointer; background:{{ ($s->jenis_kelamin ?? '') === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                         <td>{{ $rekap->firstItem() + $i }}</td>
                         <td>{{ $s->nama_lengkap ?? '-' }} <i class="fas fa-chevron-down text-muted small ms-1"></i></td>
                         <td>{{ $s->kelas ?? '-' }}</td>
                         <td class="text-center"><span class="badge bg-primary">{{ $r->jumlah_kunjungan }}</span></td>
-                        <td class="text-muted small">Lihat riwayat</td>
                     </tr>
                     <tr class="collapse" id="riwayat{{ $r->id_siswa }}">
-                        <td colspan="5" class="bg-light p-0">
+                        <td colspan="4" class="bg-light p-0">
                             <table class="table table-sm mb-0">
                                 <thead>
                                     <tr>
@@ -66,4 +66,6 @@
         </div>
     @endif
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
