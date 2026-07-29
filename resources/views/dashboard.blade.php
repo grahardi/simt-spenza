@@ -148,6 +148,15 @@
                 ['label' => 'Rekap Absen Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'purple', 'href' => route('kesiswaan.rekap-mingguan')],
             ],
         ],
+        'admin_kegiatan' => [
+            'title' => 'Menu Admin Kegiatan',
+            'theme' => 'purple',
+            'items' => [
+                ['label' => 'Agenda', 'icon' => 'fas fa-calendar-alt', 'color' => 'purple', 'href' => route('agenda.index')],
+                ['label' => 'List Agenda', 'icon' => 'fas fa-list', 'color' => 'blue', 'href' => route('agenda.list-sudah')],
+                ['label' => 'Tambah Agenda', 'icon' => 'fas fa-plus', 'color' => 'green', 'href' => route('agenda.create')],
+            ],
+        ],
     ];
 @endphp
 
