@@ -25,4 +25,9 @@ class Agenda extends Model
         'ujian' => '#fd7e14',
         'kegiatan' => '#198754',
     ];
+
+    public function foto(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(AgendaFoto::class, 'id_agenda');
+    }
 }

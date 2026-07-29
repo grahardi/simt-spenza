@@ -106,7 +106,7 @@ class AkunController extends Controller
             'piket' => ['nullable', 'string', 'max:20'],
         ]);
 
-        $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal', 'tata_usaha', 'uks', 'kesiswaan'];
+        $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal', 'tata_usaha', 'uks', 'kesiswaan', 'admin_kegiatan'];
         foreach ($flagRoles as $flag) {
             $data[$flag] = $request->boolean($flag) ? 1 : 0;
         }

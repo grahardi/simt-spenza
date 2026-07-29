@@ -71,6 +71,7 @@
                         'tata_usaha' => 'Tata Usaha',
                         'uks' => 'UKS',
                         'kesiswaan' => 'Kesiswaan',
+                    'admin_kegiatan' => 'Admin Kegiatan',
                     ] as $flag => $label)
                         <div class="col-md-3 mb-2">
                             <div class="custom-control custom-checkbox">

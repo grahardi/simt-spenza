@@ -8,11 +8,19 @@
         <i class="fas fa-calendar-alt fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Agenda Kegiatan Sekolah</h1>
     </div>
-    @if (auth('member')->user()->hasRole('kesiswaan'))
-        <a href="{{ route('agenda.create') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
-            <i class="fas fa-plus me-1"></i> Tambah Agenda
+    <div class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
+        <a href="{{ route('agenda.mendatang') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-right me-1"></i> Agenda Mendatang
         </a>
-    @endif
+        <a href="{{ route('agenda.list-sudah') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-list me-1"></i> Agenda List
+        </a>
+        @if (auth('member')->user()->hasRole('kesiswaan') || auth('member')->user()->hasRole('admin_kegiatan'))
+            <a href="{{ route('agenda.create') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-plus me-1"></i> Tambah Agenda
+            </a>
+        @endif
+    </div>
 </div>
 
 @if (session('status'))
@@ -58,7 +66,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const bisaEdit = @json(auth('member')->user()->hasRole('kesiswaan'));
+    const bisaEdit = @json(auth('member')->user()->hasRole('kesiswaan') || auth('member')->user()->hasRole('admin_kegiatan'));
     const calendarEl = document.getElementById('kalenderAgenda');
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -93,9 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('keteranganDetailAgenda').textContent = info.event.extendedProps.keterangan || '-';
 
             const footer = document.getElementById('footerDetailAgenda');
-            footer.innerHTML = '';
+            footer.innerHTML = `<a href="/agenda/${info.event.id}/galeri" class="btn btn-sm btn-outline-success"><i class="fas fa-images me-1"></i> Galeri</a>`;
             if (bisaEdit) {
-                footer.innerHTML = `
+                footer.innerHTML += `
                     <a href="/agenda/${info.event.id}/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit me-1"></i> Edit</a>
                     <form method="POST" action="/agenda/${info.event.id}" class="d-inline" onsubmit="return confirm('Hapus agenda ini?')">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">

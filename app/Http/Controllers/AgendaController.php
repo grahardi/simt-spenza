@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agenda;
+use App\Models\AgendaFoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AgendaController extends Controller
 {
@@ -23,7 +25,6 @@ class AgendaController extends Controller
                 'id' => $a->id,
                 'title' => $a->judul,
                 'start' => $a->tanggal_mulai->toDateString(),
-                // FullCalendar: tanggal selesai bersifat "eksklusif", jadi +1 hari
                 'end' => $a->tanggal_selesai ? $a->tanggal_selesai->copy()->addDay()->toDateString() : null,
                 'color' => Agenda::KATEGORI_WARNA[$a->kategori] ?? '#6c757d',
                 'extendedProps' => [
@@ -34,6 +35,28 @@ class AgendaController extends Controller
         });
 
         return response()->json($events);
+    }
+
+    /** Agenda List - kegiatan yang SUDAH dilaksanakan (tanggal mulai <= hari ini). */
+    public function listSudah()
+    {
+        $agenda = Agenda::withCount('foto')
+            ->where('tanggal_mulai', '<=', now('Asia/Jakarta')->toDateString())
+            ->orderByDesc('tanggal_mulai')
+            ->paginate(15);
+
+        return view('agenda.list-sudah', compact('agenda'));
+    }
+
+    /** Agenda Mendatang - kegiatan yang BELUM dilaksanakan. */
+    public function mendatang()
+    {
+        $agenda = Agenda::withCount('foto')
+            ->where('tanggal_mulai', '>', now('Asia/Jakarta')->toDateString())
+            ->orderBy('tanggal_mulai')
+            ->paginate(15);
+
+        return view('agenda.mendatang', compact('agenda'));
     }
 
     public function create()
@@ -65,9 +88,46 @@ class AgendaController extends Controller
 
     public function destroy(Agenda $agenda)
     {
+        foreach ($agenda->foto as $f) {
+            Storage::disk('public')->delete($f->path);
+        }
         $agenda->delete();
 
         return redirect()->route('agenda.index')->with('status', 'Agenda berhasil dihapus.');
+    }
+
+    /** Galeri foto 1 agenda - model tampilan grid ala Instagram. */
+    public function galeri(Agenda $agenda)
+    {
+        $agenda->load('foto');
+
+        return view('agenda.galeri', compact('agenda'));
+    }
+
+    public function simpanFoto(Request $request, Agenda $agenda)
+    {
+        $request->validate([
+            'foto' => ['required', 'array', 'min:1'],
+            'foto.*' => ['image', 'max:8192'],
+        ]);
+
+        foreach ($request->file('foto') as $file) {
+            $agenda->foto()->create([
+                'path' => $file->store('agenda', 'public'),
+                'diupload_oleh' => Auth::guard('member')->id(),
+            ]);
+        }
+
+        return back()->with('status', count($request->file('foto')).' foto berhasil diupload.');
+    }
+
+    public function hapusFoto(AgendaFoto $agendaFoto)
+    {
+        $idAgenda = $agendaFoto->id_agenda;
+        Storage::disk('public')->delete($agendaFoto->path);
+        $agendaFoto->delete();
+
+        return redirect()->route('agenda.galeri', $idAgenda)->with('status', 'Foto dihapus.');
     }
 
     private function validasi(Request $request): array

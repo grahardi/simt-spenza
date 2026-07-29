@@ -113,6 +113,7 @@ class Member extends Authenticatable
             'tata_usaha' => 'tata_usaha',
             'uks' => 'uks',
             'kesiswaan' => 'kesiswaan',
+            'admin_kegiatan' => 'admin_kegiatan',
         ];
 
         $roles = [];
