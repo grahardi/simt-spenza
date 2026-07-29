@@ -102,7 +102,14 @@ class TugasController extends Controller
 
         $perintah = 'timeout 60 libreoffice --headless --convert-to pdf --outdir '
             .escapeshellarg($folderKerja).' '.escapeshellarg($pathAsli).' 2>&1';
-        exec($perintah, $output, $kodeKeluar);
+
+        // Beberapa hosting menonaktifkan exec()/shell_exec() demi keamanan -
+        // kalau begitu, jangan sampai error fatal, langsung fallback simpan
+        // file Word aslinya saja (upload tetap berhasil, cuma tidak dikonversi).
+        $kodeKeluar = 1;
+        if (function_exists('exec') && !in_array('exec', array_map('trim', explode(',', (string) ini_get('disable_functions'))), true)) {
+            exec($perintah, $output, $kodeKeluar);
+        }
 
         if ($kodeKeluar === 0 && file_exists($pathPdfHasil)) {
             $tujuanRelatif = 'tugas/'.$namaAman.'.pdf';
