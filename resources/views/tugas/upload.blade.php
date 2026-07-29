@@ -2,6 +2,10 @@
 
 @section('title', ($tugas ? 'Tugas' : ($bisaEdit ? 'Upload Tugas' : 'Belum Ada Tugas')) . ' - ' . $kelas)
 
+@php
+    $isPdf = fn ($path) => $path && str_ends_with(strtolower($path), '.pdf');
+@endphp
+
 @section('content')
 <div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
     <h1 class="h5 pt-2 mb-0">
@@ -26,11 +30,11 @@
             </table>
             @if ($tugas->gambar)
                 <label class="form-label d-block">Lampiran</label>
-                <a href="{{ Storage::url($tugas->gambar) }}" target="_blank">
-                    <img src="{{ Storage::url($tugas->gambar) }}" alt="Lampiran tugas" class="img-fluid rounded border mb-2" style="max-height:320px;">
-                </a>
-                <a href="{{ Storage::url($tugas->gambar) }}" target="_blank" download class="btn btn-outline-primary btn-sm d-block">
-                    <i class="fas fa-download me-1"></i> Download Lampiran
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalLampiran">
+                    <i class="fas fa-{{ $isPdf($tugas->gambar) ? 'file-pdf' : 'image' }} me-1"></i> Lihat Lampiran
+                </button>
+                <a href="{{ Storage::url($tugas->gambar) }}" target="_blank" download class="btn btn-outline-secondary">
+                    <i class="fas fa-download me-1"></i> Download
                 </a>
             @endif
         @else
@@ -39,7 +43,7 @@
             </div>
         @endif
 
-        <a href="{{ request('dari_piket') ? route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru) }}" class="btn btn-outline-secondary mt-3">Kembali</a>
+        <a href="{{ request('dari_piket') ? route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru) }}" class="btn btn-outline-secondary mt-3 d-block">Kembali</a>
     @else
         @if ($tugas)
             <p class="text-muted small">Tugas untuk kelas ini pada tanggal ini sudah pernah diupload - masih bisa diedit/diganti di bawah ini.</p>
@@ -47,8 +51,9 @@
             @if ($tugas->gambar)
                 <div class="mb-3">
                     <label class="form-label d-block">Lampiran Saat Ini</label>
-                    {{-- Preview gambar langsung inline (bukan cuma link) --}}
-                    <img src="{{ Storage::url($tugas->gambar) }}" alt="Lampiran tugas" class="img-fluid rounded border" style="max-height:320px;">
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalLampiran">
+                        <i class="fas fa-{{ $isPdf($tugas->gambar) ? 'file-pdf' : 'image' }} me-1"></i> Lihat Lampiran
+                    </button>
                 </div>
             @endif
         @endif
@@ -72,8 +77,8 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Foto/Lampiran (opsional)</label>
-                <input type="file" name="foto" accept="image/*" class="form-control">
-                <small class="text-muted">Upload foto baru untuk mengganti lampiran yang sudah ada.</small>
+                <input type="file" name="foto" accept="image/*,.doc,.docx,.pdf" class="form-control">
+                <small class="text-muted">Gambar langsung tersimpan apa adanya. File Word (.doc/.docx) otomatis dikonversi jadi PDF.</small>
             </div>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">
@@ -84,4 +89,32 @@
         </form>
     @endif
 </div>
+
+@if ($tugas && $tugas->gambar)
+    <div class="modal fade" id="modalLampiran" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Lampiran Tugas - Kelas {{ $kelas }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-0" style="min-height:70vh;">
+                    @if ($isPdf($tugas->gambar))
+                        <iframe src="{{ Storage::url($tugas->gambar) }}" style="width:100%;height:75vh;border:0;"></iframe>
+                    @else
+                        <img src="{{ Storage::url($tugas->gambar) }}" alt="Lampiran tugas" class="img-fluid" style="max-height:80vh;">
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ Storage::url($tugas->gambar) }}" target="_blank" download class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download me-1"></i> Download
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

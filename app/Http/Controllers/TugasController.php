@@ -42,7 +42,7 @@ class TugasController extends Controller
         $data = $request->validate([
             'tugas' => ['required', 'string', 'max:255'],
             'keterangan' => ['nullable', 'string', 'max:255'],
-            'foto' => ['nullable', 'image', 'max:8192'],
+            'foto' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,doc,docx,pdf', 'max:8192'],
             'tanggal' => ['nullable', 'date'],
         ]);
 
@@ -58,7 +58,14 @@ class TugasController extends Controller
         ];
 
         if ($request->hasFile('foto')) {
-            $atribut['gambar'] = $request->file('foto')->store('tugas', 'public');
+            $file = $request->file('foto');
+            $ekstensi = strtolower($file->getClientOriginalExtension());
+
+            if (in_array($ekstensi, ['doc', 'docx'], true)) {
+                $atribut['gambar'] = $this->simpanSebagaiPdf($file);
+            } else {
+                $atribut['gambar'] = $file->store('tugas', 'public');
+            }
         }
 
         Tugas::updateOrCreate(
@@ -73,5 +80,50 @@ class TugasController extends Controller
         };
 
         return redirect($kembali)->with('status', 'Tugas untuk kelas '.$kelas.' berhasil diupload.');
+    }
+
+    /**
+     * Simpan file Word (.doc/.docx) sebagai PDF (dikonversi otomatis pakai
+     * LibreOffice headless). Kalau LibreOffice tidak tersedia/gagal, fallback
+     * simpan file Word aslinya apa adanya - upload tidak boleh gagal cuma
+     * gara-gara konversi gagal.
+     */
+    private function simpanSebagaiPdf($file): string
+    {
+        $namaAsli = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $namaAman = \Illuminate\Support\Str::slug($namaAsli).'-'.uniqid();
+        $folderKerja = storage_path('app/tmp-konversi-tugas');
+        \Illuminate\Support\Facades\File::ensureDirectoryExists($folderKerja);
+
+        $pathAsli = $folderKerja.'/'.$namaAman.'.'.$file->getClientOriginalExtension();
+        $file->move($folderKerja, basename($pathAsli));
+
+        $pathPdfHasil = $folderKerja.'/'.$namaAman.'.pdf';
+
+        $perintah = 'timeout 60 libreoffice --headless --convert-to pdf --outdir '
+            .escapeshellarg($folderKerja).' '.escapeshellarg($pathAsli).' 2>&1';
+        exec($perintah, $output, $kodeKeluar);
+
+        if ($kodeKeluar === 0 && file_exists($pathPdfHasil)) {
+            $tujuanRelatif = 'tugas/'.$namaAman.'.pdf';
+            \Illuminate\Support\Facades\Storage::disk('public')->put(
+                $tujuanRelatif,
+                file_get_contents($pathPdfHasil)
+            );
+            @unlink($pathAsli);
+            @unlink($pathPdfHasil);
+
+            return $tujuanRelatif;
+        }
+
+        // Konversi gagal - simpan file Word aslinya saja, jangan gagalkan upload.
+        $tujuanRelatif = 'tugas/'.$namaAman.'.'.$file->getClientOriginalExtension();
+        \Illuminate\Support\Facades\Storage::disk('public')->put(
+            $tujuanRelatif,
+            file_get_contents($pathAsli)
+        );
+        @unlink($pathAsli);
+
+        return $tujuanRelatif;
     }
 }
