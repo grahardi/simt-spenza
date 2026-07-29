@@ -13,4 +13,7 @@
     <a href="{{ route('uks.panggilan') }}" class="btn btn-sm {{ $rute === 'uks.panggilan' ? 'btn-primary' : 'btn-outline-primary' }}">
         <i class="fas fa-phone-alt me-1"></i> Panggilan Wali Murid
     </a>
+    <a href="{{ route('uks.riwayat-siswa') }}" class="btn btn-sm {{ $rute === 'uks.riwayat-siswa' ? 'btn-primary' : 'btn-outline-primary' }}">
+        <i class="fas fa-history me-1"></i> Riwayat Siswa
+    </a>
 </div>

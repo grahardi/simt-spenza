@@ -203,6 +203,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/list', [UksController::class, 'list'])->name('list');
         Route::post('/penanganan/{uksKunjungan}', [UksController::class, 'penanganan'])->name('penanganan');
         Route::get('/panggilan', [UksController::class, 'panggilan'])->name('panggilan');
+        Route::get('/riwayat-siswa', [UksController::class, 'riwayatSiswa'])->name('riwayat-siswa');
     });
 
     // Modul Kesiswaan - Absensi Hari Ini & Keterlambatan pakai route absensi yang sudah ada,

@@ -133,4 +133,25 @@ class UksController extends Controller
 
         return view('uks.panggilan', compact('siswa', 'cari', 'kelasFilter', 'daftarKelas', 'sedangDiUks'));
     }
+
+    /** Riwayat Siswa - list siswa terbanyak kunjungan UKS, klik nama buat lihat riwayat lengkap. */
+    public function riwayatSiswa()
+    {
+        $rekap = UksKunjungan::selectRaw('id_siswa, count(*) as jumlah_kunjungan')
+            ->groupBy('id_siswa')
+            ->orderByDesc('jumlah_kunjungan')
+            ->paginate(10);
+
+        $idSiswaHalamanIni = collect($rekap->items())->pluck('id_siswa');
+
+        $siswaMap = Siswa::whereIn('id_member', $idSiswaHalamanIni)->get()->keyBy('id_member');
+
+        $riwayatPerSiswa = UksKunjungan::whereIn('id_siswa', $idSiswaHalamanIni)
+            ->orderByDesc('tanggal')
+            ->orderByDesc('waktu_masuk')
+            ->get()
+            ->groupBy('id_siswa');
+
+        return view('uks.riwayat-siswa', compact('rekap', 'siswaMap', 'riwayatPerSiswa'));
+    }
 }

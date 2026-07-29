@@ -134,6 +134,7 @@
                 ['label' => 'Siswa Sakit', 'icon' => 'fas fa-briefcase-medical', 'color' => 'red', 'href' => route('uks.cari')],
                 ['label' => 'Siswa di UKS', 'icon' => 'fas fa-bed', 'color' => 'amber', 'href' => route('uks.list')],
                 ['label' => 'Panggilan Wali Murid', 'icon' => 'fas fa-phone-alt', 'color' => 'green', 'href' => route('uks.panggilan')],
+                ['label' => 'Riwayat Siswa', 'icon' => 'fas fa-history', 'color' => 'purple', 'href' => route('uks.riwayat-siswa')],
             ],
         ],
         'kesiswaan' => [
