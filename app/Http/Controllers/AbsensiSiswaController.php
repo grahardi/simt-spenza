@@ -189,7 +189,30 @@ class AbsensiSiswaController extends Controller
             }
         );
 
+        // Konfirmasi otomatis via WA kalau Sakit/Ijin BARU (status berubah dari
+        // sebelumnya) - Alfa tetap manual lewat tombol "WA Wali Murid" yang
+        // sudah ada. Tidak dikirim ulang kalau statusnya memang sudah sama
+        // dari sebelumnya (misal cuma update catatan/foto).
+        $statusBerubah = !$absenSekarang || $absenSekarang->keterangan !== $data['keterangan'];
+        if (in_array($data['keterangan'], ['s', 'i'], true) && $statusBerubah) {
+            $this->kirimKonfirmasiWa($siswa, $data['keterangan']);
+        }
+
         return back()->with('status', 'Absensi '.$siswa->nama_lengkap.' berhasil dicatat.');
+    }
+
+    /** Kirim WA konfirmasi "sudah terabsensi Sakit/Ijin" - ke nomor Ibu kalau ada, kalau tidak ke nomor pertama yang terdaftar. */
+    private function kirimKonfirmasiWa(Siswa $siswa, string $keterangan): void
+    {
+        $nomor = $siswa->nomorWaPrioritas();
+        if (!$nomor) {
+            return;
+        }
+
+        $label = $keterangan === 's' ? 'Sakit' : 'Ijin';
+        $pesan = "Ananda {$siswa->nama_lengkap} sudah terabsensi {$label} hari ini. Terima kasih.";
+
+        (new \App\Services\WhatsappMetaService())->kirimPesan($nomor, $pesan);
     }
 
     /**

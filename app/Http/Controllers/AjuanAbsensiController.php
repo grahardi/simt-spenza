@@ -152,12 +152,28 @@ class AjuanAbsensiController extends Controller
      */
     public function acc(AjuanAbsensi $ajuan)
     {
+        $absenSekarang = AbsenSiswa::where('id_siswa', $ajuan->id_siswa)
+            ->whereDate('tgl_absen', $ajuan->tgl_absen)
+            ->first();
+        $statusBerubah = !$absenSekarang || $absenSekarang->keterangan !== $ajuan->keterangan;
+
         AbsenSiswa::updateOrCreate(
             ['id_siswa' => $ajuan->id_siswa, 'tgl_absen' => $ajuan->tgl_absen],
             ['keterangan' => $ajuan->keterangan, 'tambahan' => $ajuan->tambahan, 'gambar' => $ajuan->gambar]
         );
 
         $nama = $ajuan->siswa->nama_lengkap ?? 'siswa';
+
+        // Konfirmasi otomatis via WA kalau Sakit/Ijin BARU - Alfa tetap manual.
+        if (in_array($ajuan->keterangan, ['s', 'i'], true) && $statusBerubah && $ajuan->siswa) {
+            $nomor = $ajuan->siswa->nomorWaPrioritas();
+            if ($nomor) {
+                $label = $ajuan->keterangan === 's' ? 'Sakit' : 'Ijin';
+                $pesan = "Ananda {$ajuan->siswa->nama_lengkap} sudah terabsensi {$label} hari ini. Terima kasih.";
+                (new \App\Services\WhatsappMetaService())->kirimPesan($nomor, $pesan);
+            }
+        }
+
         $ajuan->delete();
 
         return back()->with('status', 'Ajuan '.$nama.' disetujui dan sudah masuk absensi resmi.');

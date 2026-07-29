@@ -33,6 +33,18 @@ class Siswa extends Model
         return $this->hasMany(SiswaWhatsapp::class, 'id_siswa', 'id_member');
     }
 
+    /**
+     * Nomor WA prioritas buat notifikasi otomatis (misal konfirmasi absen
+     * Sakit/Ijin) - kalau ada beberapa nomor terdaftar, IBU didahulukan.
+     * Kalau tidak ada Ibu, pakai nomor pertama yang ada (Ayah/Wali).
+     */
+    public function nomorWaPrioritas(): ?string
+    {
+        $semua = $this->nomorWhatsapp;
+
+        return $semua->firstWhere('label', 'Ibu')?->nomor ?? $semua->first()?->nomor;
+    }
+
     public function guruWali(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Guru::class, 'id_guru_wali', 'id_guru');
