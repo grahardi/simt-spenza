@@ -134,11 +134,17 @@
                         <span class="jadwal-kelas-kecil">{{ $j->kelas }}</span>
                         <span class="jadwal-mapel-kecil">{{ $j->mapelLengkap() }}</span>
                         @if ($tampilkanTombolTugas)
+                            @php
+                                $memberSekarang = auth('member')->user();
+                                $iniGuruSendiri = $memberSekarang->dataGuru && $memberSekarang->dataGuru->id_guru === $guru->id_guru;
+                            @endphp
                             <a href="{{ route('tugas.upload', [$guru, $j->kelas]) }}" class="btn btn-sm btn-outline-dark" style="border-color:currentColor;color:inherit;">
                                 @if ($tugasSudahAda)
                                     <i class="fas fa-eye me-1"></i> Lihat Tugas
-                                @else
+                                @elseif ($iniGuruSendiri)
                                     <i class="fas fa-clipboard-list me-1"></i> Upload Tugas
+                                @else
+                                    <i class="far fa-folder-open me-1"></i> Tugas Kosong
                                 @endif
                             </a>
                         @endif
