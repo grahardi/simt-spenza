@@ -274,6 +274,9 @@
                 <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}">
                     <i class="fas fa-user-circle"></i><span class="label">Profil</span>
                 </a>
+                <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-check"></i><span class="label">Agenda</span>
+                </a>
                 <a href="{{ route('jadwal.index') }}" class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-alt"></i><span class="label">Jadwal</span>
                 </a>

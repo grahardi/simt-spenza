@@ -88,6 +88,17 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::get('/profil', [\App\Http\Controllers\ProfilController::class, 'edit'])->name('profil');
     Route::put('/profil', [\App\Http\Controllers\ProfilController::class, 'update'])->name('profil.update');
 
+    // Agenda - kalender kegiatan sekolah, semua orang bisa lihat, tambah/edit/hapus khusus kesiswaan
+    Route::get('/agenda', [\App\Http\Controllers\AgendaController::class, 'index'])->name('agenda.index');
+    Route::get('/agenda/data', [\App\Http\Controllers\AgendaController::class, 'data'])->name('agenda.data');
+    Route::middleware('role:kesiswaan')->group(function () {
+        Route::get('/agenda/tambah', [\App\Http\Controllers\AgendaController::class, 'create'])->name('agenda.create');
+        Route::post('/agenda', [\App\Http\Controllers\AgendaController::class, 'store'])->name('agenda.store');
+        Route::get('/agenda/{agenda}/edit', [\App\Http\Controllers\AgendaController::class, 'edit'])->name('agenda.edit');
+        Route::put('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'update'])->name('agenda.update');
+        Route::delete('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'destroy'])->name('agenda.destroy');
+    });
+
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::post('/notifikasi/{warning}/konfirmasi', [AjuanGuruController::class, 'konfirmasi'])->name('notifikasi.konfirmasi');
 
