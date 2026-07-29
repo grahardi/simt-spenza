@@ -30,6 +30,23 @@
         </div>
     @endif
 
+    @if ($editMode && $pendampingan->fotoTambahan->isNotEmpty())
+        <div class="mb-3">
+            <label class="form-label">Foto Tambahan Saat Ini <span class="text-muted">(klik &times; untuk hapus)</span></label>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach ($pendampingan->fotoTambahan as $ft)
+                    <div class="position-relative">
+                        <img src="{{ Storage::url($ft->path) }}" class="rounded border" style="width:90px;height:90px;object-fit:cover;">
+                        <form method="POST" action="{{ route('pendampingan.foto-tambahan.hapus', $ft) }}" class="position-absolute top-0 end-0" onsubmit="return confirm('Hapus foto ini?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm py-0 px-1" style="font-size:11px;"><i class="fas fa-times"></i></button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <form method="POST" action="{{ $editMode ? route('pendampingan.update', $pendampingan) : route('pendampingan.store') }}" enctype="multipart/form-data">
         @csrf
         @if ($editMode) @method('PUT') @endif
@@ -109,19 +126,6 @@
 
             <div class="col-12">
                 <label class="form-label">Foto Tambahan <span class="text-muted">(boleh pilih beberapa sekaligus)</span></label>
-                @if ($editMode && $pendampingan->fotoTambahan->isNotEmpty())
-                    <div class="d-flex flex-wrap gap-2 mb-2">
-                        @foreach ($pendampingan->fotoTambahan as $ft)
-                            <div class="position-relative">
-                                <img src="{{ Storage::url($ft->path) }}" class="rounded border" style="width:90px;height:90px;object-fit:cover;">
-                                <form method="POST" action="{{ route('pendampingan.foto-tambahan.hapus', $ft) }}" class="position-absolute top-0 end-0" onsubmit="return confirm('Hapus foto ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm py-0 px-1" style="font-size:11px;"><i class="fas fa-times"></i></button>
-                                </form>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
                 <input type="file" name="foto_tambahan[]" accept="image/*" class="form-control" multiple>
                 <small class="text-muted">Upload foto baru akan ditambahkan (bukan mengganti yang sudah ada).</small>
             </div>
