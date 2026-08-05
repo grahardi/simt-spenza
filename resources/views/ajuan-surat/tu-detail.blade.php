@@ -69,6 +69,63 @@
                 <i class="fas fa-file-word me-1"></i> Unduh Surat (.docx)
             </a>
         </div>
+
+        @if ($ajuan->jenis_surat === 'sppd')
+            <div class="border rounded p-3 mb-3">
+                <h6 class="mb-2"><i class="fas fa-camera me-1"></i> Bukti Foto Perjalanan</h6>
+                @if ($ajuan->foto_bukti_perjalanan)
+                    <a href="{{ Storage::url($ajuan->foto_bukti_perjalanan) }}" target="_blank">
+                        <img src="{{ Storage::url($ajuan->foto_bukti_perjalanan) }}" class="img-fluid rounded border mb-2" style="max-height:200px;">
+                    </a>
+                    <small class="text-muted d-block mb-2">Upload foto baru untuk mengganti.</small>
+                @else
+                    <p class="text-muted small mb-2">Belum ada bukti foto perjalanan.</p>
+                @endif
+                <form method="POST" action="{{ route('surat-tu.upload-bukti', $ajuan) }}" enctype="multipart/form-data" class="d-flex gap-2">
+                    @csrf
+                    <input type="file" name="foto_bukti" accept="image/*" class="form-control" required>
+                    <button type="submit" class="btn btn-outline-primary text-nowrap"><i class="fas fa-upload me-1"></i> Upload</button>
+                </form>
+            </div>
+
+            <div class="border rounded p-3 mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h6 class="mb-1"><i class="fas fa-money-bill-wave me-1"></i> Biaya Transport</h6>
+                    @if ($ajuan->status_bayar === 'sudah')
+                        <span class="badge bg-success">Terbayar</span>
+                        <span class="text-muted small ms-1">Rp {{ number_format($ajuan->nominal_transport ?? 0, 0, ',', '.') }}</span>
+                    @else
+                        <span class="badge bg-secondary">Belum Dibayar</span>
+                    @endif
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBayar">
+                    <i class="fas fa-edit me-1"></i> Ubah Status
+                </button>
+            </div>
+
+            <div class="modal fade" id="modalBayar" tabindex="-1">
+                <div class="modal-dialog">
+                    <form method="POST" action="{{ route('surat-tu.tandai-bayar', $ajuan) }}" class="modal-content">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title">Biaya Transport - {{ $ajuan->guru->nama ?? '-' }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nominal (Rp)</label>
+                                <input type="number" name="nominal_transport" class="form-control" value="{{ $ajuan->nominal_transport }}" min="0" step="1000" placeholder="contoh: 150000">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" name="status_bayar" value="belum" class="btn btn-outline-danger">Tandai Belum</button>
+                            <button type="submit" name="status_bayar" value="sudah" class="btn btn-success"><i class="fas fa-check me-1"></i> Bayar/Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endif
     @endif
 
     <a href="{{ $ajuan->jenis_surat === 'surat_permohonan' ? route('ajuan-surat.permohonan.edit', $ajuan) : route('ajuan-surat.sppd.edit', $ajuan) }}" class="btn btn-outline-secondary mt-2 mb-2">
@@ -100,4 +157,6 @@
 
     <a href="{{ route('surat-tu.index') }}" class="btn btn-outline-secondary mt-3">Kembali</a>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

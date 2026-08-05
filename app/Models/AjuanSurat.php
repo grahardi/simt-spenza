@@ -9,11 +9,15 @@ class AjuanSurat extends Model
 {
     protected $table = 'ajuan_surat';
 
-    protected $fillable = ['id_guru', 'jenis_surat', 'data', 'file_pendukung', 'status', 'nomor_surat', 'file_pdf', 'diproses_oleh', 'diproses_at'];
+    protected $fillable = [
+        'id_guru', 'jenis_surat', 'data', 'file_pendukung', 'status', 'nomor_surat', 'file_pdf', 'diproses_oleh', 'diproses_at',
+        'foto_bukti_perjalanan', 'status_bayar', 'nominal_transport', 'dibayar_oleh', 'dibayar_at',
+    ];
 
     protected $casts = [
         'data' => 'array',
         'diproses_at' => 'datetime',
+        'dibayar_at' => 'datetime',
     ];
 
     const JENIS_LABEL = ['sppd' => 'SPPD (Surat Tugas & Perjalanan Dinas)', 'surat_permohonan' => 'Surat Permohonan'];

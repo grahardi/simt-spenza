@@ -262,4 +262,40 @@ class SuratTuguController extends Controller
 
         return 'SPPD_'.$bersihkan($panggilan).'_'.$judulBersih.'_'.$tanggal.'.docx';
     }
+
+    /** Upload bukti foto perjalanan - muncul setelah SPPD selesai dibuat (status=selesai). */
+    public function uploadBukti(Request $request, AjuanSurat $ajuanSurat)
+    {
+        $request->validate(['foto_bukti' => ['required', 'image', 'max:8192']]);
+
+        $ajuanSurat->update([
+            'foto_bukti_perjalanan' => $request->file('foto_bukti')->store('ajuan-surat/bukti', 'public'),
+        ]);
+
+        return back()->with('status', 'Bukti foto perjalanan berhasil diupload.');
+    }
+
+    /** Tandai status pembayaran biaya transport (Sudah/Belum) + nominal. */
+    public function tandaiBayar(Request $request, AjuanSurat $ajuanSurat)
+    {
+        $data = $request->validate([
+            'status_bayar' => ['required', 'in:belum,sudah'],
+            'nominal_transport' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $atribut = ['status_bayar' => $data['status_bayar']];
+
+        if ($data['status_bayar'] === 'sudah') {
+            $atribut['nominal_transport'] = $data['nominal_transport'] ?? $ajuanSurat->nominal_transport;
+            $atribut['dibayar_oleh'] = \Illuminate\Support\Facades\Auth::guard('member')->id();
+            $atribut['dibayar_at'] = now();
+        } else {
+            $atribut['dibayar_oleh'] = null;
+            $atribut['dibayar_at'] = null;
+        }
+
+        $ajuanSurat->update($atribut);
+
+        return back()->with('status', 'Status pembayaran biaya transport berhasil diperbarui.');
+    }
 }
