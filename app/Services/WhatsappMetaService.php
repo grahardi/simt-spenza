@@ -26,6 +26,7 @@ class WhatsappMetaService
     {
         if (!$this->token() || !$this->phoneId()) {
             Log::warning('WhatsappMetaService: token/phone_id belum diatur di .env');
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta', null, false, 'Token/Phone ID belum diatur di .env');
 
             return false;
         }
@@ -43,11 +44,15 @@ class WhatsappMetaService
                 Log::warning('WhatsappMetaService gagal kirim gambar: '.$respon->body());
             }
 
-            \App\Models\WhatsappLog::catat($nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta');
+            \App\Models\WhatsappLog::catat(
+                $nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta', null,
+                $respon->successful(), $respon->successful() ? null : $respon->body()
+            );
 
             return $respon->successful();
         } catch (\Throwable $e) {
             Log::warning('WhatsappMetaService gagal kirim gambar: '.$e->getMessage());
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta', null, false, $e->getMessage());
 
             return false;
         }
@@ -58,6 +63,7 @@ class WhatsappMetaService
     {
         if (!$this->token() || !$this->phoneId()) {
             Log::warning('WhatsappMetaService: token/phone_id belum diatur di .env');
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', $pesan, 'meta', null, false, 'Token/Phone ID belum diatur di .env');
 
             return false;
         }
@@ -75,11 +81,15 @@ class WhatsappMetaService
                 Log::warning('WhatsappMetaService gagal kirim pesan: '.$respon->body());
             }
 
-            \App\Models\WhatsappLog::catat($nomor, 'keluar', $pesan, 'meta');
+            \App\Models\WhatsappLog::catat(
+                $nomor, 'keluar', $pesan, 'meta', null,
+                $respon->successful(), $respon->successful() ? null : $respon->body()
+            );
 
             return $respon->successful();
         } catch (\Throwable $e) {
             Log::warning('WhatsappMetaService gagal kirim pesan: '.$e->getMessage());
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', $pesan, 'meta', null, false, $e->getMessage());
 
             return false;
         }

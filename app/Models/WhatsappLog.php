@@ -10,19 +10,22 @@ class WhatsappLog extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['nomor', 'arah', 'teks', 'sumber', 'wamid', 'created_at'];
+    protected $fillable = ['nomor', 'arah', 'teks', 'sumber', 'berhasil', 'detail_error', 'wamid', 'created_at'];
 
     protected $casts = [
         'created_at' => 'datetime',
+        'berhasil' => 'boolean',
     ];
 
-    public static function catat(string $nomor, string $arah, ?string $teks, string $sumber = 'meta', ?string $wamid = null): void
+    public static function catat(string $nomor, string $arah, ?string $teks, string $sumber = 'meta', ?string $wamid = null, ?bool $berhasil = null, ?string $detailError = null): void
     {
         static::create([
             'nomor' => $nomor,
             'arah' => $arah,
             'teks' => $teks,
             'sumber' => $sumber,
+            'berhasil' => $berhasil,
+            'detail_error' => $detailError,
             'wamid' => $wamid,
             'created_at' => now(),
         ]);

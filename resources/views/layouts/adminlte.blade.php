@@ -144,6 +144,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.whatsapp-log.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-log.*') ? 'active' : '' }}">
+                            <i class="nav-icon fab fa-whatsapp"></i>
+                            <p>Log WhatsApp</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.siswa.index') }}" class="nav-link {{ request()->routeIs('superadmin.siswa.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-graduate"></i>
                             <p>Data Siswa</p>

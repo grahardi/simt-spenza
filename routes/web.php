@@ -266,6 +266,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
         Route::get('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'edit'])->name('pengaturan-sistem.edit');
         Route::put('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'update'])->name('pengaturan-sistem.update');
+        Route::get('/whatsapp-log', [\App\Http\Controllers\Superadmin\WhatsappLogController::class, 'index'])->name('whatsapp-log.index');
 
         Route::get('/siswa', [SuperadminSiswaController::class, 'index'])->name('siswa.index');
         Route::get('/siswa/tambah', [SuperadminSiswaController::class, 'create'])->name('siswa.create');
