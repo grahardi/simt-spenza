@@ -45,18 +45,14 @@ class NotifikasiAbsensiGuruService
             $pesan .= "\nKeterangan: {$keterangan}";
         }
 
+        if ($fotoPath) {
+            $pesan .= "\n\nFoto Surat: bisa dicek di aplikasi.";
+        }
+
         if ($jumlahKelasTugas > 0) {
             $pesan .= "\n\nTugas untuk {$jumlahKelasTugas} kelas sudah diupload.";
         }
 
-        $service = new WhatsappMetaService();
-
-        if ($fotoPath) {
-            $urlFoto = \Illuminate\Support\Facades\Storage::disk('public')->url($fotoPath);
-
-            return $service->kirimGambar($nomorKepsek, $urlFoto, $pesan);
-        }
-
-        return $service->kirimPesan($nomorKepsek, $pesan);
+        return (new WhatsappMetaService())->kirimPesan($nomorKepsek, $pesan);
     }
 }

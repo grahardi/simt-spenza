@@ -266,6 +266,8 @@ class SuratTuguController extends Controller
     /** Upload bukti foto perjalanan - muncul setelah SPPD selesai dibuat (status=selesai). */
     public function uploadBukti(Request $request, AjuanSurat $ajuanSurat)
     {
+        $this->pastikanBolehKelolaBukti($ajuanSurat);
+
         $request->validate(['foto_bukti' => ['required', 'image', 'max:8192']]);
 
         $ajuanSurat->update([
@@ -275,9 +277,22 @@ class SuratTuguController extends Controller
         return back()->with('status', 'Bukti foto perjalanan berhasil diupload.');
     }
 
+    /** Boleh diakses TU/Kepsek, ATAU guru yang bersangkutan sendiri (buktikan dia berangkat). */
+    private function pastikanBolehKelolaBukti(AjuanSurat $ajuanSurat): void
+    {
+        $member = \Illuminate\Support\Facades\Auth::guard('member')->user();
+
+        $iniTuAtauKepsek = $member->hasRole('tata_usaha') || $member->hasRole('kepsek');
+        $iniGuruSendiri = $member->dataGuru && $ajuanSurat->id_guru && $member->dataGuru->id_guru === $ajuanSurat->id_guru;
+
+        abort_unless($iniTuAtauKepsek || $iniGuruSendiri, 403, 'Anda tidak berhak mengelola bukti/pembayaran ajuan ini.');
+    }
+
     /** Tandai status pembayaran biaya transport (Sudah/Belum) + nominal. */
     public function tandaiBayar(Request $request, AjuanSurat $ajuanSurat)
     {
+        $this->pastikanBolehKelolaBukti($ajuanSurat);
+
         $data = $request->validate([
             'status_bayar' => ['required', 'in:belum,sudah'],
             'nominal_transport' => ['nullable', 'numeric', 'min:0'],

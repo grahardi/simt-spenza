@@ -180,9 +180,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/permohonan', [\App\Http\Controllers\SuratTuguController::class, 'storePermohonan'])->name('permohonan.store');
         Route::get('/{ajuanSurat}', [\App\Http\Controllers\SuratTuguController::class, 'show'])->name('show');
         Route::post('/{ajuanSurat}/buat-surat', [\App\Http\Controllers\SuratTuguController::class, 'buatSurat'])->name('buat-surat');
-        Route::post('/{ajuanSurat}/upload-bukti', [\App\Http\Controllers\SuratTuguController::class, 'uploadBukti'])->name('upload-bukti');
-        Route::post('/{ajuanSurat}/tandai-bayar', [\App\Http\Controllers\SuratTuguController::class, 'tandaiBayar'])->name('tandai-bayar');
     });
+
+    // Upload bukti perjalanan & tandai status bayar - boleh TU/Kepsek ATAU guru
+    // yang bersangkutan sendiri (bukti dia benar-benar berangkat), makanya
+    // diletakkan di luar grup khusus TU. Otorisasi detail dicek di controller.
+    Route::post('/surat-tu/{ajuanSurat}/upload-bukti', [\App\Http\Controllers\SuratTuguController::class, 'uploadBukti'])->name('surat-tu.upload-bukti');
+    Route::post('/surat-tu/{ajuanSurat}/tandai-bayar', [\App\Http\Controllers\SuratTuguController::class, 'tandaiBayar'])->name('surat-tu.tandai-bayar');
 
     // Pendampingan - catatan kegiatan pendampingan guru wali ke anak walinya
     Route::prefix('pendampingan')->name('pendampingan.')->middleware('role:guru')->group(function () {
