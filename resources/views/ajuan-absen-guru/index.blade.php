@@ -32,6 +32,14 @@
         @if ($absenTanggalItu->keterangan)
             <span class="text-muted small ms-2">{{ $absenTanggalItu->keterangan }}</span>
         @endif
+    @elseif ($ajuanMenungguAcc)
+        <span class="badge bg-warning text-dark">
+            <i class="fas fa-hourglass-half me-1"></i> Menunggu ACC ({{ \App\Models\AjuanAbsenGuruPiket::LABEL_STATUS[$ajuanMenungguAcc->status] ?? $ajuanMenungguAcc->status }})
+        </span>
+        @if ($ajuanMenungguAcc->keterangan)
+            <span class="text-muted small ms-2">{{ $ajuanMenungguAcc->keterangan }}</span>
+        @endif
+        <p class="text-muted small mt-2 mb-0">Ajuan sudah dikirim, menunggu diverifikasi piket/kepsek.</p>
     @else
         <p class="text-muted small mb-2">Belum ada ajuan untuk tanggal ini.</p>
         <div class="d-flex flex-wrap gap-2">

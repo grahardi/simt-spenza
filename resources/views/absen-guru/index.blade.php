@@ -33,11 +33,13 @@
                         @if ($d->record->keterangan)
                             <span class="text-muted small ms-1">{{ $d->record->keterangan }}</span>
                         @endif
-                        @if ($d->record->foto)
-                            <a href="{{ Storage::url($d->record->foto) }}" target="_blank" class="small ms-1"><i class="fas fa-image"></i> Foto</a>
-                        @endif
                     </div>
-                    <div class="d-flex gap-2" onclick="event.stopPropagation();">
+                    <div class="d-flex gap-2 align-items-center" onclick="event.stopPropagation();">
+                        @if ($d->record->foto)
+                            <a href="{{ Storage::url($d->record->foto) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-image me-1"></i> Foto
+                            </a>
+                        @endif
                         <form method="POST" action="{{ route('absen-guru.acc', $d->record) }}" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check me-1"></i> ACC</button>

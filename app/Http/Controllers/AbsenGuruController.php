@@ -71,7 +71,7 @@ class AbsenGuruController extends Controller
         return view('absen-guru.form-ajuan', compact('guru'));
     }
 
-    /** Simpan ajuan manual (piket) - MASUK ANTRIAN, belum langsung jadi absensi resmi. */
+    /** Simpan ajuan manual (piket) - LANGSUNG resmi (piket sendiri yang mengesahkan, tidak perlu ACC lagi). */
     public function simpanAjuan(Request $request, Guru $guru)
     {
         $data = $request->validate([
@@ -82,20 +82,25 @@ class AbsenGuruController extends Controller
         ]);
 
         $atribut = [
-            'id_guru' => $guru->id_guru,
-            'tanggal' => $data['tanggal'],
             'status' => $data['status'],
             'keterangan' => $data['keterangan'] ?? null,
-            'diajukan_oleh' => Auth::guard('member')->id(),
+            'dicatat_oleh' => Auth::guard('member')->id(),
         ];
 
         if ($request->hasFile('foto')) {
             $atribut['foto'] = $request->file('foto')->store('absensi-guru', 'public');
         }
 
-        AjuanAbsenGuruPiket::create($atribut);
+        AbsensiGuru::updateOrCreate(
+            ['id_guru' => $guru->id_guru, 'tanggal' => $data['tanggal']],
+            $atribut
+        );
 
-        return redirect()->route('absen-guru.index')->with('status', 'Ajuan absen '.$guru->nama.' berhasil dikirim, menunggu ACC.');
+        \App\Services\NotifikasiAbsensiGuruService::kirimKeKepsek(
+            $guru, $data['status'], $data['keterangan'] ?? null, $atribut['foto'] ?? null, $data['tanggal']
+        );
+
+        return redirect()->route('absen-guru.index')->with('status', 'Absensi '.$guru->nama.' berhasil dicatat.');
     }
 
     /** ACC ajuan - baru di sini masuk ke absensi resmi & kirim notif WA ke Kepsek. */
