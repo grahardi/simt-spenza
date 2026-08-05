@@ -39,9 +39,15 @@
                                 {{ $a->labelStatus() }}
                             </span>
                             @if ($a->status === 'selesai' && $a->jenis_surat === 'sppd')
-                                <span class="badge {{ $a->status_bayar === 'sudah' ? 'bg-success' : 'bg-secondary' }} ms-1">
+                                <br>
+                                <span class="badge {{ $a->status_bayar === 'sudah' ? 'bg-success' : 'bg-secondary' }} mt-1">
                                     {{ $a->status_bayar === 'sudah' ? 'Transport Terbayar' : 'Transport Belum Dibayar' }}
                                 </span>
+                                @if ($a->foto_bukti_perjalanan)
+                                    <a href="{{ Storage::url($a->foto_bukti_perjalanan) }}" target="_blank" class="small d-block mt-1">
+                                        <i class="fas fa-image me-1"></i> Lihat bukti foto
+                                    </a>
+                                @endif
                             @endif
                         </td>
                         <td class="text-end">
@@ -54,70 +60,15 @@
                                 </a>
                             @endif
                             @if ($a->status === 'selesai' && $a->jenis_surat === 'sppd')
-                                <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="collapse" data-bs-target="#buktiBayar{{ $a->id }}">
-                                    <i class="fas fa-camera me-1"></i> Bukti &amp; Bayar
+                                <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBukti{{ $a->id }}">
+                                    <i class="fas fa-camera me-1"></i> Bukti Perjalanan
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBayar{{ $a->id }}">
+                                    <i class="fas fa-money-bill-wave me-1"></i> Status Bayar
                                 </button>
                             @endif
                         </td>
                     </tr>
-                    @if ($a->status === 'selesai' && $a->jenis_surat === 'sppd')
-                        <tr class="collapse" id="buktiBayar{{ $a->id }}">
-                            <td colspan="5" class="bg-light">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <h6 class="small">Bukti Foto Perjalanan</h6>
-                                        @if ($a->foto_bukti_perjalanan)
-                                            <a href="{{ Storage::url($a->foto_bukti_perjalanan) }}" target="_blank">
-                                                <img src="{{ Storage::url($a->foto_bukti_perjalanan) }}" class="img-fluid rounded border mb-2" style="max-height:160px;">
-                                            </a>
-                                        @else
-                                            <p class="text-muted small mb-2">Belum ada bukti foto.</p>
-                                        @endif
-                                        <form method="POST" action="{{ route('surat-tu.upload-bukti', $a) }}" enctype="multipart/form-data" class="d-flex gap-2">
-                                            @csrf
-                                            <input type="file" name="foto_bukti" accept="image/*" class="form-control form-control-sm" required>
-                                            <button type="submit" class="btn btn-sm btn-outline-primary text-nowrap">Upload</button>
-                                        </form>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="small">Biaya Transport</h6>
-                                        <p class="mb-2">
-                                            @if ($a->status_bayar === 'sudah')
-                                                <span class="badge bg-success">Terbayar</span>
-                                                Rp {{ number_format($a->nominal_transport ?? 0, 0, ',', '.') }}
-                                            @else
-                                                <span class="badge bg-secondary">Belum Dibayar</span>
-                                            @endif
-                                        </p>
-                                        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBayar{{ $a->id }}">
-                                            Ubah Status
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <div class="modal fade" id="modalBayar{{ $a->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <form method="POST" action="{{ route('surat-tu.tandai-bayar', $a) }}" class="modal-content">
-                                    @csrf
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Biaya Transport</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <label class="form-label">Nominal (Rp)</label>
-                                        <input type="number" name="nominal_transport" class="form-control" value="{{ $a->nominal_transport }}" min="0" step="1000" placeholder="contoh: 150000">
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" name="status_bayar" value="belum" class="btn btn-outline-danger">Tandai Belum</button>
-                                        <button type="submit" name="status_bayar" value="sudah" class="btn btn-success">Bayar/Simpan</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    @endif
                 @endforeach
             </tbody>
         </table>
@@ -126,6 +77,68 @@
 </div>
 
 {{ $daftar->onEachSide(1)->links() }}
+
+{{-- Modal HARUS di luar <table>/<tbody> - taruh di dalam <tbody> itu HTML tidak valid dan bikin modal gagal muncul --}}
+@foreach ($daftar as $a)
+    @if ($a->status === 'selesai' && $a->jenis_surat === 'sppd')
+        <div class="modal fade" id="modalBukti{{ $a->id }}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Bukti Foto Perjalanan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        @if ($a->foto_bukti_perjalanan)
+                            <a href="{{ Storage::url($a->foto_bukti_perjalanan) }}" target="_blank">
+                                <img src="{{ Storage::url($a->foto_bukti_perjalanan) }}" class="img-fluid rounded border mb-3" style="max-height:260px;">
+                            </a>
+                        @else
+                            <p class="text-muted small">Belum ada bukti foto perjalanan.</p>
+                        @endif
+                        <form method="POST" action="{{ route('surat-tu.upload-bukti', $a) }}" enctype="multipart/form-data" class="d-flex gap-2">
+                            @csrf
+                            <input type="file" name="foto_bukti" accept="image/*" class="form-control" required>
+                            <button type="submit" class="btn btn-primary text-nowrap">Upload</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalBayar{{ $a->id }}" tabindex="-1">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ route('surat-tu.tandai-bayar', $a) }}" class="modal-content">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Status Biaya Transport</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3">
+                            Status sekarang:
+                            @if ($a->status_bayar === 'sudah')
+                                <span class="badge bg-success">Terbayar</span>
+                            @else
+                                <span class="badge bg-secondary">Belum Dibayar</span>
+                            @endif
+                        </p>
+                        <label class="form-label">Nominal (Rp)</label>
+                        <input type="number" name="nominal_transport" class="form-control" value="{{ $a->nominal_transport }}" min="0" step="1000" placeholder="contoh: 150000">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" name="status_bayar" value="belum" class="btn btn-outline-danger">Tandai Belum</button>
+                        <button type="submit" name="status_bayar" value="sudah" class="btn btn-success">Bayar/Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+@endforeach
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
