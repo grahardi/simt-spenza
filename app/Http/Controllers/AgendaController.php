@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agenda;
+use App\Models\AgendaBerkasLainnya;
 use App\Models\AgendaFoto;
+use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -41,6 +43,7 @@ class AgendaController extends Controller
     public function listSudah()
     {
         $agenda = Agenda::withCount('foto')
+            ->with('penanggungJawab')
             ->where('tanggal_mulai', '<=', now('Asia/Jakarta')->toDateString())
             ->orderByDesc('tanggal_mulai')
             ->paginate(15);
@@ -52,6 +55,7 @@ class AgendaController extends Controller
     public function mendatang()
     {
         $agenda = Agenda::withCount('foto')
+            ->with('penanggungJawab')
             ->where('tanggal_mulai', '>', now('Asia/Jakarta')->toDateString())
             ->orderBy('tanggal_mulai')
             ->paginate(15);
@@ -61,13 +65,16 @@ class AgendaController extends Controller
 
     public function create()
     {
-        return view('agenda.form', ['agenda' => new Agenda()]);
+        $daftarGuru = Guru::orderBy('nama')->get();
+
+        return view('agenda.form', ['agenda' => new Agenda(), 'daftarGuru' => $daftarGuru]);
     }
 
     public function store(Request $request)
     {
         $data = $this->validasi($request);
         $data['dibuat_oleh'] = Auth::guard('member')->id();
+        $data = $this->tanganiUploadBerkas($request, $data);
 
         Agenda::create($data);
 
@@ -76,12 +83,17 @@ class AgendaController extends Controller
 
     public function edit(Agenda $agenda)
     {
-        return view('agenda.form', compact('agenda'));
+        $daftarGuru = Guru::orderBy('nama')->get();
+
+        return view('agenda.form', compact('agenda', 'daftarGuru'));
     }
 
     public function update(Request $request, Agenda $agenda)
     {
-        $agenda->update($this->validasi($request));
+        $data = $this->validasi($request);
+        $data = $this->tanganiUploadBerkas($request, $data, $agenda);
+
+        $agenda->update($data);
 
         return redirect()->route('agenda.index')->with('status', 'Agenda berhasil diperbarui.');
     }
@@ -90,6 +102,14 @@ class AgendaController extends Controller
     {
         foreach ($agenda->foto as $f) {
             Storage::disk('public')->delete($f->path);
+        }
+        foreach ($agenda->berkasLainnya as $b) {
+            Storage::disk('public')->delete($b->path);
+        }
+        foreach ([$agenda->berkas_proposal, $agenda->berkas_sk_kepanitiaan, $agenda->berkas_spj] as $path) {
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
         }
         $agenda->delete();
 
@@ -130,6 +150,33 @@ class AgendaController extends Controller
         return redirect()->route('agenda.galeri', $idAgenda)->with('status', 'Foto dihapus.');
     }
 
+    /** Upload "Berkas Lainnya" (boleh banyak sekaligus, beda dari Proposal/SK/SPJ yang cuma 1 file). */
+    public function simpanBerkasLainnya(Request $request, Agenda $agenda)
+    {
+        $request->validate([
+            'berkas' => ['required', 'array', 'min:1'],
+            'berkas.*' => ['file', 'max:10240'],
+        ]);
+
+        foreach ($request->file('berkas') as $file) {
+            $agenda->berkasLainnya()->create([
+                'nama_file' => $file->getClientOriginalName(),
+                'path' => $file->store('agenda/berkas-lainnya', 'public'),
+            ]);
+        }
+
+        return back()->with('status', 'Berkas berhasil diupload.');
+    }
+
+    public function hapusBerkasLainnya(AgendaBerkasLainnya $agendaBerkasLainnya)
+    {
+        $idAgenda = $agendaBerkasLainnya->id_agenda;
+        Storage::disk('public')->delete($agendaBerkasLainnya->path);
+        $agendaBerkasLainnya->delete();
+
+        return redirect()->route('agenda.edit', $idAgenda)->with('status', 'Berkas dihapus.');
+    }
+
     private function validasi(Request $request): array
     {
         return $request->validate([
@@ -138,6 +185,27 @@ class AgendaController extends Controller
             'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
             'keterangan' => ['nullable', 'string', 'max:1000'],
             'kategori' => ['required', 'in:libur,kbm,ujian,kegiatan'],
+            'id_penanggung_jawab' => ['nullable', 'integer', 'exists:guru,id_guru'],
+            'berkas_proposal' => ['nullable', 'file', 'max:10240'],
+            'berkas_sk_kepanitiaan' => ['nullable', 'file', 'max:10240'],
+            'berkas_spj' => ['nullable', 'file', 'max:10240'],
         ]);
+    }
+
+    /** Simpan 3 berkas utama (Proposal/SK Kepanitiaan/SPJ) - upload baru mengganti yang lama. */
+    private function tanganiUploadBerkas(Request $request, array $data, ?Agenda $agenda = null): array
+    {
+        foreach (['berkas_proposal', 'berkas_sk_kepanitiaan', 'berkas_spj'] as $field) {
+            if ($request->hasFile($field)) {
+                if ($agenda && $agenda->{$field}) {
+                    Storage::disk('public')->delete($agenda->{$field});
+                }
+                $data[$field] = $request->file($field)->store('agenda/berkas', 'public');
+            } else {
+                unset($data[$field]);
+            }
+        }
+
+        return $data;
     }
 }

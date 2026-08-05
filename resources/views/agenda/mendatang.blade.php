@@ -22,7 +22,7 @@
         <div class="table-responsive">
         <table class="table table-striped mb-0 align-middle">
             <thead>
-                <tr><th>Tanggal</th><th>Judul</th><th>Kategori</th><th>Keterangan</th></tr>
+                <tr><th>Tanggal</th><th>Judul</th><th>Penanggung Jawab</th><th>Kategori</th><th>Keterangan</th></tr>
             </thead>
             <tbody>
                 @foreach ($agenda as $a)
@@ -34,6 +34,7 @@
                             @endif
                         </td>
                         <td>{{ $a->judul }}</td>
+                        <td>{{ $a->penanggungJawab->nama ?? '-' }}</td>
                         <td>
                             <span class="badge" style="background:{{ \App\Models\Agenda::KATEGORI_WARNA[$a->kategori] }};">
                                 {{ \App\Models\Agenda::KATEGORI_LABEL[$a->kategori] }}
