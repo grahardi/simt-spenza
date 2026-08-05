@@ -53,6 +53,21 @@ class NotifikasiAbsensiGuruService
             $pesan .= "\n\nTugas untuk {$jumlahKelasTugas} kelas sudah diupload.";
         }
 
-        return (new WhatsappMetaService())->kirimPesan($nomorKepsek, $pesan);
+        $service = new WhatsappMetaService();
+        $berhasil = $service->kirimPesan($nomorKepsek, $pesan);
+
+        // Fallback ke Template resmi kalau pesan biasa gagal (kemungkinan
+        // besar karena di luar jendela 24 jam - Kepsek jarang chat balik ke
+        // bot). Template bisa tembus kapan saja asal sudah di-approve Meta.
+        if (!$berhasil) {
+            $berhasil = $service->kirimTemplate($nomorKepsek, 'notifikasi_absensi_guru', [
+                $guru->nama,
+                $labelStatus,
+                $tanggalTampil,
+                $keterangan ?: '-',
+            ]);
+        }
+
+        return $berhasil;
     }
 }

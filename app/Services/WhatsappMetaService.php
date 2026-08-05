@@ -58,6 +58,60 @@ class WhatsappMetaService
         }
     }
 
+    /**
+     * Kirim pesan pakai TEMPLATE resmi (sudah di-approve Meta) - ini yang
+     * bisa tembus walau di luar jendela 24 jam (beda dari kirimPesan() biasa
+     * yang cuma jalan kalau penerima baru saja chat ke bot). Dipakai sebagai
+     * notifikasi penting yang HARUS sampai meski penerima jarang chat balik
+     * (misal ke Kepala Sekolah).
+     *
+     * @param  string[]  $parameter  Isi tiap {{1}}, {{2}}, dst sesuai urutan di template.
+     */
+    public function kirimTemplate(string $nomor, string $namaTemplate, array $parameter, string $bahasa = 'id'): bool
+    {
+        if (!$this->token() || !$this->phoneId()) {
+            Log::warning('WhatsappMetaService: token/phone_id belum diatur di .env');
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', '[template:'.$namaTemplate.'] '.implode(' | ', $parameter), 'meta', null, false, 'Token/Phone ID belum diatur di .env');
+
+            return false;
+        }
+
+        try {
+            $respon = Http::withToken($this->token())
+                ->post("https://graph.facebook.com/v21.0/{$this->phoneId()}/messages", [
+                    'messaging_product' => 'whatsapp',
+                    'to' => $nomor,
+                    'type' => 'template',
+                    'template' => [
+                        'name' => $namaTemplate,
+                        'language' => ['code' => $bahasa],
+                        'components' => [
+                            [
+                                'type' => 'body',
+                                'parameters' => array_map(fn ($p) => ['type' => 'text', 'text' => (string) $p], $parameter),
+                            ],
+                        ],
+                    ],
+                ]);
+
+            if (!$respon->successful()) {
+                Log::warning('WhatsappMetaService gagal kirim template: '.$respon->body());
+            }
+
+            \App\Models\WhatsappLog::catat(
+                $nomor, 'keluar', '[template:'.$namaTemplate.'] '.implode(' | ', $parameter), 'meta', null,
+                $respon->successful(), $respon->successful() ? null : $respon->body()
+            );
+
+            return $respon->successful();
+        } catch (\Throwable $e) {
+            Log::warning('WhatsappMetaService gagal kirim template: '.$e->getMessage());
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', '[template:'.$namaTemplate.'] '.implode(' | ', $parameter), 'meta', null, false, $e->getMessage());
+
+            return false;
+        }
+    }
+
     /** Kirim pesan teks biasa. Balikin true/false sesuai berhasil/tidak. */
     public function kirimPesan(string $nomor, string $pesan): bool
     {
