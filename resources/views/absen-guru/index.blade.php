@@ -25,35 +25,28 @@
         <p class="text-muted small mb-0">Tidak ada ajuan yang menunggu ACC.</p>
     @else
         @foreach ($menungguAcc as $i => $d)
-            <div class="border rounded mb-2" style="border-color:#ffc107 !important;">
-                <div role="button" data-bs-toggle="collapse" data-bs-target="#detailP{{ $i }}" class="d-flex justify-content-between align-items-center p-3 flex-wrap gap-2" style="cursor:pointer;">
-                    <div>
-                        <strong>{{ $d->guru->nama }}</strong>
-                        <span class="badge-status badge-{{ $d->record->status }} ms-2">{{ $d->record->labelStatus() }}</span>
-                        @if ($d->record->keterangan)
-                            <span class="text-muted small ms-1">{{ $d->record->keterangan }}</span>
-                        @endif
-                    </div>
-                    <div class="d-flex gap-2 align-items-center" onclick="event.stopPropagation();">
-                        @if ($d->record->foto)
-                            <a href="{{ Storage::url($d->record->foto) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-image me-1"></i> Foto
-                            </a>
-                        @endif
-                        <form method="POST" action="{{ route('absen-guru.acc', $d->record) }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check me-1"></i> ACC</button>
-                        </form>
-                        <form method="POST" action="{{ route('absen-guru.tolak', $d->record) }}" class="d-inline" onsubmit="return confirm('Tolak ajuan ini?')">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i> Tolak</button>
-                        </form>
-                    </div>
+            <div class="border rounded mb-2 d-flex justify-content-between align-items-center p-3 flex-wrap gap-2" style="border-color:#ffc107 !important;">
+                <div>
+                    <strong>{{ $d->guru->nama }}</strong>
+                    <span class="badge-status badge-{{ $d->record->status }} ms-2">{{ $d->record->labelStatus() }}</span>
+                    @if ($d->record->keterangan)
+                        <span class="text-muted small ms-1">{{ $d->record->keterangan }}</span>
+                    @endif
                 </div>
-                <div class="collapse" id="detailP{{ $i }}">
-                    <div class="p-3 border-top bg-light">
-                        @include('absen-guru._jadwal-tugas', ['d' => $d, 'palet' => $palet])
-                    </div>
+                <div class="d-flex gap-2 align-items-center">
+                    @if ($d->record->foto)
+                        <a href="{{ Storage::url($d->record->foto) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-image me-1"></i> Foto
+                        </a>
+                    @endif
+                    <form method="POST" action="{{ route('absen-guru.acc', $d->record) }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check me-1"></i> ACC</button>
+                    </form>
+                    <form method="POST" action="{{ route('absen-guru.tolak', $d->record) }}" class="d-inline" onsubmit="return confirm('Tolak ajuan ini?')">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i> Tolak</button>
+                    </form>
                 </div>
             </div>
         @endforeach

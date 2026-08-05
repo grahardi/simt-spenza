@@ -58,12 +58,20 @@ class AbsenGuruController extends Controller
         ];
     }
 
-    /** Form pilih guru untuk Ajuan Manual (piket). */
-    public function pilihGuru()
+    /** Form pilih guru untuk Ajuan Manual (piket) - cari nama, bukan dropdown semua guru. */
+    public function pilihGuru(Request $request)
     {
-        $daftarGuru = Guru::orderBy('nama')->get();
+        $cari = trim((string) $request->input('cari'));
+        $daftarGuru = null;
 
-        return view('absen-guru.pilih-guru', compact('daftarGuru'));
+        if ($cari !== '') {
+            $daftarGuru = Guru::where('nama', 'like', '%'.$cari.'%')
+                ->orderBy('nama')
+                ->limit(20)
+                ->get();
+        }
+
+        return view('absen-guru.pilih-guru', compact('daftarGuru', 'cari'));
     }
 
     public function formAjuan(Guru $guru)
