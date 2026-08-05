@@ -212,7 +212,18 @@ class AbsensiSiswaController extends Controller
         $label = $keterangan === 's' ? 'Sakit' : 'Ijin';
         $pesan = "Ananda {$siswa->nama_lengkap} sudah terabsensi {$label} hari ini. Terima kasih.";
 
-        (new \App\Services\WhatsappMetaService())->kirimPesan($nomor, $pesan);
+        $bot = new \App\Services\WhatsappMetaService();
+        $terkirim = $bot->kirimPesan($nomor, $pesan);
+
+        // Fallback ke Template resmi kalau pesan biasa gagal (wali murid
+        // jarang chat balik ke bot, di luar jendela 24 jam).
+        if (!$terkirim) {
+            $bot->kirimTemplate($nomor, 'konfirmasi_absensi_siswa', [
+                $siswa->nama_lengkap,
+                $siswa->kelas ?? '-',
+                $label,
+            ]);
+        }
     }
 
     /**
@@ -243,6 +254,17 @@ class AbsensiSiswaController extends Controller
         $pesan = "Assalamu'alaikum, kami informasikan bahwa ananda *{$absen->siswa->nama_lengkap}* tercatat *Alfa* (tidak ada keterangan) pada {$tanggal->translatedFormat('d F Y')}. Mohon konfirmasi ke pihak sekolah. Terima kasih - SMP Negeri 1 Turen";
 
         $terkirim = $bot->kirimPesan($data['nomor'], $pesan);
+
+        // Fallback ke Template resmi kalau pesan biasa gagal (kemungkinan
+        // besar wali murid jarang chat balik ke bot, jadi di luar jendela 24
+        // jam). Template bisa tembus kapan saja asal sudah di-approve Meta.
+        if (!$terkirim) {
+            $terkirim = $bot->kirimTemplate($data['nomor'], 'notifikasi_siswa_alfa', [
+                $absen->siswa->nama_lengkap,
+                $absen->siswa->kelas ?? '-',
+                $tanggal->translatedFormat('d F Y'),
+            ]);
+        }
 
         if ($terkirim) {
             $absen->update(['status_wa' => 'terkirim']);

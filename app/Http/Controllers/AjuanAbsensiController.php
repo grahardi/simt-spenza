@@ -170,7 +170,15 @@ class AjuanAbsensiController extends Controller
             if ($nomor) {
                 $label = $ajuan->keterangan === 's' ? 'Sakit' : 'Ijin';
                 $pesan = "Ananda {$ajuan->siswa->nama_lengkap} sudah terabsensi {$label} hari ini. Terima kasih.";
-                (new \App\Services\WhatsappMetaService())->kirimPesan($nomor, $pesan);
+                $bot = new \App\Services\WhatsappMetaService();
+                $terkirim = $bot->kirimPesan($nomor, $pesan);
+                if (!$terkirim) {
+                    $bot->kirimTemplate($nomor, 'konfirmasi_absensi_siswa', [
+                        $ajuan->siswa->nama_lengkap,
+                        $ajuan->siswa->kelas ?? '-',
+                        $label,
+                    ]);
+                }
             }
         }
 
