@@ -80,6 +80,10 @@ class JadwalController extends Controller
             ->whereDate('tanggal', now('Asia/Jakarta'))
             ->first();
 
+        $ajuanMenungguAcc = \App\Models\AjuanAbsenGuruPiket::where('id_guru', $guru->id_guru)
+            ->whereDate('tanggal', now('Asia/Jakarta'))
+            ->first();
+
         $tugasHariIni = \App\Models\Tugas::where('idguru', $guru->id_guru)
             ->whereDate('tgl_tugas', now('Asia/Jakarta'))
             ->get()
@@ -91,6 +95,7 @@ class JadwalController extends Controller
             'urutanHari' => $this->urutanHari,
             'layout' => $this->layout(),
             'absenGuruHariIni' => $absenGuruHariIni,
+            'ajuanMenungguAcc' => $ajuanMenungguAcc,
             'tugasHariIni' => $tugasHariIni,
         ]);
     }
@@ -106,28 +111,38 @@ class JadwalController extends Controller
 
         $tanggalHariIni = now('Asia/Jakarta')->toDateString();
 
-        $atribut = [
+        $foto = null;
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto')->store('absensi-guru', 'public');
+        }
+
+        // Alfa langsung tercatat resmi (tidak perlu ACC/notif WA ke Kepsek).
+        if ($data['status'] === 'a') {
+            \App\Models\AbsensiGuru::updateOrCreate(
+                ['id_guru' => $guru->id_guru, 'tanggal' => $tanggalHariIni],
+                [
+                    'status' => 'a',
+                    'keterangan' => $data['keterangan'] ?? null,
+                    'foto' => $foto,
+                    'dicatat_oleh' => \Illuminate\Support\Facades\Auth::guard('member')->id(),
+                ]
+            );
+
+            return back()->with('status', 'Absensi '.$guru->nama.' berhasil dicatat.');
+        }
+
+        // Sakit/Ijin/Dispensasi masuk antrian "Menunggu ACC" dulu - konsisten
+        // dengan alur di menu Absen Guru (baru kirim notif WA ke Kepsek
+        // SETELAH benar-benar di-ACC, bukan langsung saat diajukan).
+        \App\Models\AjuanAbsenGuruPiket::create([
+            'id_guru' => $guru->id_guru,
+            'tanggal' => $tanggalHariIni,
             'status' => $data['status'],
             'keterangan' => $data['keterangan'] ?? null,
-            'dicatat_oleh' => \Illuminate\Support\Facades\Auth::guard('member')->id(),
-        ];
+            'foto' => $foto,
+            'diajukan_oleh' => \Illuminate\Support\Facades\Auth::guard('member')->id(),
+        ]);
 
-        if ($request->hasFile('foto')) {
-            $atribut['foto'] = $request->file('foto')->store('absensi-guru', 'public');
-        }
-
-        \App\Models\AbsensiGuru::updateOrCreate(
-            ['id_guru' => $guru->id_guru, 'tanggal' => $tanggalHariIni],
-            $atribut
-        );
-
-        // Notif WA ke Kepsek - cuma buat Sakit/Ijin/Dispensasi, Alfa tidak usah.
-        if (in_array($data['status'], ['s', 'i', 'd'], true)) {
-            \App\Services\NotifikasiAbsensiGuruService::kirimKeKepsek(
-                $guru, $data['status'], $data['keterangan'] ?? null, $atribut['foto'] ?? null, $tanggalHariIni
-            );
-        }
-
-        return back()->with('status', 'Absensi '.$guru->nama.' berhasil dicatat.');
+        return back()->with('status', 'Ajuan absen '.$guru->nama.' berhasil dikirim, menunggu ACC di menu Absen Guru.');
     }
 }

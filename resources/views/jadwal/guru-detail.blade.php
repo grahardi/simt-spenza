@@ -43,6 +43,11 @@
             @if ($absenGuruHariIni->keterangan)
                 <span class="text-muted small ms-2">{{ $absenGuruHariIni->keterangan }}</span>
             @endif
+        @elseif ($ajuanMenungguAcc)
+            <span class="badge bg-warning text-dark">
+                <i class="fas fa-hourglass-half me-1"></i> Menunggu ACC ({{ \App\Models\AjuanAbsenGuruPiket::LABEL_STATUS[$ajuanMenungguAcc->status] ?? $ajuanMenungguAcc->status }})
+            </span>
+            <a href="{{ route('absen-guru.index') }}" class="small ms-2">Proses ACC di menu Absen Guru</a>
         @elseif ($bolehTandai)
             {{-- Tombol TANDAI cuma untuk piket/admin/kesiswaan --}}
             <div class="d-flex flex-wrap gap-2">
@@ -68,7 +73,7 @@
         @endif
     </div>
 
-    @if ($bolehTandai && !$absenGuruHariIni)
+    @if ($bolehTandai && !$absenGuruHariIni && !$ajuanMenungguAcc)
         @foreach (['s' => 'Sakit', 'i' => 'Ijin', 'd' => 'Dispensasi'] as $kode => $label)
             <div class="modal fade" id="modalAbsenGuru-{{ $kode }}" tabindex="-1">
                 <div class="modal-dialog">
