@@ -242,6 +242,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Absen Guru (piket) - terpadu: sudah diacc + menunggu ACC + Ajuan Manual
     Route::prefix('absen-guru')->name('absen-guru.')->middleware('role:piket,kepsek,admin,kesiswaan')->group(function () {
         Route::get('/', [\App\Http\Controllers\AbsenGuruController::class, 'index'])->name('index');
+        Route::get('/riwayat', [\App\Http\Controllers\AbsenGuruController::class, 'riwayatAbsen'])->name('riwayat');
         Route::get('/pilih-guru', [\App\Http\Controllers\AbsenGuruController::class, 'pilihGuru'])->name('pilih-guru');
         Route::get('/ajuan/{guru}', [\App\Http\Controllers\AbsenGuruController::class, 'formAjuan'])->name('form-ajuan');
         Route::post('/ajuan/{guru}', [\App\Http\Controllers\AbsenGuruController::class, 'simpanAjuan'])->name('simpan-ajuan');

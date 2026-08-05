@@ -74,6 +74,28 @@ class AbsenGuruController extends Controller
         return view('absen-guru.pilih-guru', compact('daftarGuru', 'cari'));
     }
 
+    /** Riwayat Absen Guru - semua riwayat (bukan cuma hari ini), klik nama untuk lihat detail (keterangan, surat, tugas). */
+    public function riwayatAbsen(Request $request)
+    {
+        $cari = trim((string) $request->input('cari'));
+
+        $riwayat = AbsensiGuru::with('guru')
+            ->when($cari !== '', fn ($q) => $q->whereHas('guru', fn ($g) => $g->where('nama', 'like', '%'.$cari.'%')))
+            ->orderByDesc('tanggal')
+            ->paginate(20)
+            ->withQueryString();
+
+        // Detail tugas per baris (cuma untuk yang tampil di halaman ini)
+        $idGuruHalamanIni = collect($riwayat->items())->pluck('id_guru')->unique();
+        $tanggalHalamanIni = collect($riwayat->items())->pluck('tanggal')->map(fn ($t) => $t->toDateString())->unique();
+
+        $tugasSemua = Tugas::whereIn('idguru', $idGuruHalamanIni)
+            ->get()
+            ->groupBy(fn ($t) => $t->idguru.'|'.\Illuminate\Support\Carbon::parse($t->tgl_tugas)->toDateString());
+
+        return view('absen-guru.riwayat', compact('riwayat', 'cari', 'tugasSemua'));
+    }
+
     public function formAjuan(Guru $guru)
     {
         return view('absen-guru.form-ajuan', compact('guru'));
