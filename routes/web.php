@@ -235,10 +235,15 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/rekap-mingguan', [KesiswaanController::class, 'rekapMingguan'])->name('rekap-mingguan');
     });
 
-    // Absen Guru (piket) - list guru, link ke jadwal (bukan CRUD)
-    Route::get('/absen-guru', [GuruController::class, 'absenList'])
-        ->name('guru.absen-list')
-        ->middleware('role:piket,kepsek');
+    // Absen Guru (piket) - terpadu: sudah diacc + menunggu ACC + Ajuan Manual
+    Route::prefix('absen-guru')->name('absen-guru.')->middleware('role:piket,kepsek,admin,kesiswaan')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AbsenGuruController::class, 'index'])->name('index');
+        Route::get('/pilih-guru', [\App\Http\Controllers\AbsenGuruController::class, 'pilihGuru'])->name('pilih-guru');
+        Route::get('/ajuan/{guru}', [\App\Http\Controllers\AbsenGuruController::class, 'formAjuan'])->name('form-ajuan');
+        Route::post('/ajuan/{guru}', [\App\Http\Controllers\AbsenGuruController::class, 'simpanAjuan'])->name('simpan-ajuan');
+        Route::post('/{ajuanAbsenGuruPiket}/acc', [\App\Http\Controllers\AbsenGuruController::class, 'acc'])->name('acc');
+        Route::post('/{ajuanAbsenGuruPiket}/tolak', [\App\Http\Controllers\AbsenGuruController::class, 'tolak'])->name('tolak');
+    });
 
     // Upload Tugas untuk kelas (guru absen) - dari halaman detail jadwal guru
     Route::prefix('tugas')->name('tugas.')->group(function () {
@@ -491,12 +496,6 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Ajukan Absen Diri - guru ajukan sendiri Sakit/Ijin/Dispensasi, pilih tanggal
     Route::prefix('ajuan-absen-guru')->name('ajuan-absen-guru.')->middleware('role:guru')->group(function () {
         Route::get('/', [AjuanAbsenGuruController::class, 'index'])->name('index');
-    });
-
-    // Ajuan Piket Guru - piket/admin/kesiswaan ajukan absen ATAS NAMA guru tertentu (pilih dulu gurunya)
-    Route::prefix('ajuan-piket-guru')->name('ajuan-absen-guru.piket.')->middleware('role:piket,admin,kesiswaan')->group(function () {
-        Route::get('/', [AjuanAbsenGuruController::class, 'pilihGuru'])->name('pilih');
-        Route::get('/{guru}', [AjuanAbsenGuruController::class, 'index'])->name('form');
     });
 
     // Simpan dipakai bersama oleh guru (ajukan sendiri) maupun piket (ajukan atas nama guru lain)

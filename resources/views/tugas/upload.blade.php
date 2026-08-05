@@ -43,7 +43,7 @@
             </div>
         @endif
 
-        <a href="{{ request('dari_piket') ? route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru) }}" class="btn btn-outline-secondary mt-3 d-block">Kembali</a>
+        <a href="{{ request('dari_piket') ? route('absen-guru.index') : route('jadwal.guru', $guru) }}" class="btn btn-outline-secondary mt-3 d-block">Kembali</a>
     @else
         @if ($tugas)
             <p class="text-muted small">Tugas untuk kelas ini pada tanggal ini sudah pernah diupload - masih bisa diedit/diganti di bawah ini.</p>
@@ -84,7 +84,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-upload me-1"></i> {{ $tugas ? 'Simpan Perubahan' : 'Upload' }}
                 </button>
-                <a href="{{ request('dari_piket') ? route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal->toDateString()]) : (request('dari_ajuan_sendiri') ? route('ajuan-absen-guru.index', ['tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru)) }}" class="btn btn-outline-secondary">Kembali</a>
+                <a href="{{ request('dari_piket') ? route('absen-guru.index') : (request('dari_ajuan_sendiri') ? route('ajuan-absen-guru.index', ['tanggal' => $tanggal->toDateString()]) : route('jadwal.guru', $guru)) }}" class="btn btn-outline-secondary">Kembali</a>
             </div>
         </form>
     @endif

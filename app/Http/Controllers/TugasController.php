@@ -74,7 +74,7 @@ class TugasController extends Controller
         );
 
         $kembali = match (true) {
-            $request->boolean('dari_piket') => route('ajuan-absen-guru.piket.form', ['guru' => $guru, 'tanggal' => $tanggal]),
+            $request->boolean('dari_piket') => route('absen-guru.index'),
             $request->boolean('dari_ajuan_sendiri') => route('ajuan-absen-guru.index', ['tanggal' => $tanggal]),
             default => route('jadwal.guru', $guru),
         };
