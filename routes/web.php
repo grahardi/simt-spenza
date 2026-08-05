@@ -167,6 +167,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Edit ajuan surat - bisa diakses guru pemilik ATAU Tata Usaha/Kepsek/Admin,
     // otorisasi detailnya dicek di dalam controller (bolehEdit()), makanya
     // middleware di sini cuma auth umum, bukan role spesifik.
+    Route::get('/ajuan-surat/{ajuanSurat}', [\App\Http\Controllers\AjuanSuratController::class, 'show'])->name('ajuan-surat.show');
     Route::get('/ajuan-surat/{ajuanSurat}/sppd/edit', [\App\Http\Controllers\AjuanSuratController::class, 'editSppd'])->name('ajuan-surat.sppd.edit');
     Route::put('/ajuan-surat/{ajuanSurat}/sppd', [\App\Http\Controllers\AjuanSuratController::class, 'updateSppd'])->name('ajuan-surat.sppd.update');
     Route::get('/ajuan-surat/{ajuanSurat}/permohonan/edit', [\App\Http\Controllers\AjuanSuratController::class, 'editPermohonan'])->name('ajuan-surat.permohonan.edit');

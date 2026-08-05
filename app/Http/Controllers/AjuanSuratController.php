@@ -30,6 +30,15 @@ class AjuanSuratController extends Controller
         return view('ajuan-surat.index', compact('guru', 'daftar'));
     }
 
+    /** Halaman detail 1 ajuan - semua tombol aksi (Edit, Unduh, Bukti, Bayar, Undangan) di sini, biar list-nya tidak padat. */
+    public function show(AjuanSurat $ajuanSurat)
+    {
+        $guru = $this->guruLogin();
+        abort_unless($ajuanSurat->id_guru === $guru->id_guru, 403, 'Bukan ajuan surat Anda.');
+
+        return view('ajuan-surat.detail', ['ajuan' => $ajuanSurat]);
+    }
+
     /** Form Ajukan SPPD. */
     public function createSppd()
     {
