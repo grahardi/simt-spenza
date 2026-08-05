@@ -72,15 +72,12 @@ class BimbinganController extends Controller
     /** Pengganti bimbinganlist.php - daftar semua catatan bimbingan, filter tanggal. */
     public function index(Request $request)
     {
-        $tanggal = $request->date('tgl') ?? Carbon::today();
-        $tanggal = Carbon::parse($tanggal);
-
         $bimbingan = Bimbingan::with(['siswa', 'pelapor'])
-            ->whereDate('tgl_bimbingan', $tanggal)
+            ->orderByDesc('tgl_bimbingan')
             ->orderByDesc('id_bk')
             ->paginate(20)
             ->withQueryString();
 
-        return view('bimbingan.index', compact('bimbingan', 'tanggal'));
+        return view('bimbingan.index', compact('bimbingan'));
     }
 }

@@ -17,18 +17,10 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
-<div class="px-4 py-3 mb-3 bg-white rounded shadow">
-    <form method="GET" class="d-flex gap-2 align-items-center">
-        <label class="form-label mb-0">Tanggal</label>
-        <input type="date" name="tgl" class="form-control" style="max-width:200px"
-               value="{{ $tanggal->format('Y-m-d') }}" onchange="this.form.submit()">
-    </form>
-</div>
-
 <div class="p-4 bg-white rounded shadow">
     @if ($bimbingan->isEmpty())
         <div class="text-muted text-center py-4">
-            <i class="far fa-question-circle me-1"></i> Tidak ada catatan bimbingan pada {{ $tanggal->translatedFormat('d F Y') }}.
+            <i class="far fa-question-circle me-1"></i> Belum ada catatan bimbingan.
         </div>
     @else
         <div class="table-responsive">
@@ -36,6 +28,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
+                        <th>Tanggal</th>
                         <th>Siswa</th>
                         <th>Jenis</th>
                         <th>Keterangan</th>
@@ -48,6 +41,7 @@
                     @foreach ($bimbingan as $i => $b)
                         <tr>
                             <td>{{ $bimbingan->firstItem() + $i }}</td>
+                            <td class="text-nowrap">{{ \Illuminate\Support\Carbon::parse($b->tgl_bimbingan)->translatedFormat('d M Y') }}</td>
                             <td>{{ $b->siswa->nama_lengkap ?? '-' }}</td>
                             <td><span class="badge-status badge-purple" style="background:#eeedfe;color:#534ab7;">{{ $b->kategori }}</span></td>
                             <td class="small">{{ $b->Keterangan }}</td>
