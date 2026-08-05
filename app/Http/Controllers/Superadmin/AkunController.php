@@ -91,7 +91,12 @@ class AkunController extends Controller
 
     public function edit(Member $akun)
     {
-        return view('superadmin.akun.roles', ['member' => $akun]);
+        $daftarGuru = \App\Models\Guru::orderBy('nama')->get();
+
+        // Guru yang SUDAH terhubung ke akun lain (biar tidak dobel pilih guru yang sama)
+        $idGuruTerpakai = Member::whereNotNull('id_guru')->where('id', '!=', $akun->id)->pluck('id_guru');
+
+        return view('superadmin.akun.roles', ['member' => $akun, 'daftarGuru' => $daftarGuru, 'idGuruTerpakai' => $idGuruTerpakai]);
     }
 
     /** Simpan roles untuk akun ini (sama logikanya dengan GuruController::simpanRoles, tapi tanpa syarat harus ada guru). */
@@ -104,6 +109,7 @@ class AkunController extends Controller
             'jenis_ptk' => ['nullable', 'in:guru,tenaga_administrasi'],
             'walikelas' => ['nullable', 'string', 'max:10'],
             'piket' => ['nullable', 'string', 'max:20'],
+            'id_guru' => ['nullable', 'integer', 'exists:guru,id_guru'],
         ]);
 
         $flagRoles = ['admin', 'tatib', 'bk', 'guru', 'keagamaan', 'kebersihan', 'kepsek', 'adminsoal', 'tata_usaha', 'uks', 'kesiswaan', 'admin_kegiatan'];

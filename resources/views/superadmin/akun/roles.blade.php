@@ -9,6 +9,19 @@
         <form method="POST" action="{{ route('superadmin.akun.update', $member) }}">
             @csrf @method('PUT')
             <div class="form-group">
+                <label>Terhubung ke Data Guru <span class="text-muted small">(dipakai buat fitur yang butuh data kepegawaian - NIP, mapel, dll)</span></label>
+                <select name="id_guru" class="form-control">
+                    <option value="">- Tidak terhubung ke guru manapun (akun normal) -</option>
+                    @foreach ($daftarGuru as $g)
+                        <option value="{{ $g->id_guru }}"
+                            {{ $idGuruTerpakai->contains($g->id_guru) ? 'disabled' : '' }}
+                            @selected($member->id_guru === $g->id_guru)>
+                            {{ $g->nama }}{{ $idGuruTerpakai->contains($g->id_guru) ? ' (sudah dipakai akun lain)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Jabatan Login <span class="text-muted small">(isi "Superadmin" untuk akses penuh panel ini)</span></label>
                 <input type="text" name="jabatan" class="form-control" value="{{ $member->jabatan }}">
             </div>
