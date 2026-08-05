@@ -203,6 +203,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.absensi-guru.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi-guru.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                            <p>Data Absensi Guru</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.pelanggaran.index') }}" class="nav-link {{ request()->routeIs('superadmin.pelanggaran.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-gavel"></i>
                             <p>Data Pelanggaran</p>

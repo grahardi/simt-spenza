@@ -323,6 +323,11 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::put('/absensi/{absen}', [SuperadminAbsensiController::class, 'update'])->name('absensi.update');
         Route::delete('/absensi/{absen}', [SuperadminAbsensiController::class, 'destroy'])->name('absensi.destroy');
 
+        Route::get('/absensi-guru', [\App\Http\Controllers\Superadmin\AbsensiGuruController::class, 'index'])->name('absensi-guru.index');
+        Route::get('/absensi-guru/{absensiGuru}/edit', [\App\Http\Controllers\Superadmin\AbsensiGuruController::class, 'edit'])->name('absensi-guru.edit');
+        Route::put('/absensi-guru/{absensiGuru}', [\App\Http\Controllers\Superadmin\AbsensiGuruController::class, 'update'])->name('absensi-guru.update');
+        Route::delete('/absensi-guru/{absensiGuru}', [\App\Http\Controllers\Superadmin\AbsensiGuruController::class, 'destroy'])->name('absensi-guru.destroy');
+
         Route::get('/pelanggaran', [SuperadminPelanggaranController::class, 'index'])->name('pelanggaran.index');
         Route::get('/pelanggaran/{pelanggaran}/edit', [SuperadminPelanggaranController::class, 'edit'])->name('pelanggaran.edit');
         Route::put('/pelanggaran/{pelanggaran}', [SuperadminPelanggaranController::class, 'update'])->name('pelanggaran.update');
