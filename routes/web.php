@@ -208,7 +208,6 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         ->name('surat-keluar.pilih-jenis')
         ->middleware('role:tata_usaha,kepsek');
     Route::resource('surat-keluar', SuratKeluarController::class)
-        ->except(['show'])
         ->middleware('role:tata_usaha,kepsek');
 
     // Kategori Surat & pengaturan kode baku - buat kelola format nomor surat keluar

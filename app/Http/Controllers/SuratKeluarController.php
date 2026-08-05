@@ -14,6 +14,12 @@ class SuratKeluarController extends Controller
         return view('persuratan.surat-keluar.pilih-jenis');
     }
 
+    /** Halaman detail 1 surat keluar - tombol aksi (Edit, Lampiran, Hapus) di sini, biar list-nya tidak padat. */
+    public function show(SuratKeluar $suratKeluar)
+    {
+        return view('persuratan.surat-keluar.detail', ['surat' => $suratKeluar]);
+    }
+
     public function index(Request $request)
     {
         $surat = SuratKeluar::with('kategori')

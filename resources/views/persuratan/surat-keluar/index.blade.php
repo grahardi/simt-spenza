@@ -29,58 +29,29 @@
     </form>
 </div>
 
-<div class="p-4 bg-white rounded shadow">
-    @if ($surat->isEmpty())
-        <div class="text-muted text-center py-4">
-            <i class="far fa-question-circle me-1"></i> Belum ada surat keluar tercatat.
-        </div>
-    @else
-        <div class="table-responsive">
-            <table class="table table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kode Surat</th>
-                        <th>Kategori</th>
-                        <th>Tanggal</th>
-                        <th>Tujuan</th>
-                        <th>Perihal</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($surat as $i => $s)
-                        <tr>
-                            <td>{{ $surat->firstItem() + $i }}</td>
-                            <td><code>{{ $s->kode_surat }}</code></td>
-                            <td>{{ $s->kategori->nama ?? '-' }}</td>
-                            <td>{{ $s->tanggal_surat->format('d/m/Y') }}</td>
-                            <td>{{ $s->tujuan_surat }}</td>
-                            <td>{{ $s->perihal }}</td>
-                            <td class="text-end">
-                                @if ($s->lampiran)
-                                    <a href="{{ Storage::url($s->lampiran) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-paperclip"></i>
-                                    </a>
-                                @endif
-                                <a href="{{ route('surat-keluar.edit', $s) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('surat-keluar.destroy', $s) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Yakin hapus surat ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+@if ($surat->isEmpty())
+    <div class="bg-white rounded shadow text-muted text-center py-4">
+        <i class="far fa-question-circle me-1"></i> Belum ada surat keluar tercatat.
+    </div>
+@else
+    @php
+        $warnaKategori = fn ($perihal) => str_starts_with($perihal ?? '', 'SPPD') ? 'blue' : (str_starts_with($perihal ?? '', 'Permohonan') ? 'amber' : 'purple');
+    @endphp
+    <div class="menu-grid">
+        @foreach ($surat as $s)
+            <a href="{{ route('surat-keluar.show', $s) }}" class="menu-card bg-{{ $warnaKategori($s->perihal) }}">
+                <span class="menu-icon">
+                    <i class="fas fa-{{ str_starts_with($s->perihal ?? '', 'SPPD') ? 'plane-departure' : (str_starts_with($s->perihal ?? '', 'Permohonan') ? 'file-alt' : 'archive') }}"></i>
+                </span>
+                <span class="menu-title">{{ $s->perihal }}</span>
+                <span class="d-block small mt-1 opacity-75">{{ $s->tanggal_surat->format('d/m/Y') }} &middot; {{ $s->tujuan_surat }}</span>
+                <code class="d-block small mt-1">{{ $s->kode_surat }}</code>
+            </a>
+        @endforeach
+    </div>
+
+    <div class="mt-3">
         {{ $surat->onEachSide(1)->links() }}
-    @endif
-</div>
+    </div>
+@endif
 @endsection
