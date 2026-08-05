@@ -63,7 +63,6 @@ class NotifikasiAbsensiGuruService
             $berhasil = $service->kirimTemplate($nomorKepsek, 'notifikasi_absensi_guru', [
                 $guru->nama,
                 $labelStatus,
-                $tanggalTampil,
                 $keterangan ?: '-',
             ]);
         }
