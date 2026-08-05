@@ -255,6 +255,9 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::prefix('superadmin')->name('superadmin.')->middleware('role:superadmin')->group(function () {
         Route::get('/', [SuperadminDashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'edit'])->name('pengaturan-sistem.edit');
+        Route::put('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'update'])->name('pengaturan-sistem.update');
+
         Route::get('/siswa', [SuperadminSiswaController::class, 'index'])->name('siswa.index');
         Route::get('/siswa/tambah', [SuperadminSiswaController::class, 'create'])->name('siswa.create');
         Route::post('/siswa', [SuperadminSiswaController::class, 'store'])->name('siswa.store');

@@ -9,7 +9,7 @@ class AbsensiGuru extends Model
 {
     protected $table = 'absensi_guru';
 
-    protected $fillable = ['id_guru', 'tanggal', 'status', 'keterangan', 'dicatat_oleh'];
+    protected $fillable = ['id_guru', 'tanggal', 'status', 'keterangan', 'foto', 'dicatat_oleh'];
 
     protected $casts = ['tanggal' => 'date'];
 

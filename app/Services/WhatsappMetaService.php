@@ -21,6 +21,38 @@ class WhatsappMetaService
         return config('services.whatsapp_meta.phone_id');
     }
 
+    /** Kirim gambar (pakai URL publik) + caption opsional. Balikin true/false sesuai berhasil/tidak. */
+    public function kirimGambar(string $nomor, string $urlGambar, ?string $caption = null): bool
+    {
+        if (!$this->token() || !$this->phoneId()) {
+            Log::warning('WhatsappMetaService: token/phone_id belum diatur di .env');
+
+            return false;
+        }
+
+        try {
+            $respon = Http::withToken($this->token())
+                ->post("https://graph.facebook.com/v21.0/{$this->phoneId()}/messages", [
+                    'messaging_product' => 'whatsapp',
+                    'to' => $nomor,
+                    'type' => 'image',
+                    'image' => array_filter(['link' => $urlGambar, 'caption' => $caption]),
+                ]);
+
+            if (!$respon->successful()) {
+                Log::warning('WhatsappMetaService gagal kirim gambar: '.$respon->body());
+            }
+
+            \App\Models\WhatsappLog::catat($nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta');
+
+            return $respon->successful();
+        } catch (\Throwable $e) {
+            Log::warning('WhatsappMetaService gagal kirim gambar: '.$e->getMessage());
+
+            return false;
+        }
+    }
+
     /** Kirim pesan teks biasa. Balikin true/false sesuai berhasil/tidak. */
     public function kirimPesan(string $nomor, string $pesan): bool
     {

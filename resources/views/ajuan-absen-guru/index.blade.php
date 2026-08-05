@@ -51,7 +51,7 @@
 @foreach (['s' => 'Sakit', 'i' => 'Ijin', 'd' => 'Dispensasi'] as $kode => $label)
     <div class="modal fade" id="modalAjuan-{{ $kode }}" tabindex="-1">
         <div class="modal-dialog">
-            <form method="POST" action="{{ route('ajuan-absen-guru.simpan') }}" class="modal-content">
+            <form method="POST" action="{{ route('ajuan-absen-guru.simpan') }}" enctype="multipart/form-data" class="modal-content">
                 @csrf
                 @if ($dariPiket)
                     <input type="hidden" name="id_guru" value="{{ $guru->id_guru }}">
@@ -64,7 +64,9 @@
                 </div>
                 <div class="modal-body">
                     <label class="form-label">Keterangan (opsional)</label>
-                    <input type="text" name="keterangan" class="form-control" placeholder="contoh: demam, ada urusan keluarga">
+                    <input type="text" name="keterangan" class="form-control mb-2" placeholder="contoh: demam, ada urusan keluarga">
+                    <label class="form-label">Foto Surat (opsional)</label>
+                    <input type="file" name="foto" accept="image/*" class="form-control">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>

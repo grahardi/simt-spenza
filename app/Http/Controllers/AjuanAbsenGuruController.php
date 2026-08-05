@@ -72,6 +72,7 @@ class AjuanAbsenGuruController extends Controller
             'tanggal' => ['required', 'date'],
             'status' => ['required', 'in:s,i,d'], // cuma Sakit/Ijin/Dispensasi, bukan Alfa
             'keterangan' => ['nullable', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:8192'],
         ]);
 
         $member = Auth::guard('member')->user();
@@ -87,13 +88,24 @@ class AjuanAbsenGuruController extends Controller
             $idGuru = $guruSendiri->id_guru;
         }
 
+        $atribut = [
+            'status' => $data['status'],
+            'keterangan' => $data['keterangan'] ?? null,
+            'dicatat_oleh' => $member->id,
+        ];
+
+        if ($request->hasFile('foto')) {
+            $atribut['foto'] = $request->file('foto')->store('absensi-guru', 'public');
+        }
+
         AbsensiGuru::updateOrCreate(
             ['id_guru' => $idGuru, 'tanggal' => $data['tanggal']],
-            [
-                'status' => $data['status'],
-                'keterangan' => $data['keterangan'] ?? null,
-                'dicatat_oleh' => $member->id,
-            ]
+            $atribut
+        );
+
+        // Notif WA ke Kepsek - Sakit/Ijin/Dispensasi selalu lewat sini (Alfa tidak ada di validasi status di atas).
+        \App\Services\NotifikasiAbsensiGuruService::kirimKeKepsek(
+            \App\Models\Guru::find($idGuru), $data['status'], $data['keterangan'] ?? null, $atribut['foto'] ?? null, $data['tanggal']
         );
 
         $rute = !empty($data['id_guru']) ? 'ajuan-absen-guru.piket.form' : 'ajuan-absen-guru.index';

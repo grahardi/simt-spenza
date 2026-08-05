@@ -138,6 +138,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.pengaturan-sistem.edit') }}" class="nav-link {{ request()->routeIs('superadmin.pengaturan-sistem.edit') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p>Pengaturan Sistem</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.siswa.index') }}" class="nav-link {{ request()->routeIs('superadmin.siswa.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-graduate"></i>
                             <p>Data Siswa</p>
