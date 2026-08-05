@@ -302,6 +302,25 @@
         </div>
     @endif
 
+    @php
+        $memberSekarang = auth('member')->user();
+        $agendaBelumSelesai = ($memberSekarang && ($memberSekarang->hasRole('admin_kegiatan') || $memberSekarang->hasRole('kesiswaan') || $memberSekarang->hasRole('kepsek')))
+            ? \App\Models\Agenda::where('status_administrasi', 'belum_selesai')
+                ->where('tanggal_mulai', '<=', now('Asia/Jakarta')->toDateString())
+                ->orderBy('tanggal_mulai')
+                ->get()
+            : collect();
+    @endphp
+    @foreach ($agendaBelumSelesai as $agendaBelum)
+        <div class="bg-danger text-white text-center py-2 small fw-semibold d-flex align-items-center justify-content-center gap-2 flex-wrap">
+            <i class="fas fa-exclamation-triangle"></i>
+            Ada Kegiatan <strong>{{ $agendaBelum->judul }}</strong> yang belum selesai administrasinya, untuk segera ditindaklanjuti.
+            <a href="{{ route('agenda.edit', $agendaBelum) }}" class="btn btn-light btn-sm py-0 px-2">
+                <i class="fas fa-upload me-1"></i> Kelola Berkas
+            </a>
+        </div>
+    @endforeach
+
     <main class="container py-3">
         @yield('content')
     </main>

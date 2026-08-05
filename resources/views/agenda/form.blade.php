@@ -51,14 +51,25 @@
             <label class="form-label">Judul Kegiatan</label>
             <input type="text" name="judul" class="form-control" value="{{ old('judul', $agenda->judul) }}" required>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Penanggung Jawab <span class="text-muted">(opsional)</span></label>
-            <select name="id_penanggung_jawab" class="form-select">
-                <option value="">- Pilih guru -</option>
-                @foreach ($daftarGuru as $g)
-                    <option value="{{ $g->id_guru }}" @selected(old('id_penanggung_jawab', $agenda->id_penanggung_jawab) == $g->id_guru)>{{ $g->nama }}</option>
-                @endforeach
-            </select>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Ketua Panitia <span class="text-muted">(opsional)</span></label>
+                <select name="ketua" class="form-select">
+                    <option value="">- Pilih guru -</option>
+                    @foreach ($daftarGuru as $g)
+                        <option value="{{ $g->id_guru }}" @selected(old('ketua', $agenda->ketua()?->id_guru) == $g->id_guru)>{{ $g->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Sekretaris <span class="text-muted">(opsional)</span></label>
+                <select name="sekretaris" class="form-select">
+                    <option value="">- Pilih guru -</option>
+                    @foreach ($daftarGuru as $g)
+                        <option value="{{ $g->id_guru }}" @selected(old('sekretaris', $agenda->sekretaris()?->id_guru) == $g->id_guru)>{{ $g->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
         <div class="row g-3 mb-3">
             <div class="col-md-6">

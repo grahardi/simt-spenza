@@ -34,7 +34,7 @@
                             @endif
                         </td>
                         <td>{{ $a->judul }}</td>
-                        <td>{{ $a->penanggungJawab->nama ?? '-' }}</td>
+                        <td>@if ($a->ketua())Ketua: {{ $a->ketua()->guru->nama ?? '-' }}<br>@endif@if ($a->sekretaris())Sekretaris: {{ $a->sekretaris()->guru->nama ?? '-' }}@endif@if (!$a->ketua() && !$a->sekretaris())-@endif</td>
                         <td>
                             <span class="badge" style="background:{{ \App\Models\Agenda::KATEGORI_WARNA[$a->kategori] }};">
                                 {{ \App\Models\Agenda::KATEGORI_LABEL[$a->kategori] }}

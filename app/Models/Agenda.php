@@ -10,7 +10,7 @@ class Agenda extends Model
 
     protected $fillable = [
         'judul', 'tanggal_mulai', 'tanggal_selesai', 'keterangan', 'kategori', 'dibuat_oleh',
-        'id_penanggung_jawab', 'berkas_proposal', 'berkas_sk_kepanitiaan', 'berkas_spj',
+        'status_administrasi', 'berkas_proposal', 'berkas_sk_kepanitiaan', 'berkas_spj',
     ];
 
     protected $casts = ['tanggal_mulai' => 'date', 'tanggal_selesai' => 'date'];
@@ -39,8 +39,18 @@ class Agenda extends Model
         return $this->hasMany(AgendaBerkasLainnya::class, 'id_agenda');
     }
 
-    public function penanggungJawab(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function penanggungJawab(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(Guru::class, 'id_penanggung_jawab', 'id_guru');
+        return $this->hasMany(AgendaPenanggungJawab::class, 'id_agenda');
+    }
+
+    public function ketua(): ?AgendaPenanggungJawab
+    {
+        return $this->penanggungJawab->firstWhere('jabatan', 'Ketua');
+    }
+
+    public function sekretaris(): ?AgendaPenanggungJawab
+    {
+        return $this->penanggungJawab->firstWhere('jabatan', 'Sekretaris');
     }
 }

@@ -22,7 +22,7 @@
         <div class="table-responsive">
         <table class="table table-striped mb-0 align-middle">
             <thead>
-                <tr><th>Tanggal</th><th>Judul</th><th>Penanggung Jawab</th><th>Kategori</th><th class="text-center">Foto</th><th></th></tr>
+                <tr><th>Tanggal</th><th>Judul</th><th>Penanggung Jawab</th><th>Kategori</th><th>Administrasi</th><th class="text-center">Foto</th><th></th></tr>
             </thead>
             <tbody>
                 @foreach ($agenda as $a)
@@ -34,14 +34,28 @@
                             @endif
                         </td>
                         <td>{{ $a->judul }}</td>
-                        <td>{{ $a->penanggungJawab->nama ?? '-' }}</td>
+                        <td>@if ($a->ketua())Ketua: {{ $a->ketua()->guru->nama ?? '-' }}<br>@endif@if ($a->sekretaris())Sekretaris: {{ $a->sekretaris()->guru->nama ?? '-' }}@endif@if (!$a->ketua() && !$a->sekretaris())-@endif</td>
                         <td>
                             <span class="badge" style="background:{{ \App\Models\Agenda::KATEGORI_WARNA[$a->kategori] }};">
                                 {{ \App\Models\Agenda::KATEGORI_LABEL[$a->kategori] }}
                             </span>
                         </td>
+                        <td>
+                            @if ($a->status_administrasi === 'selesai')
+                                <span class="badge bg-success">Selesai</span>
+                            @else
+                                <span class="badge bg-warning text-dark">Belum Selesai</span>
+                                <form method="POST" action="{{ route('agenda.tandai-selesai', $a) }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-xs btn-outline-success" style="font-size:11px;padding:1px 5px;">Tandai Selesai</button>
+                                </form>
+                            @endif
+                        </td>
                         <td class="text-center">{{ $a->foto_count }}</td>
                         <td class="text-end">
+                            <a href="{{ route('agenda.edit', $a) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             <a href="{{ route('agenda.galeri', $a) }}" class="btn btn-sm btn-outline-success">
                                 <i class="fas fa-images me-1"></i> Galeri
                             </a>

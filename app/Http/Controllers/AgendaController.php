@@ -43,7 +43,7 @@ class AgendaController extends Controller
     public function listSudah()
     {
         $agenda = Agenda::withCount('foto')
-            ->with('penanggungJawab')
+            ->with('penanggungJawab.guru')
             ->where('tanggal_mulai', '<=', now('Asia/Jakarta')->toDateString())
             ->orderByDesc('tanggal_mulai')
             ->paginate(15);
@@ -55,7 +55,7 @@ class AgendaController extends Controller
     public function mendatang()
     {
         $agenda = Agenda::withCount('foto')
-            ->with('penanggungJawab')
+            ->with('penanggungJawab.guru')
             ->where('tanggal_mulai', '>', now('Asia/Jakarta')->toDateString())
             ->orderBy('tanggal_mulai')
             ->paginate(15);
@@ -76,7 +76,8 @@ class AgendaController extends Controller
         $data['dibuat_oleh'] = Auth::guard('member')->id();
         $data = $this->tanganiUploadBerkas($request, $data);
 
-        Agenda::create($data);
+        $agenda = Agenda::create($data);
+        $this->simpanPenanggungJawab($request, $agenda);
 
         return redirect()->route('agenda.index')->with('status', 'Agenda berhasil ditambahkan.');
     }
@@ -84,6 +85,7 @@ class AgendaController extends Controller
     public function edit(Agenda $agenda)
     {
         $daftarGuru = Guru::orderBy('nama')->get();
+        $agenda->load('penanggungJawab');
 
         return view('agenda.form', compact('agenda', 'daftarGuru'));
     }
@@ -94,8 +96,32 @@ class AgendaController extends Controller
         $data = $this->tanganiUploadBerkas($request, $data, $agenda);
 
         $agenda->update($data);
+        $this->simpanPenanggungJawab($request, $agenda);
 
         return redirect()->route('agenda.index')->with('status', 'Agenda berhasil diperbarui.');
+    }
+
+    /** Tandai administrasi kegiatan sudah selesai (Proposal/SK/SPJ dkk sudah lengkap). */
+    public function tandaiSelesai(Agenda $agenda)
+    {
+        $agenda->update(['status_administrasi' => 'selesai']);
+
+        return back()->with('status', 'Kegiatan "'.$agenda->judul.'" ditandai selesai administrasinya.');
+    }
+
+    private function simpanPenanggungJawab(Request $request, Agenda $agenda): void
+    {
+        \App\Models\AgendaPenanggungJawab::where('id_agenda', $agenda->id)->delete();
+
+        foreach (['Ketua' => 'ketua', 'Sekretaris' => 'sekretaris'] as $jabatan => $field) {
+            if ($request->filled($field)) {
+                \App\Models\AgendaPenanggungJawab::create([
+                    'id_agenda' => $agenda->id,
+                    'id_guru' => $request->input($field),
+                    'jabatan' => $jabatan,
+                ]);
+            }
+        }
     }
 
     public function destroy(Agenda $agenda)
@@ -185,7 +211,6 @@ class AgendaController extends Controller
             'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
             'keterangan' => ['nullable', 'string', 'max:1000'],
             'kategori' => ['required', 'in:libur,kbm,ujian,kegiatan'],
-            'id_penanggung_jawab' => ['nullable', 'integer', 'exists:guru,id_guru'],
             'berkas_proposal' => ['nullable', 'file', 'max:10240'],
             'berkas_sk_kepanitiaan' => ['nullable', 'file', 'max:10240'],
             'berkas_spj' => ['nullable', 'file', 'max:10240'],
