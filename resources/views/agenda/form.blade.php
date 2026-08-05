@@ -42,6 +42,31 @@
     </div>
 @endif
 
+@if ($editMode)
+    <div class="p-3 bg-white rounded shadow mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2" style="max-width:560px;">
+        <div>
+            <span class="text-muted small d-block">Status Administrasi</span>
+            @if ($agenda->status_administrasi === 'selesai')
+                <span class="badge bg-success">Selesai</span>
+            @else
+                <span class="badge bg-warning text-dark">Belum Selesai</span>
+            @endif
+        </div>
+        <form method="POST" action="{{ route('agenda.tandai-selesai', $agenda) }}">
+            @csrf
+            @if ($agenda->status_administrasi !== 'selesai')
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-check me-1"></i> Tandai Selesai
+                </button>
+            @else
+                <button type="submit" formaction="{{ route('agenda.tandai-belum-selesai', $agenda) }}" class="btn btn-outline-secondary btn-sm">
+                    Tandai Belum Selesai Lagi
+                </button>
+            @endif
+        </form>
+    </div>
+@endif
+
 <div class="p-4 bg-white rounded shadow" style="max-width:560px;">
     <form method="POST" action="{{ $editMode ? route('agenda.update', $agenda) : route('agenda.store') }}" enctype="multipart/form-data">
         @csrf

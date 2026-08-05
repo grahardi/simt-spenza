@@ -101,6 +101,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::put('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'update'])->name('agenda.update');
         Route::delete('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'destroy'])->name('agenda.destroy');
         Route::post('/agenda/{agenda}/tandai-selesai', [\App\Http\Controllers\AgendaController::class, 'tandaiSelesai'])->name('agenda.tandai-selesai');
+        Route::post('/agenda/{agenda}/tandai-belum-selesai', [\App\Http\Controllers\AgendaController::class, 'tandaiBelumSelesai'])->name('agenda.tandai-belum-selesai');
         Route::post('/agenda/{agenda}/foto', [\App\Http\Controllers\AgendaController::class, 'simpanFoto'])->name('agenda.foto.store');
         Route::delete('/agenda-foto/{agendaFoto}', [\App\Http\Controllers\AgendaController::class, 'hapusFoto'])->name('agenda.foto.hapus');
         Route::post('/agenda/{agenda}/berkas-lainnya', [\App\Http\Controllers\AgendaController::class, 'simpanBerkasLainnya'])->name('agenda.berkas-lainnya.store');
