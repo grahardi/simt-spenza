@@ -101,12 +101,20 @@ class AgendaController extends Controller
         return redirect()->route('agenda.index')->with('status', 'Agenda berhasil diperbarui.');
     }
 
-    /** Tandai administrasi kegiatan sudah selesai (Proposal/SK/SPJ dkk sudah lengkap). */
+    /** Tandai administrasi kegiatan sudah selesai (Proposal/SK/SPJ dkk sudah lengkap) - MANUAL, bukan otomatis dari upload berkas. */
     public function tandaiSelesai(Agenda $agenda)
     {
         $agenda->update(['status_administrasi' => 'selesai']);
 
         return back()->with('status', 'Kegiatan "'.$agenda->judul.'" ditandai selesai administrasinya.');
+    }
+
+    /** Kebalikannya - kalau ternyata salah klik atau perlu ditinjau ulang. */
+    public function tandaiBelumSelesai(Agenda $agenda)
+    {
+        $agenda->update(['status_administrasi' => 'belum_selesai']);
+
+        return back()->with('status', 'Kegiatan "'.$agenda->judul.'" ditandai belum selesai lagi.');
     }
 
     private function simpanPenanggungJawab(Request $request, Agenda $agenda): void

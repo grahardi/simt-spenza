@@ -101,6 +101,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::put('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'update'])->name('agenda.update');
         Route::delete('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'destroy'])->name('agenda.destroy');
         Route::post('/agenda/{agenda}/tandai-selesai', [\App\Http\Controllers\AgendaController::class, 'tandaiSelesai'])->name('agenda.tandai-selesai');
+        Route::post('/agenda/{agenda}/tandai-belum-selesai', [\App\Http\Controllers\AgendaController::class, 'tandaiBelumSelesai'])->name('agenda.tandai-belum-selesai');
         Route::post('/agenda/{agenda}/foto', [\App\Http\Controllers\AgendaController::class, 'simpanFoto'])->name('agenda.foto.store');
         Route::delete('/agenda-foto/{agendaFoto}', [\App\Http\Controllers\AgendaController::class, 'hapusFoto'])->name('agenda.foto.hapus');
         Route::post('/agenda/{agenda}/berkas-lainnya', [\App\Http\Controllers\AgendaController::class, 'simpanBerkasLainnya'])->name('agenda.berkas-lainnya.store');
@@ -241,6 +242,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Absen Guru (piket) - terpadu: sudah diacc + menunggu ACC + Ajuan Manual
     Route::prefix('absen-guru')->name('absen-guru.')->middleware('role:piket,kepsek,admin,kesiswaan')->group(function () {
         Route::get('/', [\App\Http\Controllers\AbsenGuruController::class, 'index'])->name('index');
+        Route::get('/riwayat', [\App\Http\Controllers\AbsenGuruController::class, 'riwayatAbsen'])->name('riwayat');
         Route::get('/pilih-guru', [\App\Http\Controllers\AbsenGuruController::class, 'pilihGuru'])->name('pilih-guru');
         Route::get('/ajuan/{guru}', [\App\Http\Controllers\AbsenGuruController::class, 'formAjuan'])->name('form-ajuan');
         Route::post('/ajuan/{guru}', [\App\Http\Controllers\AbsenGuruController::class, 'simpanAjuan'])->name('simpan-ajuan');

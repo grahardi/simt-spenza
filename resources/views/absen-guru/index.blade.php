@@ -10,9 +10,14 @@
         <i class="fas fa-chalkboard-teacher fa-lg me-3"></i>
         <h1 class="h5 pt-2 mb-0">Absen Guru Hari Ini</h1>
     </div>
-    <a href="{{ route('absen-guru.pilih-guru') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
-        <i class="fas fa-plus me-1"></i> Ajuan Manual
-    </a>
+    <div class="d-flex gap-2 mt-2 mt-md-0">
+        <a href="{{ route('absen-guru.riwayat') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-history me-1"></i> Riwayat Absen Guru
+        </a>
+        <a href="{{ route('absen-guru.pilih-guru') }}" class="btn btn-light btn-sm">
+            <i class="fas fa-plus me-1"></i> Ajuan Manual
+        </a>
+    </div>
 </div>
 
 @if (session('status'))
