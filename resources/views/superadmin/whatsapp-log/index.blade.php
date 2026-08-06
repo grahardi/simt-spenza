@@ -43,7 +43,8 @@
                     <th>Nomor</th>
                     <th>Sumber</th>
                     @if ($arah === 'keluar')
-                        <th>Status</th>
+                        <th>API Diterima?</th>
+                        <th>Status Pengiriman Sebenarnya</th>
                     @endif
                     <th>Isi Pesan</th>
                     @if ($arah === 'keluar')
@@ -65,6 +66,15 @@
                                     <span class="badge badge-danger">Gagal</span>
                                 @else
                                     <span class="badge badge-secondary">-</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($l->status_pengiriman)
+                                    <span class="badge {{ $l->status_pengiriman === 'failed' ? 'badge-danger' : ($l->status_pengiriman === 'read' ? 'badge-primary' : 'badge-success') }}">
+                                        {{ \App\Models\WhatsappLog::LABEL_STATUS_PENGIRIMAN[$l->status_pengiriman] ?? $l->status_pengiriman }}
+                                    </span>
+                                @else
+                                    <span class="badge badge-secondary" title="Belum ada update status dari webhook Meta">Belum ada info</span>
                                 @endif
                             </td>
                         @endif

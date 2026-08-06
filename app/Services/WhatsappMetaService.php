@@ -40,12 +40,14 @@ class WhatsappMetaService
                     'image' => array_filter(['link' => $urlGambar, 'caption' => $caption]),
                 ]);
 
+            $wamidTerkirim = $respon->json('messages.0.id');
+
             if (!$respon->successful()) {
                 Log::warning('WhatsappMetaService gagal kirim gambar: '.$respon->body());
             }
 
             \App\Models\WhatsappLog::catat(
-                $nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta', null,
+                $nomor, 'keluar', '[gambar] '.($caption ?? ''), 'meta', $wamidTerkirim,
                 $respon->successful(), $respon->successful() ? null : $respon->body()
             );
 
@@ -94,12 +96,14 @@ class WhatsappMetaService
                     ],
                 ]);
 
+            $wamidTerkirim = $respon->json('messages.0.id');
+
             if (!$respon->successful()) {
                 Log::warning('WhatsappMetaService gagal kirim template: '.$respon->body());
             }
 
             \App\Models\WhatsappLog::catat(
-                $nomor, 'keluar', '[template:'.$namaTemplate.'] '.implode(' | ', $parameter), 'meta', null,
+                $nomor, 'keluar', '[template:'.$namaTemplate.'] '.implode(' | ', $parameter), 'meta', $wamidTerkirim,
                 $respon->successful(), $respon->successful() ? null : $respon->body()
             );
 
@@ -131,12 +135,14 @@ class WhatsappMetaService
                     'text' => ['body' => $pesan],
                 ]);
 
+            $wamidTerkirim = $respon->json('messages.0.id');
+
             if (!$respon->successful()) {
                 Log::warning('WhatsappMetaService gagal kirim pesan: '.$respon->body());
             }
 
             \App\Models\WhatsappLog::catat(
-                $nomor, 'keluar', $pesan, 'meta', null,
+                $nomor, 'keluar', $pesan, 'meta', $wamidTerkirim,
                 $respon->successful(), $respon->successful() ? null : $respon->body()
             );
 

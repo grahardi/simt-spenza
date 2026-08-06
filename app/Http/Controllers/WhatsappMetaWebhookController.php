@@ -47,8 +47,27 @@ class WhatsappMetaWebhookController extends Controller
     {
         $pesan = $request->input('entry.0.changes.0.value.messages.0');
 
-        // Bisa juga webhook status update (delivered/read) yang tidak ada
-        // 'messages', cuma 'statuses' - abaikan saja, bukan pesan masuk.
+        // Webhook status pengiriman (sent/delivered/read/failed) - beda dari
+        // pesan masuk, dikirim Meta setelah kita KIRIM pesan keluar. Dulu
+        // sengaja diabaikan, sekarang dicatat supaya kelihatan status
+        // SEBENARNYA (bukan cuma "API menerima permintaan").
+        $statusUpdate = $request->input('entry.0.changes.0.value.statuses.0');
+        if ($statusUpdate) {
+            $wamidStatus = $statusUpdate['id'] ?? null;
+            $statusBaru = $statusUpdate['status'] ?? null; // sent, delivered, read, failed
+
+            if ($wamidStatus && $statusBaru) {
+                $detailGagal = null;
+                if ($statusBaru === 'failed' && !empty($statusUpdate['errors'][0]['title'])) {
+                    $detailGagal = $statusUpdate['errors'][0]['title'].' - '.($statusUpdate['errors'][0]['message'] ?? '');
+                }
+
+                WhatsappLog::catatStatusUpdate($wamidStatus, $statusBaru, $detailGagal);
+            }
+
+            return response()->json(['status' => 'ok']);
+        }
+
         if (!$pesan) {
             return response()->json(['status' => 'ok']);
         }
