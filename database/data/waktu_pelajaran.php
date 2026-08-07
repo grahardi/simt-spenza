@@ -1,6 +1,8 @@
 <?php
 
-// Auto-generated dari kolom Waktu/Pukul di sheet 'subject', jadwal_fix-fix-fix.xlsx
+// Auto-generated dari kolom Waktu/Pukul di revisi_3-08-26__JADWAL_smt_GANJIL_2026-2027_by_KODE_rev.xlsx
+// (semester ganjil TA 2026/2027). Catatan: SENIN jam 5 label 'Jam'-nya kosong di
+// file asli, diisi manual berdasarkan posisi urut (antara jam 4 dan jam 6).
 return [
     'SENIN' => [
         1 => '07.40 - 08.20',
@@ -20,7 +22,7 @@ return [
         4 => '09.40 - 10.20',
         5 => '10.20 - 11.00',
         6 => '11.00 - 11.40',
-        7 => '11.40 - 12.20',
+        7 => '12.20-13.00',
         8 => '13.00 - 13.40',
         9 => '13.40 - 14.20',
         10 => '14.20 - 15.00',
@@ -32,7 +34,7 @@ return [
         4 => '09.40 - 10.20',
         5 => '10.20 - 11.00',
         6 => '11.00 - 11.40',
-        7 => '11.40 - 12.20',
+        7 => '12.20-13.00',
         8 => '13.00 - 13.40',
         9 => '13.40 - 14.20',
         10 => '14.20 - 15.00',
@@ -44,7 +46,7 @@ return [
         4 => '09.40 - 10.20',
         5 => '10.20 - 11.00',
         6 => '11.00 - 11.40',
-        7 => '11.40 - 12.20',
+        7 => '12.20-13.00',
         8 => '13.00 - 13.40',
         9 => '13.40 - 14.20',
         10 => '14.20 - 15.00',
