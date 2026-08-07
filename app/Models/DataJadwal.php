@@ -50,6 +50,7 @@ class DataJadwal extends Model
             'IPS' => 'Ilmu Pengetahuan Sosial',
             'PAI' => 'Pendidikan Agama Islam',
             'PKN' => 'Pendidikan Pancasila dan Kewarganegaraan',
+            'PP' => 'Pendidikan Pancasila',
             'SEN' => 'Seni Budaya', 'SBD' => 'Seni Budaya',
             'PJO' => 'Pendidikan Jasmani dan Olahraga',
             'PRA' => 'Prakarya',
