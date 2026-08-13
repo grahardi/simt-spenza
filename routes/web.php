@@ -376,6 +376,14 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/', [DknKelasController::class, 'simpan'])->name('simpan');
     });
 
+    // Bansos - fitur SEMENTARA. Wali kelas ajukan max 5 anak, Tatib/Kesiswaan lihat rekap.
+    Route::get('/bansos/ajukan', [\App\Http\Controllers\BansosController::class, 'ajukan'])
+        ->name('bansos.ajukan')->middleware('role:walikelas');
+    Route::post('/bansos/ajukan', [\App\Http\Controllers\BansosController::class, 'simpanAjuan'])
+        ->name('bansos.simpan-ajuan')->middleware('role:walikelas');
+    Route::get('/bansos/rekap', [\App\Http\Controllers\BansosController::class, 'rekap'])
+        ->name('bansos.rekap')->middleware('role:tatib,kesiswaan');
+
     // Foto Siswa - gallery by kelas + pencarian + upload/ganti foto
     Route::prefix('foto-siswa')->name('foto-siswa.')->middleware('role:guru,walikelas,kepsek,admin,piket')->group(function () {
         Route::get('/', [FotoSiswaController::class, 'pilihKelas'])->name('pilih-kelas');

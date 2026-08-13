@@ -34,6 +34,7 @@
                 ['label' => 'Rekap Absensi Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'blue', 'href' => route('aktivitas-kelas.rekap-mingguan')],
                 ['label' => 'Data Pelanggaran', 'icon' => 'fas fa-exclamation-circle', 'color' => 'red', 'href' => route('aktivitas-kelas.pelanggaran-siswa')],
                 ['label' => 'Manajemen WhatsApp', 'icon' => 'fab fa-whatsapp', 'color' => 'green', 'href' => route('walikelas.whatsapp')],
+                ['label' => 'Ajukan Bansos', 'icon' => 'fas fa-hand-holding-heart', 'color' => 'amber', 'href' => route('bansos.ajukan')],
             ],
         ],
         'kepsek' => [
@@ -83,6 +84,7 @@
                 ['label' => 'Pelanggaran', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Rekap Absen Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'purple', 'href' => route('kesiswaan.rekap-mingguan')],
                 ['label' => 'Absensi Bulanan', 'icon' => 'fas fa-calendar-alt', 'color' => 'blue', 'href' => route('absensi-bulanan')],
+                ['label' => 'Rekap Penerima Bansos', 'icon' => 'fas fa-hand-holding-heart', 'color' => 'amber', 'href' => route('bansos.rekap')],
             ],
         ],
         'bk' => [
@@ -143,6 +145,7 @@
                 ['label' => 'Tidak Masuk 3+ Hari', 'icon' => 'fas fa-user-clock', 'color' => 'red', 'href' => route('kesiswaan.tidak-masuk')],
                 ['label' => 'Pelanggaran', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Rekap Absen Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'purple', 'href' => route('kesiswaan.rekap-mingguan')],
+                ['label' => 'Rekap Penerima Bansos', 'icon' => 'fas fa-hand-holding-heart', 'color' => 'amber', 'href' => route('bansos.rekap')],
             ],
         ],
         'admin_kegiatan' => [
