@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class BansosController extends Controller
 {
-    const MAKS_PER_KELAS = 5;
+    const MAKS_PER_KELAS = 7;
+    const JUMLAH_UTAMA = 5; // 5 pertama hijau, 2 terakhir (6-7) kuning
 
     /** Halaman wali kelas - centang max 5 anak di kelasnya untuk diajukan Bansos. */
     public function ajukan()
@@ -19,7 +20,7 @@ class BansosController extends Controller
         abort_if($kelas === '', 403, 'Akun ini tidak terhubung ke kelas manapun sebagai wali kelas.');
 
         $siswa = Siswa::where('kelas', $kelas)->orderBy('nama_lengkap')->get();
-        $idSudahDiajukan = BansosAjuan::where('kelas', $kelas)->pluck('id_siswa')->toArray();
+        $idSudahDiajukan = BansosAjuan::where('kelas', $kelas)->orderBy('id')->pluck('id_siswa')->toArray();
 
         return view('bansos.ajukan', compact('kelas', 'siswa', 'idSudahDiajukan'));
     }
@@ -37,8 +38,10 @@ class BansosController extends Controller
 
         $idDipilih = $data['siswa'] ?? [];
 
-        // Pastikan semua siswa yang dipilih memang anak kelas ini (bukan kelas lain).
-        $idValid = Siswa::where('kelas', $kelas)->whereIn('id_member', $idDipilih)->pluck('id_member')->toArray();
+        // Validasi siswa yang dipilih memang anak kelas ini, TAPI tetap jaga urutan
+        // klik dari user (biar 5 pertama/2 terakhir konsisten sesuai yang diklik).
+        $idAnakKelasIni = Siswa::where('kelas', $kelas)->pluck('id_member')->toArray();
+        $idValid = array_values(array_filter($idDipilih, fn ($id) => in_array($id, $idAnakKelasIni)));
 
         // Reset dulu ajuan kelas ini, baru isi ulang sesuai pilihan sekarang (maks 5 tetap dijamin di query di atas).
         BansosAjuan::where('kelas', $kelas)->delete();
