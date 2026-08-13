@@ -12,24 +12,28 @@
 @endif
 
 <div class="alert alert-info">
-    <i class="fas fa-info-circle me-1"></i> Pilih maksimal <strong>{{ \App\Http\Controllers\BansosController::MAKS_PER_KELAS }} siswa</strong> di kelas ini untuk diajukan sebagai penerima Bansos.
-    Fitur ini <strong>sementara</strong>, bisa berubah sewaktu-waktu.
+    <i class="fas fa-info-circle me-1"></i> Klik nama siswa untuk memilih/batalkan, maksimal <strong>{{ \App\Http\Controllers\BansosController::MAKS_PER_KELAS }} siswa</strong>.
+    Yang berwarna <span class="badge bg-success">hijau</span> berarti sudah dipilih. Fitur ini <strong>sementara</strong>, bisa berubah sewaktu-waktu.
 </div>
 
 <div class="p-4 bg-white rounded shadow">
-    <form method="POST" action="{{ route('bansos.simpan-ajuan') }}">
-        @csrf
-        <p class="mb-2">
-            Terpilih: <span id="jumlahTerpilih">{{ count($idSudahDiajukan) }}</span> / {{ \App\Http\Controllers\BansosController::MAKS_PER_KELAS }}
-        </p>
+    <p class="mb-3">Terpilih: <span id="jumlahTerpilih" class="fw-bold">{{ count($idSudahDiajukan) }}</span> / {{ \App\Http\Controllers\BansosController::MAKS_PER_KELAS }}</p>
 
-        <div class="list-group mb-3">
+    <form method="POST" action="{{ route('bansos.simpan-ajuan') }}" id="formBansos">
+        @csrf
+        <div id="wadahSiswa" class="d-flex flex-column gap-2 mb-3">
             @foreach ($siswa as $s)
-                <label class="list-group-item d-flex align-items-center gap-2">
-                    <input type="checkbox" name="siswa[]" value="{{ $s->id_member }}" class="form-check-input cek-bansos"
-                           @checked(in_array($s->id_member, $idSudahDiajukan))>
-                    {{ $s->nama_lengkap }}
-                </label>
+                @php $terpilih = in_array($s->id_member, $idSudahDiajukan); @endphp
+                <div class="siswa-bansos p-3 rounded border {{ $terpilih ? 'bg-success text-white' : 'bg-light' }}"
+                     data-id="{{ $s->id_member }}" role="button" style="cursor:pointer; user-select:none;">
+                    <i class="fas fa-{{ $terpilih ? 'check-circle' : 'circle' }} me-2"></i>{{ $s->nama_lengkap }}
+                </div>
+            @endforeach
+        </div>
+
+        <div id="wadahInputTersembunyi">
+            @foreach ($idSudahDiajukan as $id)
+                <input type="hidden" name="siswa[]" value="{{ $id }}">
             @endforeach
         </div>
 
@@ -40,19 +44,63 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const maks = {{ \App\Http\Controllers\BansosController::MAKS_PER_KELAS }};
-    const checkboxes = document.querySelectorAll('.cek-bansos');
     const label = document.getElementById('jumlahTerpilih');
+    const wadahInput = document.getElementById('wadahInputTersembunyi');
+    let terpilih = new Set(@json($idSudahDiajukan));
 
-    function update() {
-        const dipilih = document.querySelectorAll('.cek-bansos:checked').length;
-        label.textContent = dipilih;
-        checkboxes.forEach(cb => {
-            if (!cb.checked) cb.disabled = dipilih >= maks;
+    function renderInput() {
+        wadahInput.innerHTML = '';
+        terpilih.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'siswa[]';
+            input.value = id;
+            wadahInput.appendChild(input);
+        });
+        label.textContent = terpilih.size;
+    }
+
+    function updateTampilan() {
+        document.querySelectorAll('.siswa-bansos').forEach(el => {
+            const id = parseInt(el.dataset.id);
+            const dipilih = terpilih.has(id);
+            const icon = el.querySelector('i');
+
+            el.classList.toggle('bg-success', dipilih);
+            el.classList.toggle('text-white', dipilih);
+            el.classList.toggle('bg-light', !dipilih);
+            icon.classList.toggle('fa-check-circle', dipilih);
+            icon.classList.toggle('fa-circle', !dipilih);
+
+            // Kalau sudah penuh & baris ini belum dipilih, matikan klik-nya
+            const penuh = terpilih.size >= maks;
+            if (!dipilih && penuh) {
+                el.style.opacity = '0.5';
+                el.style.cursor = 'not-allowed';
+                el.dataset.terkunci = '1';
+            } else {
+                el.style.opacity = '1';
+                el.style.cursor = 'pointer';
+                el.dataset.terkunci = '0';
+            }
         });
     }
 
-    checkboxes.forEach(cb => cb.addEventListener('change', update));
-    update();
+    document.querySelectorAll('.siswa-bansos').forEach(el => {
+        el.addEventListener('click', function () {
+            const id = parseInt(this.dataset.id);
+            if (terpilih.has(id)) {
+                terpilih.delete(id);
+            } else {
+                if (terpilih.size >= maks) return; // sudah penuh, abaikan klik
+                terpilih.add(id);
+            }
+            renderInput();
+            updateTampilan();
+        });
+    });
+
+    updateTampilan();
 });
 </script>
 @endsection
