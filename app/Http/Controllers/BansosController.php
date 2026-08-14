@@ -60,6 +60,11 @@ class BansosController extends Controller
     /** Rekap semua penerima Bansos - khusus Tatib & Kesiswaan. */
     public function rekap(Request $request)
     {
+        $rekapPerKelas = BansosAjuan::selectRaw('kelas, count(*) as jumlah')
+            ->groupBy('kelas')
+            ->orderBy('kelas')
+            ->get();
+
         $rekap = BansosAjuan::with('siswa')
             ->when($request->filled('kelas'), fn ($q) => $q->where('kelas', $request->input('kelas')))
             ->orderBy('kelas')
@@ -69,6 +74,6 @@ class BansosController extends Controller
 
         $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
 
-        return view('bansos.rekap', compact('rekap', 'daftarKelas'));
+        return view('bansos.rekap', compact('rekap', 'rekapPerKelas', 'daftarKelas'));
     }
 }

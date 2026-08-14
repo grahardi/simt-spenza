@@ -7,6 +7,26 @@
     <h1 class="h5 pt-2 mb-0"><i class="fas fa-hand-holding-heart me-2"></i>Rekap Penerima Bansos</h1>
 </div>
 
+<div class="p-4 bg-white rounded shadow mb-3">
+    <h6 class="mb-3"><i class="fas fa-chart-bar me-1"></i> Rekap Jumlah per Kelas</h6>
+    @if ($rekapPerKelas->isEmpty())
+        <p class="text-muted small mb-0">Belum ada data.</p>
+    @else
+        <div class="row g-2">
+            @foreach ($rekapPerKelas as $r)
+                <div class="col-6 col-md-3 col-lg-2">
+                    <a href="{{ route('bansos.rekap', ['kelas' => $r->kelas]) }}"
+                       class="d-block text-center p-2 rounded border text-decoration-none {{ request('kelas') === $r->kelas ? 'bg-primary text-white' : 'bg-light text-dark' }}">
+                        <div class="fw-bold fs-5">{{ $r->jumlah }}</div>
+                        <div class="small">{{ $r->kelas }}</div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+        <p class="text-muted small mt-2 mb-0">Total keseluruhan: <strong>{{ $rekapPerKelas->sum('jumlah') }}</strong> siswa.</p>
+    @endif
+</div>
+
 <div class="px-4 py-3 mb-3 bg-white rounded shadow">
     <form method="GET" class="row g-2 align-items-center">
         <div class="col-md-4">
