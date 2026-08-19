@@ -21,16 +21,13 @@
 @endif
 
 <div class="p-4 bg-white rounded shadow mb-3">
-    <h6 class="mb-2"><i class="fas fa-file-excel me-1"></i> Import dari Excel</h6>
+    <h6 class="mb-2"><i class="fas fa-file-excel me-1"></i> Export ke Excel</h6>
     <p class="text-muted small mb-2">
-        Format: kolom A = Nama Siswa, kolom B = Kelas (contoh: "7 - A"). Baris pertama dianggap header (dilewati).
-        Siswa yang sudah pernah diajukan sebelumnya akan dilewati otomatis.
+        Unduh rekap dalam format Excel. @if (request('kelas')) Sesuai filter kelas yang sedang aktif ({{ request('kelas') }}). @else Semua kelas. @endif
     </p>
-    <form method="POST" action="{{ route('bansos.import') }}" enctype="multipart/form-data" class="d-flex gap-2 flex-wrap">
-        @csrf
-        <input type="file" name="file_excel" accept=".xlsx,.xls,.csv" class="form-control" style="max-width:360px;" required>
-        <button type="submit" class="btn btn-outline-primary text-nowrap"><i class="fas fa-upload me-1"></i> Import</button>
-    </form>
+    <a href="{{ route('bansos.export', request()->only('kelas')) }}" class="btn btn-outline-success">
+        <i class="fas fa-download me-1"></i> Download Excel
+    </a>
 </div>
 
 <div class="p-4 bg-white rounded shadow mb-3">

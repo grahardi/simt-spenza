@@ -77,58 +77,44 @@ class BansosController extends Controller
         return view('bansos.rekap', compact('rekap', 'rekapPerKelas', 'daftarKelas'));
     }
 
-    /** Import Excel (kolom: Nama Siswa, Kelas) - dipakai Tatib/Kesiswaan buat isi massal, bukan lewat klik satu-satu. */
-    public function importExcel(Request $request)
+    /** Export rekap Bansos ke Excel - khusus Tatib/Kesiswaan. */
+    public function exportExcel(Request $request)
     {
-        $request->validate(['file_excel' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120']]);
+        $data = BansosAjuan::with('siswa')
+            ->when($request->filled('kelas'), fn ($q) => $q->where('kelas', $request->input('kelas')))
+            ->orderBy('kelas')
+            ->orderBy('id_siswa')
+            ->get();
 
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($request->file('file_excel')->getRealPath());
-        $baris = $spreadsheet->getActiveSheet()->toArray();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Rekap Bansos');
 
-        // Baris pertama dianggap header, dilewati. Kolom A = Nama, Kolom B = Kelas.
-        $berhasil = 0;
-        $tidakDitemukan = [];
-        $sudahAda = 0;
+        $sheet->fromArray(['No', 'Nama Siswa', 'Kelas', 'Tanggal Diajukan'], null, 'A1');
+        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
 
-        foreach (array_slice($baris, 1) as $r) {
-            $nama = trim((string) ($r[0] ?? ''));
-            $kelas = trim((string) ($r[1] ?? ''));
-            if ($nama === '' || $kelas === '') {
-                continue;
-            }
-
-            $siswa = Siswa::where('kelas', $kelas)->where('nama_lengkap', 'like', '%'.$nama.'%')->first();
-
-            if (!$siswa) {
-                $tidakDitemukan[] = "{$nama} ({$kelas})";
-
-                continue;
-            }
-
-            $ada = BansosAjuan::where('id_siswa', $siswa->id_member)->exists();
-            if ($ada) {
-                $sudahAda++;
-
-                continue;
-            }
-
-            BansosAjuan::create([
-                'id_siswa' => $siswa->id_member,
-                'kelas' => $siswa->kelas,
-                'diajukan_oleh' => Auth::guard('member')->id(),
-                'keterangan' => 'Import Excel',
-            ]);
-            $berhasil++;
+        $baris = 2;
+        foreach ($data as $i => $r) {
+            $sheet->fromArray([
+                $i + 1,
+                $r->siswa->nama_lengkap ?? '-',
+                $r->kelas,
+                $r->created_at->format('d-m-Y'),
+            ], null, 'A'.$baris);
+            $baris++;
         }
 
-        $pesan = "{$berhasil} siswa berhasil diimport.";
-        if ($sudahAda > 0) {
-            $pesan .= " {$sudahAda} dilewati (sudah ada sebelumnya).";
-        }
-        if (!empty($tidakDitemukan)) {
-            $pesan .= ' Tidak ditemukan ('.count($tidakDitemukan).'): '.implode(', ', array_slice($tidakDitemukan, 0, 10)).(count($tidakDitemukan) > 10 ? ', dst.' : '');
+        foreach (range('A', 'D') as $kolom) {
+            $sheet->getColumnDimension($kolom)->setAutoSize(true);
         }
 
-        return back()->with('status', $pesan);
+        $namaFile = 'rekap-bansos-'.now()->format('Ymd-His').'.xlsx';
+        $pathSementara = storage_path('app/tmp-export/'.$namaFile);
+        \Illuminate\Support\Facades\File::ensureDirectoryExists(dirname($pathSementara));
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save($pathSementara);
+
+        return response()->download($pathSementara, $namaFile)->deleteFileAfterSend(true);
     }
 }
