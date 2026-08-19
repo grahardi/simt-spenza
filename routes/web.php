@@ -383,6 +383,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         ->name('bansos.simpan-ajuan')->middleware('role:walikelas');
     Route::get('/bansos/rekap', [\App\Http\Controllers\BansosController::class, 'rekap'])
         ->name('bansos.rekap')->middleware('role:tatib,kesiswaan');
+    Route::post('/bansos/import', [\App\Http\Controllers\BansosController::class, 'importExcel'])
+        ->name('bansos.import')->middleware('role:tatib,kesiswaan');
 
     // Foto Siswa - gallery by kelas + pencarian + upload/ganti foto
     Route::prefix('foto-siswa')->name('foto-siswa.')->middleware('role:guru,walikelas,kepsek,admin,piket')->group(function () {

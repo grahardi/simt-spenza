@@ -76,4 +76,59 @@ class BansosController extends Controller
 
         return view('bansos.rekap', compact('rekap', 'rekapPerKelas', 'daftarKelas'));
     }
+
+    /** Import Excel (kolom: Nama Siswa, Kelas) - dipakai Tatib/Kesiswaan buat isi massal, bukan lewat klik satu-satu. */
+    public function importExcel(Request $request)
+    {
+        $request->validate(['file_excel' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120']]);
+
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($request->file('file_excel')->getRealPath());
+        $baris = $spreadsheet->getActiveSheet()->toArray();
+
+        // Baris pertama dianggap header, dilewati. Kolom A = Nama, Kolom B = Kelas.
+        $berhasil = 0;
+        $tidakDitemukan = [];
+        $sudahAda = 0;
+
+        foreach (array_slice($baris, 1) as $r) {
+            $nama = trim((string) ($r[0] ?? ''));
+            $kelas = trim((string) ($r[1] ?? ''));
+            if ($nama === '' || $kelas === '') {
+                continue;
+            }
+
+            $siswa = Siswa::where('kelas', $kelas)->where('nama_lengkap', 'like', '%'.$nama.'%')->first();
+
+            if (!$siswa) {
+                $tidakDitemukan[] = "{$nama} ({$kelas})";
+
+                continue;
+            }
+
+            $ada = BansosAjuan::where('id_siswa', $siswa->id_member)->exists();
+            if ($ada) {
+                $sudahAda++;
+
+                continue;
+            }
+
+            BansosAjuan::create([
+                'id_siswa' => $siswa->id_member,
+                'kelas' => $siswa->kelas,
+                'diajukan_oleh' => Auth::guard('member')->id(),
+                'keterangan' => 'Import Excel',
+            ]);
+            $berhasil++;
+        }
+
+        $pesan = "{$berhasil} siswa berhasil diimport.";
+        if ($sudahAda > 0) {
+            $pesan .= " {$sudahAda} dilewati (sudah ada sebelumnya).";
+        }
+        if (!empty($tidakDitemukan)) {
+            $pesan .= ' Tidak ditemukan ('.count($tidakDitemukan).'): '.implode(', ', array_slice($tidakDitemukan, 0, 10)).(count($tidakDitemukan) > 10 ? ', dst.' : '');
+        }
+
+        return back()->with('status', $pesan);
+    }
 }

@@ -106,7 +106,7 @@
 
                     // Tombol Upload/Lihat Tugas cuma di baris pertama tiap blok
                     // kelas+mapel, dan cuma kalau sudah ada ajuan (bukan Alfa).
-                    $tampilkanTombolTugas = $blokBaru && $absenTanggalItu;
+                    $tampilkanTombolTugas = $blokBaru && ($absenTanggalItu || $ajuanMenungguAcc);
                     $tugasSudahAda = $tampilkanTombolTugas ? ($tugasTanggalItu[$j->kelas] ?? null) : null;
                 @endphp
                 <div class="jadwal-baris bg-{{ $warna }}">
