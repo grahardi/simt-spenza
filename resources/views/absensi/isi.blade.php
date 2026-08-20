@@ -65,44 +65,34 @@
             <div class="table-responsive">
             <table class="table mb-0 align-middle">
                 <thead>
-                    <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th>Status</th><th style="width:320px">Aksi</th></tr>
+                    <tr><th>No. Induk</th><th>Nama</th><th>Kelas</th><th style="width:340px">Aksi</th></tr>
                 </thead>
                 <tbody>
                     @foreach ($siswa as $s)
+                        @php $statusSekarang = $s->absenHariIni->keterangan ?? null; @endphp
                         <tr style="background:{{ $s->jenis_kelamin === 'P' ? '#fde9ec' : '#e6f7ea' }};">
                             <td>{{ $s->id_member }}</td>
                             <td>{{ $s->nama_lengkap }}</td>
                             <td>{{ $s->kelas }}</td>
                             <td>
-                                @if ($s->absenHariIni)
-                                    <span class="badge-status badge-{{ $s->absenHariIni->keterangan }}">
-                                        {{ $s->absenHariIni->labelKeterangan() }}
-                                    </span>
-                                @else
-                                    <span class="text-muted small">Belum diabsen</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if (! $s->absenHariIni)
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <button type="button" class="btn-absen btn-absen-sakit" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
-                                            <i class="fas fa-thermometer me-1"></i> Sakit
+                                <div class="d-flex flex-wrap gap-1">
+                                    <button type="button" class="btn-absen btn-absen-sakit {{ $statusSekarang === 's' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalSakit{{ $s->id_member }}">
+                                        <i class="fas fa-thermometer me-1"></i> Sakit
+                                    </button>
+                                    <button type="button" class="btn-absen btn-absen-ijin {{ $statusSekarang === 'i' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalIjin{{ $s->id_member }}">
+                                        <i class="fas fa-envelope me-1"></i> Ijin
+                                    </button>
+                                    <button type="button" class="btn-absen btn-absen-dispensasi {{ $statusSekarang === 'd' ? 'btn-absen-aktif' : '' }}" data-bs-toggle="modal" data-bs-target="#modalDispensasi{{ $s->id_member }}">
+                                        <i class="fas fa-bus me-1"></i> Dispensasi
+                                    </button>
+                                    <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="keterangan" value="a">
+                                        <button type="submit" class="btn-absen btn-absen-alfa {{ $statusSekarang === 'a' ? 'btn-absen-aktif' : '' }}">
+                                            <i class="fas fa-times me-1"></i> Alfa
                                         </button>
-                                        <button type="button" class="btn-absen btn-absen-ijin" data-bs-toggle="modal" data-bs-target="#modalIjin{{ $s->id_member }}">
-                                            <i class="fas fa-envelope me-1"></i> Ijin
-                                        </button>
-                                        <button type="button" class="btn-absen btn-absen-dispensasi" data-bs-toggle="modal" data-bs-target="#modalDispensasi{{ $s->id_member }}">
-                                            <i class="fas fa-bus me-1"></i> Dispensasi
-                                        </button>
-                                        <form method="POST" action="{{ route('absensi.tandai', $s) }}" class="d-inline">
-                                            @csrf
-                                            <input type="hidden" name="keterangan" value="a">
-                                            <button type="submit" class="btn-absen btn-absen-alfa">
-                                                <i class="fas fa-times me-1"></i> Alfa
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endif
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -113,7 +103,6 @@
     </div>
 
     @foreach ($siswa as $s)
-        @if (! $s->absenHariIni)
             <div class="modal fade" id="modalSakit{{ $s->id_member }}" tabindex="-1">
                 <div class="modal-dialog">
                     <form method="POST" action="{{ route('absensi.tandai', $s) }}" enctype="multipart/form-data" class="modal-content">
@@ -197,7 +186,6 @@
                     </form>
                 </div>
             </div>
-        @endif
     @endforeach
 @endif
 
