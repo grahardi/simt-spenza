@@ -20,7 +20,6 @@
                 ['label' => 'Ajukan Absen Diri', 'icon' => 'fas fa-user-clock', 'color' => 'red', 'href' => route('ajuan-absen-guru.index')],
                 ['label' => 'Guru Wali', 'icon' => 'fas fa-user-friends', 'color' => 'purple', 'href' => route('guru.wali-siswa')],
                 ['label' => 'Ajuan Surat', 'icon' => 'fas fa-file-signature', 'color' => 'red', 'href' => route('ajuan-surat.index')],
-                ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
                 ['label' => 'Pelanggaran Keagamaan', 'icon' => 'fas fa-mosque', 'color' => 'coral', 'href' => route('pelanggaran-keagamaan.pilih-kelas')],
                 ['label' => 'Peminjaman', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],
                 ['label' => 'Daftar Nama Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'teal', 'href' => route('siswa.index')],
