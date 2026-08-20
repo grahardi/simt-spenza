@@ -38,6 +38,8 @@ class PelanggaranKeagamaanController extends Controller
             'status' => ['required', 'in:ijin,halangan,kabur'],
         ]);
 
+        abort_if($data['status'] === 'halangan' && $siswa->jenis_kelamin !== 'P', 422, 'Status Halangan cuma berlaku untuk siswa perempuan.');
+
         PelanggaranKeagamaan::updateOrCreate(
             ['id_siswa' => $siswa->id_member, 'tanggal' => now('Asia/Jakarta')->toDateString()],
             [

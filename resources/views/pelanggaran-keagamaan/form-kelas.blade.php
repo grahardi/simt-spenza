@@ -42,11 +42,13 @@
                             <input type="hidden" name="status" value="ijin">
                             <button type="submit" class="btn btn-sm {{ $catatan?->status === 'ijin' ? 'btn-info' : 'btn-outline-info' }}">Ijin</button>
                         </form>
-                        <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="status" value="halangan">
-                            <button type="submit" class="btn btn-sm {{ $catatan?->status === 'halangan' ? 'btn-warning' : 'btn-outline-warning' }}">Halangan</button>
-                        </form>
+                        @if ($s->jenis_kelamin === 'P')
+                            <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
+                                @csrf
+                                <input type="hidden" name="status" value="halangan">
+                                <button type="submit" class="btn btn-sm {{ $catatan?->status === 'halangan' ? 'btn-warning' : 'btn-outline-warning' }}">Halangan</button>
+                            </form>
+                        @endif
                         <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="status" value="kabur">
