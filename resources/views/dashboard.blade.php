@@ -21,6 +21,7 @@
                 ['label' => 'Guru Wali', 'icon' => 'fas fa-user-friends', 'color' => 'purple', 'href' => route('guru.wali-siswa')],
                 ['label' => 'Ajuan Surat', 'icon' => 'fas fa-file-signature', 'color' => 'red', 'href' => route('ajuan-surat.index')],
                 ['label' => 'Laporan Keagamaan', 'icon' => 'fas fa-pray', 'color' => 'purple', 'href' => route('keagamaan.index')],
+                ['label' => 'Pelanggaran Keagamaan', 'icon' => 'fas fa-mosque', 'color' => 'coral', 'href' => route('pelanggaran-keagamaan.pilih-kelas')],
                 ['label' => 'Peminjaman', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],
                 ['label' => 'Daftar Nama Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'teal', 'href' => route('siswa.index')],
                 ['label' => 'Foto Siswa', 'icon' => 'fas fa-images', 'color' => 'pink', 'href' => route('foto-siswa.pilih-kelas')],
@@ -104,6 +105,8 @@
             'items' => [
                 ['label' => 'Laporan Hari Ini', 'icon' => 'fas fa-calendar-day', 'color' => 'purple', 'href' => route('keagamaan.rekap')],
                 ['label' => 'Rekap Pelanggar', 'icon' => 'fas fa-list', 'color' => 'coral', 'href' => route('keagamaan.rekap')],
+                ['label' => 'Rekap Harian Ijin/Halangan/Kabur', 'icon' => 'fas fa-mosque', 'color' => 'red', 'href' => route('pelanggaran-keagamaan.rekap-harian')],
+                ['label' => 'Rekap Terbanyak Ijin/Halangan/Kabur', 'icon' => 'fas fa-chart-bar', 'color' => 'amber', 'href' => route('pelanggaran-keagamaan.rekap-terbanyak')],
             ],
         ],
         'kebersihan' => [

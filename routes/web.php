@@ -466,6 +466,19 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     });
 
     // Keagamaan - guru yang punya jadwal jam sholat lapor, role keagamaan lihat rekap
+    // Pelanggaran Keagamaan (sholat) - input oleh guru, rekap khusus admin keagamaan
+    Route::prefix('pelanggaran-keagamaan')->name('pelanggaran-keagamaan.')->middleware('role:guru')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'pilihKelas'])->name('pilih-kelas');
+        Route::get('/{kelas}', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'formKelas'])->name('form-kelas');
+        Route::post('/{siswa}', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'simpan'])->name('simpan');
+    });
+    Route::delete('/pelanggaran-keagamaan/{pelanggaranKeagamaan}', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'hapus'])
+        ->name('pelanggaran-keagamaan.hapus')->middleware('role:guru');
+    Route::prefix('rekap-keagamaan')->name('pelanggaran-keagamaan.')->middleware('role:keagamaan')->group(function () {
+        Route::get('/harian', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'rekapHarian'])->name('rekap-harian');
+        Route::get('/terbanyak', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'rekapTerbanyak'])->name('rekap-terbanyak');
+    });
+
     Route::prefix('keagamaan')->name('keagamaan.')->group(function () {
         Route::get('/', [KeagamaanController::class, 'index'])->name('index')->middleware('role:guru');
         Route::post('/lapor/{siswa}', [KeagamaanController::class, 'simpan'])->name('simpan')->middleware('role:guru');
