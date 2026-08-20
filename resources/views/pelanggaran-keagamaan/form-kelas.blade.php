@@ -23,42 +23,35 @@
     <div class="table-responsive">
     <table class="table table-striped mb-0 align-middle">
         <thead>
-            <tr><th>Nama</th><th>Status Sekarang</th><th class="text-end">Aksi</th></tr>
+            <tr><th>Nama</th><th class="text-end">Aksi</th></tr>
         </thead>
         <tbody>
             @foreach ($siswa as $s)
                 @php $catatan = $sudahDicatatHariIni[$s->id_member] ?? null; @endphp
                 <tr>
                     <td>{{ $s->nama_lengkap }}</td>
-                    <td>
-                        @if ($catatan)
-                            <span class="badge {{ $catatan->status === 'kabur' ? 'bg-danger' : ($catatan->status === 'halangan' ? 'bg-warning text-dark' : 'bg-info text-dark') }}">
-                                {{ $catatan->labelStatus() }}
-                            </span>
-                            <form method="POST" action="{{ route('pelanggaran-keagamaan.hapus', $catatan) }}" class="d-inline ms-1" onsubmit="return confirm('Hapus catatan ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-link text-danger p-0"><i class="fas fa-times"></i></button>
-                            </form>
-                        @else
-                            <span class="text-muted small">-</span>
-                        @endif
-                    </td>
                     <td class="text-end">
                         <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="status" value="ijin">
-                            <button type="submit" class="btn btn-sm btn-outline-info">Ijin</button>
+                            <button type="submit" class="btn btn-sm {{ $catatan?->status === 'ijin' ? 'btn-info' : 'btn-outline-info' }}">Ijin</button>
                         </form>
                         <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="status" value="halangan">
-                            <button type="submit" class="btn btn-sm btn-outline-warning">Halangan</button>
+                            <button type="submit" class="btn btn-sm {{ $catatan?->status === 'halangan' ? 'btn-warning' : 'btn-outline-warning' }}">Halangan</button>
                         </form>
                         <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="status" value="kabur">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Kabur</button>
+                            <button type="submit" class="btn btn-sm {{ $catatan?->status === 'kabur' ? 'btn-danger' : 'btn-outline-danger' }}">Kabur</button>
                         </form>
+                        @if ($catatan)
+                            <form method="POST" action="{{ route('pelanggaran-keagamaan.hapus', $catatan) }}" class="d-inline" onsubmit="return confirm('Hapus catatan ini?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-link text-muted" title="Batalkan catatan"><i class="fas fa-times"></i></button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach
