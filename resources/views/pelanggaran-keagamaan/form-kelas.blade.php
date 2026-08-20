@@ -28,8 +28,13 @@
         <tbody>
             @foreach ($siswa as $s)
                 @php $catatan = $sudahDicatatHariIni[$s->id_member] ?? null; @endphp
-                <tr>
-                    <td>{{ $s->nama_lengkap }}</td>
+                <tr style="background:{{ $s->jenis_kelamin === 'P' ? '#fde9ec' : '#e6f7ea' }};">
+                    <td>
+                        {{ $s->nama_lengkap }}
+                        @if ($s->bukanIslam())
+                            <i class="fas fa-cross text-muted ms-1" title="{{ $s->agama }} - bukan Islam"></i>
+                        @endif
+                    </td>
                     <td class="text-end">
                         <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
                             @csrf

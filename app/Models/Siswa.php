@@ -18,9 +18,17 @@ class Siswa extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin',
+        'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin', 'agama',
         'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku', 'id_guru_wali',
     ];
+
+    /** Non-muslim kalau kolom agama terisi & bukan "Islam" (kosong dianggap belum diisi, bukan ditandai apapun). */
+    public function bukanIslam(): bool
+    {
+        $agama = trim((string) $this->agama);
+
+        return $agama !== '' && strtolower($agama) !== 'islam';
+    }
 
     public function absensi(): HasMany
     {
