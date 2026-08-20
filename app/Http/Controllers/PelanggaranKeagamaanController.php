@@ -33,7 +33,15 @@ class PelanggaranKeagamaanController extends Controller
             ->get()
             ->keyBy('id_siswa');
 
-        return view('pelanggaran-keagamaan.form-kelas', compact('kelas', 'siswa', 'sudahDicatatHariIni'));
+        // Siswa yang sudah tercatat Sakit/Ijin/Alfa/Dispensasi hari ini di
+        // absensi harian - tidak masuk sekolah, jadi tidak perlu ditandai
+        // Ijin/Halangan/Kabur sholat (tombolnya diganti keterangan saja).
+        $absenHariIni = \App\Models\AbsenSiswa::whereIn('id_siswa', $siswa->pluck('id_member'))
+            ->whereDate('tgl_absen', $tanggalHariIni)
+            ->get()
+            ->keyBy('id_siswa');
+
+        return view('pelanggaran-keagamaan.form-kelas', compact('kelas', 'siswa', 'sudahDicatatHariIni', 'absenHariIni'));
     }
 
     /** Simpan/ubah status 1 siswa untuk hari ini (klik tombol Ijin/Halangan/Kabur). */
@@ -44,6 +52,11 @@ class PelanggaranKeagamaanController extends Controller
         ]);
 
         abort_if($data['status'] === 'halangan' && $siswa->jenis_kelamin !== 'P', 422, 'Status Halangan cuma berlaku untuk siswa perempuan.');
+
+        $absenHariIni = \App\Models\AbsenSiswa::where('id_siswa', $siswa->id_member)
+            ->whereDate('tgl_absen', now('Asia/Jakarta')->toDateString())
+            ->first();
+        abort_if($absenHariIni, 422, $siswa->nama_lengkap.' sudah tercatat '.$absenHariIni?->labelKeterangan().' hari ini, tidak perlu dicatat di sini.');
 
         PelanggaranKeagamaan::updateOrCreate(
             ['id_siswa' => $siswa->id_member, 'tanggal' => now('Asia/Jakarta')->toDateString()],

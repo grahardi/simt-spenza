@@ -37,28 +37,35 @@
                         @endif
                     </td>
                     <td class="text-end" style="background-color:{{ $warnaBaris }} !important;">
-                        <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="status" value="ijin">
-                            <button type="submit" class="btn btn-sm {{ $catatan?->status === 'ijin' ? 'btn-info' : 'btn-outline-info' }}">Ijin</button>
-                        </form>
-                        @if ($s->jenis_kelamin === 'P')
+                        @php $absen = $absenHariIni[$s->id_member] ?? null; @endphp
+                        @if ($absen)
+                            <span class="badge-status badge-{{ $absen->keterangan }}">
+                                Terabsen {{ $absen->labelKeterangan() }}
+                            </span>
+                        @else
                             <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
                                 @csrf
-                                <input type="hidden" name="status" value="halangan">
-                                <button type="submit" class="btn btn-sm {{ $catatan?->status === 'halangan' ? 'btn-warning' : 'btn-outline-warning' }}">Halangan</button>
+                                <input type="hidden" name="status" value="ijin">
+                                <button type="submit" class="btn btn-sm {{ $catatan?->status === 'ijin' ? 'btn-info' : 'btn-outline-info' }}">Ijin</button>
                             </form>
-                        @endif
-                        <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="status" value="kabur">
-                            <button type="submit" class="btn btn-sm {{ $catatan?->status === 'kabur' ? 'btn-danger' : 'btn-outline-danger' }}">Kabur</button>
-                        </form>
-                        @if ($catatan)
-                            <form method="POST" action="{{ route('pelanggaran-keagamaan.hapus', $catatan) }}" class="d-inline" onsubmit="return confirm('Hapus catatan ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-link text-muted" title="Batalkan catatan"><i class="fas fa-times"></i></button>
+                            @if ($s->jenis_kelamin === 'P')
+                                <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
+                                    @csrf
+                                    <input type="hidden" name="status" value="halangan">
+                                    <button type="submit" class="btn btn-sm {{ $catatan?->status === 'halangan' ? 'btn-warning' : 'btn-outline-warning' }}">Halangan</button>
+                                </form>
+                            @endif
+                            <form method="POST" action="{{ route('pelanggaran-keagamaan.simpan', $s) }}" class="d-inline">
+                                @csrf
+                                <input type="hidden" name="status" value="kabur">
+                                <button type="submit" class="btn btn-sm {{ $catatan?->status === 'kabur' ? 'btn-danger' : 'btn-outline-danger' }}">Kabur</button>
                             </form>
+                            @if ($catatan)
+                                <form method="POST" action="{{ route('pelanggaran-keagamaan.hapus', $catatan) }}" class="d-inline" onsubmit="return confirm('Hapus catatan ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-link text-muted" title="Batalkan catatan"><i class="fas fa-times"></i></button>
+                                </form>
+                            @endif
                         @endif
                     </td>
                 </tr>
