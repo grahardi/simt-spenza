@@ -14,9 +14,16 @@
 </div>
 
 <div class="px-4 py-3 mb-3 bg-white rounded shadow">
-    <form method="GET" class="d-flex gap-2 align-items-center">
+    <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
         <label class="form-label mb-0">Tanggal</label>
         <input type="date" name="tanggal" class="form-control" style="max-width:200px" value="{{ $tanggal }}" onchange="this.form.submit()">
+        <label class="form-label mb-0 ms-2">Status</label>
+        <select name="status" class="form-select" style="max-width:180px" onchange="this.form.submit()">
+            <option value="">Semua</option>
+            @foreach (\App\Models\PelanggaranKeagamaan::LABEL_STATUS as $kode => $label)
+                <option value="{{ $kode }}" @selected($status === $kode)>{{ $label }}</option>
+            @endforeach
+        </select>
     </form>
 </div>
 

@@ -477,6 +477,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::prefix('rekap-keagamaan')->name('pelanggaran-keagamaan.')->middleware('role:keagamaan')->group(function () {
         Route::get('/harian', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'rekapHarian'])->name('rekap-harian');
         Route::get('/terbanyak', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'rekapTerbanyak'])->name('rekap-terbanyak');
+        Route::get('/aksi', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'aksi'])->name('aksi');
+        Route::post('/aksi/{siswa}', [\App\Http\Controllers\PelanggaranKeagamaanController::class, 'simpanTindakan'])->name('simpan-tindakan');
     });
 
     Route::prefix('keagamaan')->name('keagamaan.')->group(function () {

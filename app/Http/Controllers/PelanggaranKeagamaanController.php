@@ -83,15 +83,17 @@ class PelanggaranKeagamaanController extends Controller
     public function rekapHarian(Request $request)
     {
         $tanggal = $request->input('tanggal', now('Asia/Jakarta')->toDateString());
+        $status = $request->input('status'); // kosong = semua
 
         $rekap = PelanggaranKeagamaan::with('siswa')
             ->whereDate('tanggal', $tanggal)
+            ->when($status, fn ($q) => $q->where('status', $status))
             ->orderBy('kelas')
             ->orderBy('id_siswa')
-            ->paginate(20)
+            ->paginate(10)
             ->withQueryString();
 
-        return view('pelanggaran-keagamaan.rekap-harian', compact('rekap', 'tanggal'));
+        return view('pelanggaran-keagamaan.rekap-harian', compact('rekap', 'tanggal', 'status'));
     }
 
     /** Rekap Terbanyak - siswa dengan jumlah Ijin/Halangan/Kabur terbanyak (akumulasi semua tanggal). */
@@ -104,9 +106,68 @@ class PelanggaranKeagamaanController extends Controller
             ->groupBy('id_siswa', 'kelas')
             ->orderByDesc('jumlah')
             ->with('siswa')
-            ->paginate(20)
+            ->paginate(10)
             ->withQueryString();
 
         return view('pelanggaran-keagamaan.rekap-terbanyak', compact('rekap', 'status'));
+    }
+
+    /**
+     * Aksi Pelanggaran - siswa yang Kabur-nya sudah kelipatan 3 (3, 6, 9, dst)
+     * dan belum ditindak untuk kelipatan itu. Setelah ditindak, tombol hilang
+     * sampai kelipatan 3 berikutnya tercapai lagi.
+     */
+    public function aksi(Request $request)
+    {
+        $jumlahKaburSemua = PelanggaranKeagamaan::selectRaw('id_siswa, kelas, count(*) as jumlah_kabur')
+            ->where('status', 'kabur')
+            ->groupBy('id_siswa', 'kelas')
+            ->having('jumlah_kabur', '>=', 3)
+            ->orderByDesc('jumlah_kabur')
+            ->get();
+
+        $idSiswa = $jumlahKaburSemua->pluck('id_siswa');
+        $tindakanTerbanyak = \App\Models\PelanggaranKeagamaanTindakan::whereIn('id_siswa', $idSiswa)
+            ->selectRaw('id_siswa, count(*) as jumlah_tindakan')
+            ->groupBy('id_siswa')
+            ->get()
+            ->keyBy('id_siswa');
+
+        $siswaMap = Siswa::whereIn('id_member', $idSiswa)->get()->keyBy('id_member');
+
+        $daftar = $jumlahKaburSemua->map(function ($r) use ($tindakanTerbanyak, $siswaMap) {
+            $ambangSekarang = intdiv($r->jumlah_kabur, 3); // sudah lewati kelipatan 3 keberapa
+            $sudahDitindak = $tindakanTerbanyak[$r->id_siswa]->jumlah_tindakan ?? 0;
+
+            return (object) [
+                'siswa' => $siswaMap[$r->id_siswa] ?? null,
+                'id_siswa' => $r->id_siswa,
+                'kelas' => $r->kelas,
+                'jumlah_kabur' => $r->jumlah_kabur,
+                'perluTindakan' => $ambangSekarang > $sudahDitindak,
+            ];
+        });
+
+        return view('pelanggaran-keagamaan.aksi', compact('daftar'));
+    }
+
+    public function simpanTindakan(Request $request, Siswa $siswa)
+    {
+        $data = $request->validate([
+            'keterangan' => ['required', 'string', 'max:500'],
+        ]);
+
+        $jumlahKaburSekarang = PelanggaranKeagamaan::where('id_siswa', $siswa->id_member)
+            ->where('status', 'kabur')
+            ->count();
+
+        \App\Models\PelanggaranKeagamaanTindakan::create([
+            'id_siswa' => $siswa->id_member,
+            'jumlah_kabur_saat_tindak' => $jumlahKaburSekarang,
+            'keterangan' => $data['keterangan'],
+            'ditindak_oleh' => Auth::guard('member')->id(),
+        ]);
+
+        return back()->with('status', 'Tindakan untuk '.$siswa->nama_lengkap.' berhasil disimpan.');
     }
 }

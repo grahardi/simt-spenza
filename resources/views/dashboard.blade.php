@@ -103,10 +103,10 @@
             'title' => 'Menu Keagamaan',
             'theme' => 'coral',
             'items' => [
-                ['label' => 'Laporan Hari Ini', 'icon' => 'fas fa-calendar-day', 'color' => 'purple', 'href' => route('keagamaan.rekap')],
-                ['label' => 'Rekap Pelanggar', 'icon' => 'fas fa-list', 'color' => 'coral', 'href' => route('keagamaan.rekap')],
+                ['label' => 'Laporan/Rekap Sholat', 'icon' => 'fas fa-calendar-day', 'color' => 'purple', 'href' => route('keagamaan.rekap')],
                 ['label' => 'Rekap Harian Ijin/Halangan/Kabur', 'icon' => 'fas fa-mosque', 'color' => 'red', 'href' => route('pelanggaran-keagamaan.rekap-harian')],
                 ['label' => 'Rekap Terbanyak Ijin/Halangan/Kabur', 'icon' => 'fas fa-chart-bar', 'color' => 'amber', 'href' => route('pelanggaran-keagamaan.rekap-terbanyak')],
+                ['label' => 'Aksi Pelanggaran', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('pelanggaran-keagamaan.aksi')],
             ],
         ],
         'kebersihan' => [
