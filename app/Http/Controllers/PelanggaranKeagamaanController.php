@@ -12,7 +12,12 @@ class PelanggaranKeagamaanController extends Controller
     /** List kelas dalam bentuk kartu - dipilih guru untuk mulai catat. */
     public function pilihKelas()
     {
-        $daftarKelas = Siswa::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
+        $daftarKelas = [];
+        foreach (['7', '8', '9'] as $tingkat) {
+            foreach (str_split('ABCDEFGHIJ') as $huruf) {
+                $daftarKelas[] = "{$tingkat} - {$huruf}";
+            }
+        }
 
         return view('pelanggaran-keagamaan.pilih-kelas', compact('daftarKelas'));
     }
