@@ -21,7 +21,7 @@
 
 <div class="bg-white rounded shadow overflow-hidden">
     <div class="table-responsive">
-    <table class="table table-striped mb-0 align-middle">
+    <table class="table mb-0 align-middle">
         <thead>
             <tr><th>Nama</th><th class="text-end">Aksi</th></tr>
         </thead>
