@@ -324,4 +324,18 @@ class AbsensiSiswaController extends Controller
 
         return view('absensi.telat', ['data' => $data, 'tanggal' => $tanggal]);
     }
+
+    /** Hapus catatan keterlambatan - dipakai piket kalau salah catat/perlu dibatalkan. */
+    public function hapusTelat(Keterlambatan $keterlambatan)
+    {
+        $nama = $keterlambatan->siswa->nama_lengkap ?? 'siswa';
+        $keterlambatan->delete();
+
+        \App\Models\LogAktivitas::catat(
+            'keterlambatan',
+            (\Illuminate\Support\Facades\Auth::guard('member')->user()->nama ?? 'Seseorang').' menghapus catatan keterlambatan '.$nama.'.'
+        );
+
+        return back()->with('status', 'Catatan keterlambatan '.$nama.' berhasil dihapus.');
+    }
 }

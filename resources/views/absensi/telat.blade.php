@@ -29,13 +29,21 @@
     @else
         <div class="table-responsive">
             <table class="table table-striped">
-                <thead><tr><th>No</th><th>Nama</th><th>Kelas</th></tr></thead>
+                <thead><tr><th>No</th><th>Nama</th><th>Kelas</th>@if (auth('member')->user()->hasRole('piket'))<th class="text-end">Aksi</th>@endif</tr></thead>
                 <tbody>
                     @foreach ($data as $i => $row)
                         <tr>
                             <td>{{ $data->firstItem() + $i }}</td>
                             <td>{{ $row->siswa->nama_lengkap ?? '-' }}</td>
                             <td>{{ $row->siswa->kelas ?? '-' }}</td>
+                            @if (auth('member')->user()->hasRole('piket'))
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('absensi.telat.hapus', $row) }}" onsubmit="return confirm('Hapus catatan keterlambatan {{ $row->siswa->nama_lengkap ?? 'siswa ini' }}?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

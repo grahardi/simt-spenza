@@ -126,6 +126,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
         Route::get('/telat', [AbsensiSiswaController::class, 'listTelat'])->name('telat.list')
             ->middleware('role:piket,kesiswaan');
+        Route::delete('/telat/{keterlambatan}', [AbsensiSiswaController::class, 'hapusTelat'])->name('telat.hapus')
+            ->middleware('role:piket');
         Route::get('/telat-isi', [AbsensiSiswaController::class, 'isiKeterlambatan'])->name('telat-isi')
             ->middleware('role:piket');
 
