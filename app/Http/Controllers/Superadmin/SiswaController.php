@@ -42,6 +42,15 @@ class SiswaController extends Controller
             'id_member' => ['required', 'string', 'max:20', 'unique:datasiswa,id_member'],
         ]) + $this->validated($request);
 
+        // Kolom-kolom ini tidak ada di form (dikelola terpisah / opsional), tapi
+        // ternyata beberapa punya NOT NULL tanpa default di database - dikasih
+        // nilai kosong/null di sini biar tidak error "doesn't have a default value".
+        $data += [
+            'whatsapp' => '',
+            'foto_profil' => '',
+            'id_guru_wali' => null,
+        ];
+
         Siswa::create($data);
 
         return redirect()->route('superadmin.siswa.index')->with('status', 'Siswa baru berhasil ditambahkan.');
