@@ -14,11 +14,11 @@ class Siswa extends Model
 {
     protected $table = 'datasiswa';
     protected $primaryKey = 'id_member';
-    public $incrementing = true;
+    public $incrementing = false; // id_member diisi manual (Nomor Induk), bukan auto-increment
     public $timestamps = false;
 
     protected $fillable = [
-        'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin', 'agama',
+        'id_member', 'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin', 'agama',
         'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku', 'id_guru_wali',
     ];
 

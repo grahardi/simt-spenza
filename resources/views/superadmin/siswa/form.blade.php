@@ -12,6 +12,15 @@
 
             <div class="row">
                 <div class="form-group col-md-4">
+                    <label>Nomor Induk (ID) <span class="text-danger">*</span></label>
+                    @if ($siswa->exists)
+                        <input type="text" class="form-control" value="{{ $siswa->id_member }}" disabled>
+                        <small class="text-muted">Nomor Induk tidak bisa diubah setelah data dibuat.</small>
+                    @else
+                        <input type="text" name="id_member" class="form-control" value="{{ old('id_member') }}" required>
+                    @endif
+                </div>
+                <div class="form-group col-md-4">
                     <label>NISN</label>
                     <input type="text" name="nisn" class="form-control" value="{{ old('nisn', $siswa->nisn) }}">
                 </div>

@@ -38,7 +38,11 @@ class SiswaController extends Controller
 
     public function store(Request $request)
     {
-        Siswa::create($this->validated($request));
+        $data = $request->validate([
+            'id_member' => ['required', 'string', 'max:20', 'unique:datasiswa,id_member'],
+        ]) + $this->validated($request);
+
+        Siswa::create($data);
 
         return redirect()->route('superadmin.siswa.index')->with('status', 'Siswa baru berhasil ditambahkan.');
     }
