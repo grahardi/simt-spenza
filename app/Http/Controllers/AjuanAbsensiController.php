@@ -155,6 +155,17 @@ class AjuanAbsensiController extends Controller
         $absenSekarang = AbsenSiswa::where('id_siswa', $ajuan->id_siswa)
             ->whereDate('tgl_absen', $ajuan->tgl_absen)
             ->first();
+
+        // Cegah Alfa menimpa Sakit/Ijin yang sudah ada (misal dari ajuan WA
+        // yang sudah di-ACC lebih dulu) - Sakit/Ijin harus tetap diutamakan
+        // di atas Alfa, sama seperti proteksi di Isi Absensi manual.
+        if ($ajuan->keterangan === 'a' && $absenSekarang && in_array($absenSekarang->keterangan, ['s', 'i'], true)) {
+            $labelSekarang = $absenSekarang->keterangan === 's' ? 'Sakit' : 'Ijin';
+            $nama = $ajuan->siswa->nama_lengkap ?? 'siswa';
+
+            return back()->with('status_gagal', $nama.' sudah tercatat '.$labelSekarang.' hari ini - ajuan Alfa ini tidak bisa di-ACC (tidak boleh menimpa Sakit/Ijin). Tolak ajuan ini kalau memang sudah tidak relevan.');
+        }
+
         $statusBerubah = !$absenSekarang || $absenSekarang->keterangan !== $ajuan->keterangan;
 
         AbsenSiswa::updateOrCreate(

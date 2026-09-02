@@ -15,6 +15,10 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
+@if (session('status_gagal'))
+    <div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-1"></i> {{ session('status_gagal') }}</div>
+@endif
+
 <div class="px-4 py-3 mb-3 bg-white rounded shadow">
     <form method="GET" class="d-flex align-items-center gap-2 flex-wrap">
         <label class="form-label mb-0"><i class="fas fa-calendar-alt me-1"></i> Tanggal</label>
