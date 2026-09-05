@@ -25,9 +25,15 @@
                                 <p class="small text-muted mb-1 text-truncate" title="{{ $h['nama_file_asli'] }}">
                                     {{ $h['nama_file_asli'] }}
                                 </p>
-                                <p class="small mb-1">Kecocokan: <strong>{{ $h['skor'] }}%</strong></p>
+                                <p class="small mb-1">
+                                    @if ($h['terdeteksi'])
+                                        Kecocokan: <strong>{{ $h['skor'] }}%</strong>
+                                    @else
+                                        <span class="text-danger">Tidak terdeteksi</span> - pilih manual
+                                    @endif
+                                </p>
                                 <select name="konfirmasi[{{ $i }}][id_siswa]" class="form-control form-control-sm mb-2">
-                                    <option value="">- Tidak ada -</option>
+                                    <option value="">- Pilih siswa -</option>
                                     @foreach ($siswaKelas as $s)
                                         <option value="{{ $s->id_member }}" @selected($s->id_member == $h['id_siswa_tebakan'])>
                                             {{ $s->nama_lengkap }}
@@ -37,7 +43,7 @@
                                 <input type="hidden" name="konfirmasi[{{ $i }}][path_sementara]" value="{{ $h['path_sementara'] }}">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input cek-simpan" id="cek{{ $i }}"
-                                           data-index="{{ $i }}" @checked($h['skor'] >= 60)>
+                                           data-index="{{ $i }}" @checked($h['terdeteksi'])>
                                     <label class="custom-control-label" for="cek{{ $i }}">Simpan foto ini</label>
                                 </div>
                             </div>

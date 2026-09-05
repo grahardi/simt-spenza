@@ -30,6 +30,9 @@ class UploadFotoKelasController extends Controller
      * di kelas itu berdasarkan KEMIRIPAN NAMA (nama file vs nama_lengkap),
      * simpan sementara, tampilkan halaman preview buat dikonfirmasi.
      */
+    /** Skor minimum (%) supaya dianggap "terdeteksi" - di bawah ini dropdown dikosongkan, bukan asal pilih yang paling tinggi meski sama-sama lemah. */
+    const AMBANG_SKOR_TERDETEKSI = 45;
+
     public function unggah(Request $request)
     {
         $request->validate([
@@ -62,10 +65,16 @@ class UploadFotoKelasController extends Controller
 
             $pathSementara = $file->store($folderSementara, 'public');
 
+            // Kalau skor terlalu rendah, jangan asal pilih yang paling tinggi
+            // di antara kandidat yang sama-sama lemah - anggap "tidak terdeteksi"
+            // (dropdown kosong), biar admin yang pilih manual sendiri.
+            $terdeteksi = $skorTerbaik >= self::AMBANG_SKOR_TERDETEKSI;
+
             $hasil[] = [
                 'path_sementara' => $pathSementara,
                 'nama_file_asli' => $file->getClientOriginalName(),
-                'id_siswa_tebakan' => $terbaik?->id_member,
+                'id_siswa_tebakan' => $terdeteksi ? $terbaik?->id_member : null,
+                'terdeteksi' => $terdeteksi,
                 'skor' => round($skorTerbaik, 1),
             ];
         }
