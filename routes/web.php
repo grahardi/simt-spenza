@@ -273,6 +273,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
         Route::get('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'edit'])->name('pengaturan-sistem.edit');
         Route::put('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'update'])->name('pengaturan-sistem.update');
+
+        Route::get('/upload-foto-kelas', [\App\Http\Controllers\Superadmin\UploadFotoKelasController::class, 'form'])->name('upload-foto-kelas.form');
+        Route::post('/upload-foto-kelas/unggah', [\App\Http\Controllers\Superadmin\UploadFotoKelasController::class, 'unggah'])->name('upload-foto-kelas.unggah');
+        Route::post('/upload-foto-kelas/simpan', [\App\Http\Controllers\Superadmin\UploadFotoKelasController::class, 'simpanKonfirmasi'])->name('upload-foto-kelas.simpan-konfirmasi');
         Route::get('/whatsapp-log', [\App\Http\Controllers\Superadmin\WhatsappLogController::class, 'index'])->name('whatsapp-log.index');
 
         Route::get('/siswa', [SuperadminSiswaController::class, 'index'])->name('siswa.index');

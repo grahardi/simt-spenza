@@ -144,6 +144,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.upload-foto-kelas.form') }}" class="nav-link {{ request()->routeIs('superadmin.upload-foto-kelas.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-images"></i>
+                            <p>Upload Foto Kelas</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.whatsapp-log.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-log.*') ? 'active' : '' }}">
                             <i class="nav-icon fab fa-whatsapp"></i>
                             <p>Log WhatsApp</p>

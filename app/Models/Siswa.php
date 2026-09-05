@@ -67,13 +67,20 @@ class Siswa extends Model
      * URL foto profil siswa. File-nya ada di storage/app/public/siswa/,
      * nama filenya persis isi kolom foto_profil.
      */
+    /**
+     * URL foto profil siswa. Bisa 2 format: nama file saja (lama, otomatis
+     * dicari di storage/app/public/siswa/), atau path lengkap termasuk folder
+     * (baru, dari Upload Foto Kelas - contoh: "foto2026/17927.jpg").
+     */
     public function getFotoUrlAttribute(): ?string
     {
         if (empty($this->foto_profil)) {
             return null;
         }
 
-        return \Illuminate\Support\Facades\Storage::url('siswa/'.$this->foto_profil);
+        $path = str_contains($this->foto_profil, '/') ? $this->foto_profil : 'siswa/'.$this->foto_profil;
+
+        return \Illuminate\Support\Facades\Storage::url($path);
     }
 
     /** Inisial 2 huruf untuk avatar default kalau belum ada foto, mis. "Ginanjar Rahardi" -> "GR". */
