@@ -53,7 +53,7 @@
 {{-- Modal HARUS di luar <table>/<tbody> - taruh di dalamnya bikin HTML tidak valid dan modal gagal berfungsi --}}
 @foreach ($absensi as $a)
     <div class="modal fade" id="modalAbsen{{ $a->id_absen_siswa }}" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <form method="POST" action="{{ route('superadmin.absensi.update', $a) }}" class="modal-content">
                 @csrf @method('PUT')
                 <div class="modal-header">
@@ -64,7 +64,7 @@
                     @if ($a->gambar)
                         <label class="d-block mb-1">Foto Surat</label>
                         <a href="{{ Storage::url($a->gambar) }}" target="_blank">
-                            <img src="{{ Storage::url($a->gambar) }}" class="img-fluid rounded border mb-3" style="max-height:280px;">
+                            <img src="{{ Storage::url($a->gambar) }}" class="img-fluid rounded border mb-3" style="max-height:560px;">
                         </a>
                     @else
                         <p class="text-muted small">Tidak ada foto surat untuk catatan ini.</p>
