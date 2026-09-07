@@ -421,7 +421,11 @@ class WhatsappConversationService
 
         try {
             $binary = base64_decode($gambarBase64);
-            $namaFile = 'surat-'.$sesi->id_siswa_dipilih.'-'.now()->format('Ymd-His').'.jpg';
+            $namaSiswa = \App\Models\Siswa::find($sesi->id_siswa_dipilih)?->nama_lengkap;
+            $namaFile = \App\Models\AbsenSiswa::namaFileSurat(
+                $sesi->jenis_dipilih ?? 's', $sesi->id_siswa_dipilih, $namaSiswa,
+                now('Asia/Jakarta')->toDateString(), 'jpg'
+            );
             Storage::disk('public')->put('ajuan-whatsapp/'.$namaFile, $binary);
 
             $sesi->update(['langkah' => 'tunggu_selfie', 'foto_sementara' => 'ajuan-whatsapp/'.$namaFile]);

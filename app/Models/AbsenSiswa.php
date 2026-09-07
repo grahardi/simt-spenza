@@ -34,4 +34,20 @@ class AbsenSiswa extends Model
     {
         return self::KETERANGAN_LABEL[$this->keterangan] ?? 'Hadir';
     }
+
+    /**
+     * Nama file surat/foto yang bisa DIBACA MANUSIA tanpa perlu database -
+     * antisipasi kalau MySQL rusak/hilang, filenya sendiri sudah cukup jelas
+     * statusnya apa, siswa siapa, dan tanggal berapa.
+     * Contoh: "Sakit_17927_Budi-Santoso_2026-08-20.jpg"
+     */
+    public static function namaFileSurat(string $keterangan, ?int $idSiswa, ?string $namaSiswa, string $tanggal, string $ekstensi): string
+    {
+        $label = self::KETERANGAN_LABEL[$keterangan] ?? 'Absen';
+        $namaBersih = $namaSiswa ? preg_replace('/[^A-Za-z0-9]+/', '-', trim($namaSiswa)) : 'siswa';
+        $namaBersih = trim($namaBersih, '-');
+        $waktuSingkat = now('Asia/Jakarta')->format('His'); // biar tidak tertimpa kalau ada >1 file di hari yang sama
+
+        return "{$label}_{$idSiswa}_{$namaBersih}_{$tanggal}_{$waktuSingkat}.{$ekstensi}";
+    }
 }

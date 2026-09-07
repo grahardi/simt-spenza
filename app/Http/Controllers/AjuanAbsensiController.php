@@ -89,7 +89,12 @@ class AjuanAbsensiController extends Controller
         ];
 
         if ($request->hasFile('foto')) {
-            $atribut['gambar'] = $request->file('foto')->store('ajuan-absensi', 'public');
+            $file = $request->file('foto');
+            $namaFile = \App\Models\AbsenSiswa::namaFileSurat(
+                $data['keterangan'], $siswa->id_member, $siswa->nama_lengkap,
+                now('Asia/Jakarta')->toDateString(), $file->getClientOriginalExtension() ?: 'jpg'
+            );
+            $atribut['gambar'] = $file->storeAs('ajuan-absensi', $namaFile, 'public');
         }
 
         AjuanAbsensi::updateOrCreate(
