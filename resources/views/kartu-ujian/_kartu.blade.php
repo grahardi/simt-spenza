@@ -1,0 +1,58 @@
+@php
+    $siswa = $p->siswa;
+    $tanggalCetak = now('Asia/Jakarta')->translatedFormat('d F Y');
+    $pengaturanSurat = \App\Models\PengaturanSurat::first();
+@endphp
+<div class="card">
+    <div class="kop-teks">
+        PEMERINTAH KABUPATEN MALANG<br>
+        SMP NEGERI 1 TUREN
+    </div>
+
+    <div class="title-kartu">Kartu Peserta Sumatif Akhir Jenjang</div>
+
+    <div class="content">
+        <table>
+            <tr>
+                <td class="label">Nama</td><td class="separator">:</td>
+                <td class="value">{{ $siswa->nama_lengkap }}</td>
+            </tr>
+            <tr>
+                <td class="label">User</td><td class="separator">:</td>
+                <td class="value">{{ $siswa->id_member }}</td>
+            </tr>
+            @if ($tampilkanPassword)
+                <tr>
+                    <td class="label">Password</td><td class="separator">:</td>
+                    <td class="value">{{ $p->password ?? '-' }}</td>
+                </tr>
+            @endif
+            <tr>
+                <td class="label">Kls / Ruang</td><td class="separator">:</td>
+                <td class="value">{{ $siswa->kelas }} / {{ $p->ruang ?? '-' }}</td>
+            </tr>
+            @if ($p->nokursi)
+                <tr>
+                    <td class="label">No. Kursi</td><td class="separator">:</td>
+                    <td class="value">{{ $p->nokursi }}</td>
+                </tr>
+            @endif
+        </table>
+    </div>
+
+    <div class="footer-kartu">
+        <div class="foto-box">
+            @if ($siswa->foto_url)
+                <img src="{{ $siswa->foto_url }}" alt="Foto {{ $siswa->nama_lengkap }}">
+            @else
+                <div style="font-size: 7pt; color: #666; line-height: 1.2;">FOTO<br>3 x 4</div>
+            @endif
+        </div>
+        <div class="ttd">
+            <p>Turen, {{ $tanggalCetak }}</p>
+            <p>Kepala Sekolah,</p>
+            <div class="ttd-nama">{{ $pengaturanSurat->kepsek_nama ?? '-' }}</div>
+            <p>NIP. {{ $pengaturanSurat->kepsek_nip ?? '-' }}</p>
+        </div>
+    </div>
+</div>

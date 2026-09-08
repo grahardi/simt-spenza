@@ -114,6 +114,7 @@
             'theme' => 'teal',
             'items' => [
                 ['label' => 'Kelola Soal', 'icon' => 'fas fa-file-alt', 'color' => 'teal', 'href' => route('soal-upload.index')],
+                ['label' => 'Kartu Ujian & Denah', 'icon' => 'fas fa-id-card', 'color' => 'purple', 'href' => route('kartu-ujian.index')],
             ],
         ],
         'kebersihan' => [

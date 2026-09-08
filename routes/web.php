@@ -206,6 +206,20 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::delete('/{soalUpload}', [\App\Http\Controllers\SoalUploadController::class, 'hapus'])->name('hapus')->middleware('role:guru,adminsoal');
     });
 
+    // Kartu Ujian & Denah Tempat Duduk - khusus Admin Soal
+    Route::prefix('kartu-ujian')->name('kartu-ujian.')->middleware('role:adminsoal')->group(function () {
+        Route::get('/', [\App\Http\Controllers\KartuUjianController::class, 'index'])->name('index');
+        Route::get('/import', [\App\Http\Controllers\KartuUjianController::class, 'formImport'])->name('import');
+        Route::get('/template-excel', [\App\Http\Controllers\KartuUjianController::class, 'templateExcel'])->name('template-excel');
+        Route::post('/proses-import', [\App\Http\Controllers\KartuUjianController::class, 'prosesImport'])->name('proses-import');
+        Route::get('/cetak-kartu', [\App\Http\Controllers\KartuUjianController::class, 'cetakKartu'])->name('cetak-kartu');
+        Route::get('/cetak-label', [\App\Http\Controllers\KartuUjianController::class, 'cetakLabel'])->name('cetak-label');
+        Route::get('/cetak-semua-denah', [\App\Http\Controllers\KartuUjianController::class, 'cetakSemuaDenah'])->name('cetak-semua-denah');
+        Route::get('/pengaturan-denah', [\App\Http\Controllers\KartuUjianController::class, 'pengaturanDenah'])->name('pengaturan-denah');
+        Route::post('/pengaturan-denah', [\App\Http\Controllers\KartuUjianController::class, 'simpanPengaturanDenah'])->name('simpan-pengaturan-denah');
+        Route::get('/denah/{ruang}', [\App\Http\Controllers\KartuUjianController::class, 'denah'])->name('denah');
+    });
+
     Route::prefix('pendampingan')->name('pendampingan.')->middleware('role:guru')->group(function () {
         Route::get('/', [\App\Http\Controllers\PendampinganController::class, 'index'])->name('index');
         Route::get('/galeri', [\App\Http\Controllers\PendampinganController::class, 'galeri'])->name('galeri');
