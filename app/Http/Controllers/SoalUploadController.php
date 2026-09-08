@@ -10,10 +10,18 @@ use Illuminate\Support\Str;
 
 class SoalUploadController extends Controller
 {
+    const DAFTAR_MAPEL = [
+        'TIK' => 'Informatika', 'IPA' => 'IPA', 'BING' => 'Bahasa Inggris',
+        'IPS' => 'IPS', 'PAI' => 'Pend. Agama Islam', 'SENI' => 'Seni Budaya',
+        'BIN' => 'Bahasa Indonesia', 'PJOK' => 'PJOK', 'PKN' => 'Pend. Pancasila',
+        'BADER' => 'Bahasa Daerah', 'PAK' => 'Pend. Agama Kristen',
+        'MAT' => 'Matematika', 'PRAKARYA' => 'Prakarya',
+    ];
+
     /** Form upload - guru pilih kelas + mapel, upload file docx. */
     public function form()
     {
-        return view('soal-upload.form');
+        return view('soal-upload.form', ['daftarMapel' => self::DAFTAR_MAPEL]);
     }
 
     /**
@@ -25,7 +33,7 @@ class SoalUploadController extends Controller
     {
         $data = $request->validate([
             'kelas' => ['required', 'in:7,8,9'],
-            'mapel' => ['required', 'string', 'max:100'],
+            'mapel' => ['required', 'string', 'in:'.implode(',', self::DAFTAR_MAPEL)],
             'file_soal' => ['required', 'file', 'mimes:docx', 'max:20480'],
         ]);
 

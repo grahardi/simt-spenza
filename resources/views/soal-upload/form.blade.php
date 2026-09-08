@@ -33,7 +33,12 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Mata Pelajaran</label>
-            <input type="text" name="mapel" class="form-control" placeholder="contoh: IPA" required>
+            <select name="mapel" class="form-select" required>
+                <option value="">- Pilih mapel -</option>
+                @foreach ($daftarMapel as $label)
+                    <option value="{{ $label }}">{{ $label }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="mb-3">
             <label class="form-label">File Soal (.docx)</label>
