@@ -196,6 +196,14 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::post('/surat-tu/{ajuanSurat}/tandai-bayar', [\App\Http\Controllers\SuratTuguController::class, 'tandaiBayar'])->name('surat-tu.tandai-bayar');
 
     // Pendampingan - catatan kegiatan pendampingan guru wali ke anak walinya
+    // Upload Soal - guru upload per kelas+mapel, Admin Soal lihat semua+download
+    Route::prefix('soal-upload')->name('soal-upload.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SoalUploadController::class, 'form'])->name('form')->middleware('role:guru');
+        Route::post('/', [\App\Http\Controllers\SoalUploadController::class, 'store'])->name('store')->middleware('role:guru');
+        Route::get('/kelola', [\App\Http\Controllers\SoalUploadController::class, 'index'])->name('index')->middleware('role:adminsoal');
+        Route::get('/download-semua', [\App\Http\Controllers\SoalUploadController::class, 'downloadSemua'])->name('download-semua')->middleware('role:adminsoal');
+    });
+
     Route::prefix('pendampingan')->name('pendampingan.')->middleware('role:guru')->group(function () {
         Route::get('/', [\App\Http\Controllers\PendampinganController::class, 'index'])->name('index');
         Route::get('/galeri', [\App\Http\Controllers\PendampinganController::class, 'galeri'])->name('galeri');
