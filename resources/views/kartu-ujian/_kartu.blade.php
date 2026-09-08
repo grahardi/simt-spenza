@@ -4,9 +4,8 @@
     $pengaturanSurat = \App\Models\PengaturanSurat::first();
 @endphp
 <div class="card">
-    <div class="kop-teks">
-        PEMERINTAH KABUPATEN MALANG<br>
-        SMP NEGERI 1 TUREN
+    <div class="kop-img">
+        <img src="{{ asset('images/kop-sekolah.png') }}" alt="Kop SMP Negeri 1 Turen">
     </div>
 
     <div class="title-kartu">Kartu Peserta Sumatif Akhir Jenjang</div>
@@ -51,6 +50,7 @@
         <div class="ttd">
             <p>Turen, {{ $tanggalCetak }}</p>
             <p>Kepala Sekolah,</p>
+            <img src="{{ asset('images/ttd-kepsek.png') }}" class="img-ttd" alt="TTD">
             <div class="ttd-nama">{{ $pengaturanSurat->kepsek_nama ?? '-' }}</div>
             <p>NIP. {{ $pengaturanSurat->kepsek_nip ?? '-' }}</p>
         </div>
