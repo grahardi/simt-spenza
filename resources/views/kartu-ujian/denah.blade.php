@@ -10,14 +10,17 @@
         .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
         .info-ruang { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; }
         .grid-denah { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; justify-items: center; }
-        .meja { width: 45mm; height: 55mm; border: 2px solid #333; display: flex; flex-direction: column; align-items: center; padding: 5px; box-sizing: border-box; background: #fff; position: relative; }
-        .meja .foto { width: 25mm; height: 30mm; border: 1px solid #ccc; background: #eee; margin-bottom: 5px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .meja .foto img { width: 100%; height: 100%; object-fit: cover; }
-        .meja .user-id { font-size: 9pt; font-weight: bold; color: #d35400; }
-        .meja .nama { font-size: 8pt; text-align: center; font-weight: bold; margin-top: 2px; line-height: 1.1; }
-        .meja .kelas { font-size: 7pt; margin-top: auto; }
+        .meja { width: 45mm; border: 2px solid #333; box-sizing: border-box; background: #fff; }
+        .label-meja { text-align: center; font-weight: bold; font-size: 8pt; background: #eee; border-bottom: 1px solid #333; padding: 2px 0; }
+        .meja-isi { display: flex; }
+        .kartu-mini { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 4px 2px; border-right: 1px dashed #999; }
+        .kartu-mini:last-child { border-right: none; }
+        .kartu-mini .foto { width: 18mm; height: 24mm; border: 1px solid #ccc; background: #eee; margin-bottom: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .kartu-mini .foto img { width: 100%; height: 100%; object-fit: cover; }
+        .kartu-mini .user-id { font-size: 7.5pt; font-weight: bold; color: #d35400; }
+        .kartu-mini .nama { font-size: 6.5pt; text-align: center; font-weight: bold; margin-top: 1px; line-height: 1.05; }
         .label-pintu { grid-column: span 4; text-align: center; background: #000; color: #fff; padding: 5px; font-weight: bold; margin-bottom: 20px; }
-        .empty-seat { width: 45mm; height: 55mm; border: 1px dashed #ccc; }
+        .empty-seat { width: 45mm; height: 40mm; border: 1px dashed #ccc; }
         @media print {
             body { background: none; padding: 0; }
             .no-print { display: none; }

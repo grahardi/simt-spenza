@@ -119,7 +119,7 @@ class KartuUjianController extends Controller
         return view('kartu-ujian.cetak-label', ['peserta' => $this->dataPeserta()]);
     }
 
-    /** Fitur 3: Denah 1 ruang - grid zigzag 4x4 (maks 16 peserta). */
+    /** Fitur 3: Denah 1 ruang - grid zigzag, 1 meja bisa isi 2 siswa (nokursi sama). */
     public function denah(string $ruang)
     {
         $tipeDenah = PengaturanDenah::where('ruang', $ruang)->value('tipe') ?? 'kiri';
@@ -131,9 +131,11 @@ class KartuUjianController extends Controller
             ->sortBy(fn ($p) => (int) $p->siswa->id_member)
             ->values();
 
-        $gridDenah = $this->buatGridZigzag($peserta, $tipeDenah);
+        $hasilGrid = $this->buatGridZigzag($peserta, $tipeDenah);
+        $gridDenah = $hasilGrid['grid'];
+        $kelompokMeja = $hasilGrid['kelompokMeja'];
 
-        return view('kartu-ujian.denah', compact('ruang', 'tipeDenah', 'peserta', 'gridDenah'));
+        return view('kartu-ujian.denah', compact('ruang', 'tipeDenah', 'peserta', 'gridDenah', 'kelompokMeja'));
     }
 
     /** Fitur 4: Cetak semua denah ruang sekaligus (1 halaman per ruang). */
@@ -150,11 +152,14 @@ class KartuUjianController extends Controller
                 ->sortBy(fn ($p) => (int) $p->siswa->id_member)
                 ->values();
 
+            $hasilGrid = $this->buatGridZigzag($peserta, $tipeDenah);
+
             return (object) [
                 'ruang' => $ruang,
                 'tipeDenah' => $tipeDenah,
                 'peserta' => $peserta,
-                'gridDenah' => $this->buatGridZigzag($peserta, $tipeDenah),
+                'gridDenah' => $hasilGrid['grid'],
+                'kelompokMeja' => $hasilGrid['kelompokMeja'],
             ];
         });
 
@@ -185,18 +190,28 @@ class KartuUjianController extends Controller
     }
 
     /** Grid zigzag 4x4 (16 kursi) - sama logikanya dengan skrip PHP asli. */
+    /**
+     * Grid zigzag - 1 MEJA (kotak grid) berisi SEKELOMPOK siswa yang nokursi-nya
+     * SAMA (biasanya 2 siswa berbagi 1 meja fisik). Jadi grid dihitung dari
+     * JUMLAH MEJA (nokursi unik), bukan jumlah siswa - tiap sel bisa isi 1-2 kartu.
+     */
     private function buatGridZigzag($peserta, string $tipeDenah): array
     {
-        $peserta = $peserta->values();
+        // Kelompokkan per nokursi - urutan numerik (nokursi '1','2',...,'10' bukan alfabet).
+        $kelompokMeja = $peserta->groupBy('nokursi')
+            ->sortBy(fn ($grup, $nokursi) => (int) $nokursi)
+            ->values();
+
         $totalKolom = 4;
-        $totalBaris = 4;
+        $totalMeja = $kelompokMeja->count();
+        $totalBaris = (int) ceil($totalMeja / $totalKolom);
         $grid = [];
 
         for ($i = 0; $i < $totalBaris; $i++) {
             $barisIndex = [];
             for ($j = 0; $j < $totalKolom; $j++) {
                 $index = ($i * $totalKolom) + $j;
-                $barisIndex[] = $index < $peserta->count() ? $index : null;
+                $barisIndex[] = $index < $totalMeja ? $index : null;
             }
 
             if ($tipeDenah === 'kiri') {
@@ -212,6 +227,6 @@ class KartuUjianController extends Controller
             $grid[] = $barisIndex;
         }
 
-        return $grid;
+        return ['grid' => $grid, 'kelompokMeja' => $kelompokMeja];
     }
 }
