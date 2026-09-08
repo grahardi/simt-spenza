@@ -48,6 +48,12 @@
                             <a href="{{ Storage::url($s->path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-download me-1"></i> Download
                             </a>
+                            <form method="POST" action="{{ route('soal-upload.hapus', $s) }}" class="d-inline" onsubmit="return confirm('Hapus soal ini? File akan dipindah ke arsip (tidak benar-benar hilang).')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash me-1"></i> Hapus
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

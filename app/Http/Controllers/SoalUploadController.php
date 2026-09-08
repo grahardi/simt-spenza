@@ -59,6 +59,24 @@ class SoalUploadController extends Controller
         return back()->with('status', 'Soal Kelas '.$data['kelas'].' - '.$data['mapel'].' berhasil diupload.'.($existing ? ' File lama otomatis dipindah ke arsip.' : ''));
     }
 
+    /** Hapus (sebenarnya cuma dipindah ke arsip, tidak benar-benar hilang) - admin bisa semua, guru cuma miliknya sendiri. */
+    public function hapus(SoalUpload $soalUpload)
+    {
+        $member = Auth::guard('member')->user();
+        $iniMiliknya = $member->dataGuru && $soalUpload->id_guru === $member->dataGuru->id_guru;
+
+        abort_unless($member->hasRole('adminsoal') || $iniMiliknya, 403, 'Anda tidak berhak menghapus soal ini.');
+
+        if (Storage::disk('public')->exists($soalUpload->path)) {
+            $namaArsip = 'soal/arsip/'.now()->format('Ymd-His').'_'.basename($soalUpload->path);
+            Storage::disk('public')->move($soalUpload->path, $namaArsip);
+        }
+
+        $soalUpload->delete();
+
+        return back()->with('status', 'Soal Kelas '.$soalUpload->kelas.' - '.$soalUpload->mapel.' dihapus (file dipindah ke arsip, tidak benar-benar hilang).');
+    }
+
     /** List semua soal yang sudah terupload - khusus Admin Soal. */
     public function index()
     {
