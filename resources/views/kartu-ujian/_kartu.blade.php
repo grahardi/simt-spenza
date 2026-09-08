@@ -1,6 +1,7 @@
 @php
     $siswa = $p->siswa;
-    $tanggalCetak = now('Asia/Jakarta')->translatedFormat('d F Y');
+    $pengaturanKartu = \App\Models\PengaturanKartuUjian::ambil();
+    $tanggalCetak = $pengaturanKartu->tanggal->translatedFormat('d F Y');
     $pengaturanSurat = \App\Models\PengaturanSurat::first();
 @endphp
 <div class="card">
@@ -8,7 +9,7 @@
         <img src="{{ asset('images/kop-sekolah.png') }}" alt="Kop SMP Negeri 1 Turen">
     </div>
 
-    <div class="title-kartu">Kartu Peserta Sumatif Akhir Jenjang</div>
+    <div class="title-kartu">{{ $pengaturanKartu->judul }}</div>
 
     <div class="content">
         <table>

@@ -11,7 +11,7 @@
     .content table { width: 100%; font-size: 8.5pt; border-collapse: collapse; }
     .content td { padding: 1.5px 0; vertical-align: top; }
     .label { width: 30%; } .separator { width: 5%; } .value { width: 65%; font-weight: bold; }
-    .footer-kartu { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; font-size: 7.5pt; padding-top: 5px; }
+    .footer-kartu { margin-top: auto; display: flex; justify-content: center; align-items: flex-end; gap: 15px; font-size: 7.5pt; padding-top: 5px; }
     .foto-box { width: 60px; height: 80px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; background: #f9f9f9; }
     .foto-box img { width: 100%; height: 100%; object-fit: cover; }
     .ttd { text-align: center; width: 160px; position: relative; }

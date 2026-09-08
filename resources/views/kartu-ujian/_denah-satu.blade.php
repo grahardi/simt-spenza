@@ -1,6 +1,8 @@
+@php $pengaturanKartu = \App\Models\PengaturanKartuUjian::ambil(); @endphp
 <div class="header">
-    <h3 class="m-0">DENAH TEMPAT DUDUK PESERTA UJIAN</h3>
+    <h3 class="m-0">{{ strtoupper($pengaturanKartu->judul) }}</h3>
     <h2 style="margin:5px 0">SMP NEGERI 1 TUREN</h2>
+    <p class="m-0" style="font-size:10pt;">{{ $pengaturanKartu->tanggal->translatedFormat('d F Y') }}</p>
 </div>
 <div class="info-ruang">
     <span>RUANG: {{ $ruang }}</span>

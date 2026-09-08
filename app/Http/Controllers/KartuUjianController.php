@@ -11,6 +11,26 @@ use Illuminate\Support\Facades\Storage;
 
 class KartuUjianController extends Controller
 {
+    /** Halaman atur judul kartu/meja & tanggal - tampil di Kartu Ujian, Label Meja, dan Denah. */
+    public function pengaturanKartu()
+    {
+        $pengaturan = \App\Models\PengaturanKartuUjian::ambil();
+
+        return view('kartu-ujian.pengaturan-kartu', compact('pengaturan'));
+    }
+
+    public function simpanPengaturanKartu(Request $request)
+    {
+        $data = $request->validate([
+            'judul' => ['required', 'string', 'max:150'],
+            'tanggal' => ['required', 'date'],
+        ]);
+
+        \App\Models\PengaturanKartuUjian::ambil()->update($data);
+
+        return back()->with('status', 'Pengaturan berhasil disimpan.');
+    }
+
     /** Menu utama - link ke import, cetak kartu, label, denah, pengaturan denah. */
     public function index()
     {

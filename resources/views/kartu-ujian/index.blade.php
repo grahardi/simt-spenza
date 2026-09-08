@@ -38,6 +38,10 @@
         <span class="menu-icon"><i class="fas fa-cogs"></i></span>
         <span class="menu-title">Pengaturan Tipe Denah</span>
     </a>
+    <a href="{{ route('kartu-ujian.pengaturan-kartu') }}" class="menu-card bg-coral">
+        <span class="menu-icon"><i class="fas fa-heading"></i></span>
+        <span class="menu-title">Pengaturan Judul &amp; Tanggal</span>
+    </a>
 </div>
 
 @if ($daftarRuang->isNotEmpty())

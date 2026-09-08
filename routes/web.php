@@ -217,6 +217,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/cetak-semua-denah', [\App\Http\Controllers\KartuUjianController::class, 'cetakSemuaDenah'])->name('cetak-semua-denah');
         Route::get('/pengaturan-denah', [\App\Http\Controllers\KartuUjianController::class, 'pengaturanDenah'])->name('pengaturan-denah');
         Route::post('/pengaturan-denah', [\App\Http\Controllers\KartuUjianController::class, 'simpanPengaturanDenah'])->name('simpan-pengaturan-denah');
+        Route::get('/pengaturan-kartu', [\App\Http\Controllers\KartuUjianController::class, 'pengaturanKartu'])->name('pengaturan-kartu');
+        Route::post('/pengaturan-kartu', [\App\Http\Controllers\KartuUjianController::class, 'simpanPengaturanKartu'])->name('simpan-pengaturan-kartu');
         Route::get('/denah/{ruang}', [\App\Http\Controllers\KartuUjianController::class, 'denah'])->name('denah');
     });
 
