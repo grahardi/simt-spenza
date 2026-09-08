@@ -64,7 +64,18 @@ class SoalUploadController extends Controller
     {
         $daftar = SoalUpload::with('guru')->orderBy('kelas')->orderBy('mapel')->get();
 
-        return view('soal-upload.index', compact('daftar'));
+        return view('soal-upload.index', ['daftar' => $daftar, 'semua' => true]);
+    }
+
+    /** Guru cuma lihat soal yang dia sendiri upload (bukan punya guru lain). */
+    public function milikSaya()
+    {
+        $idGuru = Auth::guard('member')->user()->dataGuru?->id_guru;
+        abort_if(!$idGuru, 403, 'Akun ini tidak terhubung ke data guru manapun.');
+
+        $daftar = SoalUpload::with('guru')->where('id_guru', $idGuru)->orderBy('kelas')->orderBy('mapel')->get();
+
+        return view('soal-upload.index', ['daftar' => $daftar, 'semua' => false]);
     }
 
     /** Download semua soal sekaligus dalam 1 file ZIP - khusus Admin Soal. */
