@@ -202,6 +202,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::post('/', [\App\Http\Controllers\SoalUploadController::class, 'store'])->name('store')->middleware('role:guru');
         Route::get('/milik-saya', [\App\Http\Controllers\SoalUploadController::class, 'milikSaya'])->name('milik-saya')->middleware('role:guru');
         Route::get('/kelola', [\App\Http\Controllers\SoalUploadController::class, 'index'])->name('index')->middleware('role:adminsoal');
+        Route::get('/list-upload', [\App\Http\Controllers\SoalUploadController::class, 'listUpload'])->name('list-upload')->middleware('role:adminsoal');
         Route::get('/download-semua', [\App\Http\Controllers\SoalUploadController::class, 'downloadSemua'])->name('download-semua')->middleware('role:adminsoal');
         Route::delete('/{soalUpload}', [\App\Http\Controllers\SoalUploadController::class, 'hapus'])->name('hapus')->middleware('role:guru,adminsoal');
     });

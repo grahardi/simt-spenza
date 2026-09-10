@@ -32,7 +32,7 @@
         <table class="table table-striped mb-0 align-middle">
             <thead>
                 <tr>
-                    <th>Kelas</th><th>Mapel</th>
+                    <th>Kelas</th><th>Mapel</th><th>Tipe</th>
                     @if ($semua)<th>Guru</th>@endif
                     <th>Terakhir Diupload</th><th class="text-end">Aksi</th>
                 </tr>
@@ -42,6 +42,7 @@
                     <tr>
                         <td>{{ $s->kelas }}</td>
                         <td>{{ $s->mapel }}</td>
+                        <td><span class="badge {{ $s->tipe === 'cetak' ? 'bg-warning text-dark' : 'bg-info text-dark' }}">{{ \App\Models\SoalUpload::LABEL_TIPE[$s->tipe] }}</span></td>
                         @if ($semua)<td>{{ $s->guru->nama ?? '-' }}</td>@endif
                         <td>{{ $s->updated_at->translatedFormat('d M Y, H:i') }}</td>
                         <td class="text-end">

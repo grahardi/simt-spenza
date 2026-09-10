@@ -34,14 +34,15 @@ class SoalUploadController extends Controller
         $data = $request->validate([
             'kelas' => ['required', 'in:7,8,9'],
             'mapel' => ['required', 'string', 'in:'.implode(',', self::DAFTAR_MAPEL)],
+            'tipe' => ['required', 'in:aplikasi,cetak'],
             'file_soal' => ['required', 'file', 'mimes:docx', 'max:20480'],
         ]);
 
         $mapelSlug = Str::slug($data['mapel'], '');
-        $namaFile = 'kelas'.$data['kelas'].'_'.$mapelSlug.'.docx';
+        $namaFile = 'kelas'.$data['kelas'].'_'.$mapelSlug.'_'.$data['tipe'].'.docx';
         $pathBaru = 'soal/'.$namaFile;
 
-        $existing = SoalUpload::where('kelas', $data['kelas'])->where('mapel', $data['mapel'])->first();
+        $existing = SoalUpload::where('kelas', $data['kelas'])->where('mapel', $data['mapel'])->where('tipe', $data['tipe'])->first();
 
         if ($existing && Storage::disk('public')->exists($existing->path)) {
             // Arsipkan file lama - kasih timestamp biar tidak tertimpa arsip sebelumnya.
@@ -52,11 +53,32 @@ class SoalUploadController extends Controller
         $request->file('file_soal')->storeAs('soal', $namaFile, 'public');
 
         SoalUpload::updateOrCreate(
-            ['kelas' => $data['kelas'], 'mapel' => $data['mapel']],
+            ['kelas' => $data['kelas'], 'mapel' => $data['mapel'], 'tipe' => $data['tipe']],
             ['path' => $pathBaru, 'id_guru' => Auth::guard('member')->user()->dataGuru?->id_guru]
         );
 
-        return back()->with('status', 'Soal Kelas '.$data['kelas'].' - '.$data['mapel'].' berhasil diupload.'.($existing ? ' File lama otomatis dipindah ke arsip.' : ''));
+        $labelTipe = SoalUpload::LABEL_TIPE[$data['tipe']];
+
+        return back()->with('status', 'Soal Kelas '.$data['kelas'].' - '.$data['mapel'].' ('.$labelTipe.') berhasil diupload.'.($existing ? ' File lama otomatis dipindah ke arsip.' : ''));
+    }
+
+    /** List Upload - tab per angkatan (7/8/9), tabel Mapel x [Aplikasi, Cetak] status upload. */
+    public function listUpload()
+    {
+        $semua = SoalUpload::all()->groupBy('kelas');
+
+        $dataPerKelas = [];
+        foreach (['7', '8', '9'] as $kelas) {
+            $baris = [];
+            foreach (self::DAFTAR_MAPEL as $labelMapel) {
+                $aplikasi = $semua->get($kelas, collect())->first(fn ($s) => $s->mapel === $labelMapel && $s->tipe === 'aplikasi');
+                $cetak = $semua->get($kelas, collect())->first(fn ($s) => $s->mapel === $labelMapel && $s->tipe === 'cetak');
+                $baris[] = ['mapel' => $labelMapel, 'aplikasi' => $aplikasi, 'cetak' => $cetak];
+            }
+            $dataPerKelas[$kelas] = $baris;
+        }
+
+        return view('soal-upload.list-upload', compact('dataPerKelas'));
     }
 
     /** Hapus (sebenarnya cuma dipindah ke arsip, tidak benar-benar hilang) - admin bisa semua, guru cuma miliknya sendiri. */

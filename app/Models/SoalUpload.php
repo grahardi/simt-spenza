@@ -9,7 +9,9 @@ class SoalUpload extends Model
 {
     protected $table = 'soal_upload';
 
-    protected $fillable = ['kelas', 'mapel', 'path', 'id_guru'];
+    protected $fillable = ['kelas', 'mapel', 'tipe', 'path', 'id_guru'];
+
+    const LABEL_TIPE = ['aplikasi' => 'Format Aplikasi', 'cetak' => 'Format Cetak'];
 
     public function guru(): BelongsTo
     {

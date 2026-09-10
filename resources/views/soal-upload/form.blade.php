@@ -47,6 +47,14 @@
             </select>
         </div>
         <div class="mb-3">
+            <label class="form-label">Format Pengumpulan</label>
+            <select name="tipe" class="form-select" required>
+                <option value="aplikasi" selected>Format Aplikasi (default)</option>
+                <option value="cetak">Format Cetak</option>
+            </select>
+            <small class="text-muted">Format Cetak masih baru, belum aktif digunakan - kalau tidak yakin, biarkan "Format Aplikasi".</small>
+        </div>
+        <div class="mb-3">
             <label class="form-label">File Soal (.docx)</label>
             <input type="file" name="file_soal" accept=".docx" class="form-control" required>
             <small class="text-muted">Kalau sudah pernah upload untuk kelas+mapel yang sama, file lama otomatis dipindah ke arsip (tidak hilang).</small>
