@@ -203,6 +203,8 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/milik-saya', [\App\Http\Controllers\SoalUploadController::class, 'milikSaya'])->name('milik-saya')->middleware('role:guru');
         Route::get('/kelola', [\App\Http\Controllers\SoalUploadController::class, 'index'])->name('index')->middleware('role:adminsoal');
         Route::get('/list-upload', [\App\Http\Controllers\SoalUploadController::class, 'listUpload'])->name('list-upload')->middleware('role:adminsoal');
+        Route::post('/berkas-lain', [\App\Http\Controllers\SoalUploadController::class, 'simpanBerkasLain'])->name('simpan-berkas-lain')->middleware('role:adminsoal');
+        Route::delete('/berkas-lain/{berkasLain}', [\App\Http\Controllers\SoalUploadController::class, 'hapusBerkasLain'])->name('hapus-berkas-lain')->middleware('role:adminsoal');
         Route::get('/download-semua', [\App\Http\Controllers\SoalUploadController::class, 'downloadSemua'])->name('download-semua')->middleware('role:adminsoal');
         Route::delete('/{soalUpload}', [\App\Http\Controllers\SoalUploadController::class, 'hapus'])->name('hapus')->middleware('role:guru,adminsoal');
     });

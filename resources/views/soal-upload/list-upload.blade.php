@@ -7,6 +7,13 @@
     <h1 class="h5 pt-2 mb-0"><i class="fas fa-th-list me-2"></i>List Upload Soal</h1>
 </div>
 
+@if (session('status'))
+    <div class="alert alert-success">{{ session('status') }}</div>
+@endif
+@if (session('status_gagal'))
+    <div class="alert alert-danger">{{ session('status_gagal') }}</div>
+@endif
+
 <ul class="nav nav-tabs mb-3" role="tablist">
     @foreach (['7', '8', '9'] as $i => $kelas)
         <li class="nav-item">
@@ -20,6 +27,11 @@
 <div class="tab-content">
     @foreach (['7', '8', '9'] as $i => $kelas)
         <div class="tab-pane fade {{ $i === 0 ? 'show active' : '' }}" id="tabKelas{{ $kelas }}">
+            <div class="mb-2 text-end">
+                <a href="{{ route('soal-upload.download-semua', ['kelas' => $kelas]) }}" class="btn btn-sm btn-outline-success">
+                    <i class="fas fa-download me-1"></i> Download Semua Kelas {{ $kelas }} (ZIP)
+                </a>
+            </div>
             <div class="bg-white rounded shadow overflow-hidden">
                 <div class="table-responsive">
                 <table class="table table-striped mb-0 align-middle">

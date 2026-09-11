@@ -81,6 +81,35 @@ class SoalUploadController extends Controller
         return view('soal-upload.list-upload', compact('dataPerKelas'));
     }
 
+    /** Upload berkas bebas (tanpa kategori kelas/mapel) - keterangan diisi manual, khusus Admin Soal. */
+    public function simpanBerkasLain(Request $request)
+    {
+        $data = $request->validate([
+            'keterangan' => ['required', 'string', 'max:150'],
+            'file_berkas' => ['required', 'file', 'max:20480'],
+        ]);
+
+        $file = $request->file('file_berkas');
+        $path = $file->store('soal/berkas-lain', 'public');
+
+        \App\Models\BerkasLain::create([
+            'keterangan' => $data['keterangan'],
+            'nama_file_asli' => $file->getClientOriginalName(),
+            'path' => $path,
+            'diupload_oleh' => Auth::guard('member')->id(),
+        ]);
+
+        return back()->with('status', 'Berkas "'.$data['keterangan'].'" berhasil diupload.');
+    }
+
+    public function hapusBerkasLain(\App\Models\BerkasLain $berkasLain)
+    {
+        Storage::disk('public')->delete($berkasLain->path);
+        $berkasLain->delete();
+
+        return back()->with('status', 'Berkas dihapus.');
+    }
+
     /** Hapus (sebenarnya cuma dipindah ke arsip, tidak benar-benar hilang) - admin bisa semua, guru cuma miliknya sendiri. */
     public function hapus(SoalUpload $soalUpload)
     {
@@ -103,8 +132,9 @@ class SoalUploadController extends Controller
     public function index()
     {
         $daftar = SoalUpload::with('guru')->orderBy('kelas')->orderBy('mapel')->get();
+        $daftarBerkasLain = \App\Models\BerkasLain::orderByDesc('created_at')->get();
 
-        return view('soal-upload.index', ['daftar' => $daftar, 'semua' => true]);
+        return view('soal-upload.index', ['daftar' => $daftar, 'semua' => true, 'daftarBerkasLain' => $daftarBerkasLain]);
     }
 
     /** Guru cuma lihat soal yang dia sendiri upload (bukan punya guru lain). */
@@ -115,18 +145,19 @@ class SoalUploadController extends Controller
 
         $daftar = SoalUpload::with('guru')->where('id_guru', $idGuru)->orderBy('kelas')->orderBy('mapel')->get();
 
-        return view('soal-upload.index', ['daftar' => $daftar, 'semua' => false]);
+        return view('soal-upload.index', ['daftar' => $daftar, 'semua' => false, 'daftarBerkasLain' => collect()]);
     }
 
     /** Download semua soal sekaligus dalam 1 file ZIP - khusus Admin Soal. */
-    public function downloadSemua()
+    public function downloadSemua(Request $request)
     {
-        $daftar = SoalUpload::all();
+        $kelas = $request->query('kelas');
+        $daftar = SoalUpload::when($kelas, fn ($q) => $q->where('kelas', $kelas))->get();
         if ($daftar->isEmpty()) {
-            return back()->with('status_gagal', 'Belum ada soal yang terupload.');
+            return back()->with('status_gagal', 'Belum ada soal yang terupload'.($kelas ? ' untuk Kelas '.$kelas : '').'.');
         }
 
-        $namaZip = 'soal-semua-'.now()->format('Ymd-His').'.zip';
+        $namaZip = 'soal-'.($kelas ? 'kelas'.$kelas.'-' : 'semua-').now()->format('Ymd-His').'.zip';
         $pathZip = storage_path('app/tmp-zip/'.$namaZip);
         \Illuminate\Support\Facades\File::ensureDirectoryExists(dirname($pathZip));
 

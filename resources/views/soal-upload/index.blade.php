@@ -63,4 +63,42 @@
         </div>
     @endif
 </div>
+
+@if ($semua)
+    <div class="p-4 bg-white rounded shadow mt-3">
+        <h6 class="mb-3"><i class="fas fa-paperclip me-1"></i> Berkas Lain</h6>
+        <p class="text-muted small">Upload bebas tanpa kategori kelas/mapel - untuk berkas admin atau lainnya, keterangan diisi manual. Hanya Admin Soal yang bisa lihat/upload bagian ini.</p>
+
+        <form method="POST" action="{{ route('soal-upload.simpan-berkas-lain') }}" enctype="multipart/form-data" class="d-flex flex-wrap gap-2 mb-3">
+            @csrf
+            <input type="text" name="keterangan" class="form-control" placeholder="Keterangan, contoh: Berkas Admin" style="max-width:260px" required>
+            <input type="file" name="file_berkas" class="form-control" style="max-width:260px" required>
+            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-upload me-1"></i> Upload</button>
+        </form>
+
+        @if ($daftarBerkasLain->isEmpty())
+            <p class="text-muted small mb-0">Belum ada berkas lain yang diupload.</p>
+        @else
+            <ul class="list-group">
+                @foreach ($daftarBerkasLain as $b)
+                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <strong>{{ $b->keterangan }}</strong>
+                            <span class="text-muted small d-block">{{ $b->nama_file_asli }} &middot; {{ $b->created_at->translatedFormat('d M Y, H:i') }}</span>
+                        </div>
+                        <div>
+                            <a href="{{ Storage::url($b->path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i> Download
+                            </a>
+                            <form method="POST" action="{{ route('soal-upload.hapus-berkas-lain', $b) }}" class="d-inline" onsubmit="return confirm('Hapus berkas ini?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </div>
+@endif
 @endsection
