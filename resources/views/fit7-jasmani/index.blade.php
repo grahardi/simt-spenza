@@ -240,8 +240,10 @@
                             <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Kelas</label>
                             <select id="inputKelas" onchange="muatSiswaKelas()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm bg-white">
                                 <option value="">- Pilih kelas -</option>
-                                @foreach (['A','B','C','D','E','F','G','H','I','J'] as $huruf)
-                                    <option value="7 - {{ $huruf }}">7 - {{ $huruf }}</option>
+                                @foreach (['7','8','9'] as $tingkat)
+                                    @foreach (['A','B','C','D','E','F','G','H','I','J'] as $huruf)
+                                        <option value="{{ $tingkat }} - {{ $huruf }}">{{ $tingkat }} - {{ $huruf }}</option>
+                                    @endforeach
                                 @endforeach
                             </select>
                         </div>
@@ -254,9 +256,10 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Usia Siswa</label>
                             <select id="inputUsia" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm bg-white">
-                                <option value="13">13 Tahun (Kelas 7 SMP)</option>
-                                <option value="14">14 Tahun (Kelas 7/8 SMP)</option>
-                                <option value="15">15 Tahun (Kelas 7/8/9 SMP)</option>
+                                <option value="">- Pilih usia -</option>
+                                @foreach (range(11, 17) as $usia)
+                                    <option value="{{ $usia }}">{{ $usia }} Tahun</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -748,16 +751,9 @@
             const namaTerpilih = document.getElementById('inputNama').value;
             const siswa = daftarSiswaKelasIni.find(s => s.nama === namaTerpilih);
             if (siswa && siswa.usia) {
-                const usiaBulat = Math.floor(Number(siswa.usia)); // pengaman ganda - pastikan bilangan bulat, bukan desimal
-                const selectUsia = document.getElementById('inputUsia');
-                const adaOpsi = Array.from(selectUsia.options).some(o => o.value == usiaBulat);
-                if (!adaOpsi) {
-                    const opsiBaru = document.createElement('option');
-                    opsiBaru.value = usiaBulat;
-                    opsiBaru.textContent = `${usiaBulat} Tahun (otomatis dari tanggal lahir)`;
-                    selectUsia.insertBefore(opsiBaru, selectUsia.firstChild);
-                }
-                selectUsia.value = usiaBulat;
+                let usiaBulat = Math.floor(Number(siswa.usia));
+                usiaBulat = Math.min(17, Math.max(11, usiaBulat)); // batasi ke rentang wajar 11-17, jangan bikin opsi baru di luar itu
+                document.getElementById('inputUsia').value = usiaBulat;
             }
         }
         let myChart = null;
