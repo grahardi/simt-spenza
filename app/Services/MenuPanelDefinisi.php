@@ -27,7 +27,7 @@ class MenuPanelDefinisi
                 ['label' => 'Foto Siswa', 'icon' => 'fas fa-images', 'color' => 'pink', 'href' => route('foto-siswa.pilih-kelas')],
                 // Khusus guru mapel PJO - link ke Aplikasi Kebugaran Jasmani (FIT7).
                 ...($member && $member->dataGuru && str_contains(strtoupper((string) $member->dataGuru->jabatan), 'PJO')
-                    ? [['label' => 'Kebugaran Jasmani (FIT7)', 'icon' => 'fas fa-heartbeat', 'color' => 'green', 'href' => route('fit7-jasmani.index')]]
+                    ? [['label' => 'Kebugaran Jasmani (FIT TEST)', 'icon' => 'fas fa-heartbeat', 'color' => 'green', 'href' => route('fit7-jasmani.index')]]
                     : []),
             ],
         ],

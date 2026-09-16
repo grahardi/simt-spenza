@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kebugaran Jasmani Kelas 7 SMP</title>
+    <title>Aplikasi Kebugaran Jasmani - FIT TEST</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -81,18 +81,18 @@
     <nav class="landing-nav">
       <div class="brand">
         <div class="brand-icon"><i class="fas fa-heartbeat"></i></div>
-        <div>FIT7 JASMANI<div class="school">SMPN 1 TUREN</div></div>
+        <div>FIT TEST<div class="school">SMPN 1 TUREN</div></div>
       </div>
       <a class="cta cta-secondary" href="#app"><i class="fas fa-arrow-down"></i> Lihat Aplikasi</a>
     </nav>
 
     <section class="hero">
       <div>
-        <div class="eyebrow"><i class="fas fa-bolt"></i> ASESMEN PJOK KELAS 7</div>
+        <div class="eyebrow"><i class="fas fa-bolt"></i> ASESMEN PJOK SMP</div>
         <h1>Ukur Kebugaran.<br><span>Pahami Perkembangan.</span></h1>
         <p>
           Aplikasi digital untuk membantu peserta didik dan guru melakukan asesmen
-          kebugaran jasmani kelas 7 secara praktis, terstruktur, dan mudah dipantau.
+          kebugaran jasmani secara praktis, terstruktur, dan mudah dipantau.
           Dilengkapi kalkulator individu, rekap kelas, stopwatch, serta materi dan standar.
         </p>
         <div class="hero-actions">
@@ -151,7 +151,7 @@
       <a class="cta cta-primary" href="#app"><i class="fas fa-rocket"></i> Mulai Asesmen Sekarang</a>
     </div>
     <footer class="landing-footer">
-      FIT7 JASMANI • Aplikasi Evaluasi Kebugaran Jasmani Kelas 7 SMP • SMPN 1 Turen
+      FIT TEST • Aplikasi Evaluasi Kebugaran Jasmani SMP • SMPN 1 Turen
     </footer>
   </div>
 </div>
@@ -177,8 +177,8 @@
                         <i class="fa-solid me-1 fa-child-reaching text-2xl text-yellow-300"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-extrabold tracking-tight">FIT7 <span class="text-yellow-300">JASMANI</span></h1>
-                        <p class="text-xs text-blue-200">Asesmen & Modul Kebugaran Jasmani Kelas 7 SMP (TKJI 13-15 Thn)</p>
+                        <h1 class="text-xl font-extrabold tracking-tight">FIT <span class="text-yellow-300">TEST</span></h1>
+                        <p class="text-xs text-blue-200">Asesmen &amp; Modul Kebugaran Jasmani SMP (TKJI 13-15 Thn)</p>
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-2 text-xs bg-blue-800/60 px-3 py-1.5 rounded-full border border-blue-400/30">
@@ -421,7 +421,7 @@
                     <div>
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-table-list text-indigo-600"></i>
-                            Rekapitulasi Hasil Tes Kebugaran Kelas 7
+                            Rekapitulasi Hasil Tes Kebugaran
                         </h2>
                         <p class="text-sm text-slate-500">Daftar penilaian seluruh siswa beserta kategori kebugaran jasmani.</p>
                     </div>
@@ -436,9 +436,19 @@
                 </div>
 
                 <!-- Filter & Search -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
                     <div>
                         <input type="text" id="searchSiswa" onkeyup="renderTable()" placeholder="Cari nama siswa..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <select id="filterKelas" onchange="renderTable()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="ALL">Semua Kelas</option>
+                            @foreach (['7','8','9'] as $tingkat)
+                                @foreach (['A','B','C','D','E','F','G','H','I','J'] as $huruf)
+                                    <option value="{{ $tingkat }} - {{ $huruf }}">{{ $tingkat }} - {{ $huruf }}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
                     </div>
                     <div>
                         <select id="filterGender" onchange="renderTable()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-white">
@@ -562,7 +572,7 @@
                         <i class="fa-solid fa-book-bookmark text-amber-600"></i>
                         Panduan Materi & Standar Norma TKJI (Usia 13-15 Tahun)
                     </h2>
-                    <p class="text-sm text-slate-500">Pedoman kurikulum PJOK Kelas 7 SMP untuk 4 komponen kebugaran jasmani utama.</p>
+                    <p class="text-sm text-slate-500">Pedoman kurikulum PJOK SMP untuk 4 komponen kebugaran jasmani utama.</p>
                 </div>
 
                 <!-- Accordion / Grid Theory -->
@@ -716,7 +726,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4">
-            Aplikasi Evaluasi Kebugaran Jasmani Kelas 7 SMP &copy; 2026 - Berdasarkan Standar TKJI PJOK Indonesia
+            Aplikasi Evaluasi Kebugaran Jasmani SMP &copy; 2026 - Berdasarkan Standar TKJI PJOK Indonesia
         </div>
     </footer>
 
@@ -1087,6 +1097,7 @@
         function renderTable() {
             const tbody = document.getElementById('tableBodyData');
             const search = document.getElementById('searchSiswa').value.toLowerCase();
+            const filterKls = document.getElementById('filterKelas').value;
             const filterGen = document.getElementById('filterGender').value;
             const filterKat = document.getElementById('filterKategori').value;
             const emptyNotice = document.getElementById('emptyTableNotice');
@@ -1095,9 +1106,10 @@
 
             const filtered = records.filter(r => {
                 const matchName = r.nama.toLowerCase().includes(search);
+                const matchKls = (filterKls === 'ALL') || (r.kelas === filterKls);
                 const matchGen = (filterGen === 'ALL') || (r.gender === filterGen);
                 const matchKat = (filterKat === 'ALL') || (r.kategori === filterKat);
-                return matchName && matchGen && matchKat;
+                return matchName && matchKls && matchGen && matchKat;
             });
 
             if (filtered.length === 0) {
