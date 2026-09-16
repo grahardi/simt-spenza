@@ -23,6 +23,12 @@ class PipSiswaController extends Controller
             $query->whereHas('siswa', fn ($q) => $q->where('kelas', $request->input('kelas')));
         }
 
+        if ($request->input('status') === 'sudah') {
+            $query->where('status_cair', 'like', '%sudah%');
+        } elseif ($request->input('status') === 'belum') {
+            $query->where('status_cair', 'like', '%belum%');
+        }
+
         $daftar = $query->get()->sortBy(fn ($p) => $p->siswa->nama_lengkap ?? '')->values();
 
         $daftarKelas = $member->hasRole('kesiswaan')

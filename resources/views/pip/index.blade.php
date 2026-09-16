@@ -9,13 +9,30 @@
 
 @if ($daftarKelas->isNotEmpty())
     <div class="px-4 py-3 mb-3 bg-white rounded shadow">
-        <form method="GET" class="d-flex gap-2 align-items-center">
+        <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
             <label class="form-label mb-0">Kelas</label>
             <select name="kelas" class="form-select" style="max-width:200px" onchange="this.form.submit()">
                 <option value="">Semua Kelas</option>
                 @foreach ($daftarKelas as $k)
                     <option value="{{ $k }}" @selected(request('kelas') === $k)>{{ $k }}</option>
                 @endforeach
+            </select>
+            <label class="form-label mb-0 ms-2">Status Cair</label>
+            <select name="status" class="form-select" style="max-width:200px" onchange="this.form.submit()">
+                <option value="">Semua</option>
+                <option value="sudah" @selected(request('status') === 'sudah')>Sudah Cair</option>
+                <option value="belum" @selected(request('status') === 'belum')>Belum Cair</option>
+            </select>
+        </form>
+    </div>
+@else
+    <div class="px-4 py-3 mb-3 bg-white rounded shadow">
+        <form method="GET" class="d-flex gap-2 align-items-center">
+            <label class="form-label mb-0">Status Cair</label>
+            <select name="status" class="form-select" style="max-width:200px" onchange="this.form.submit()">
+                <option value="">Semua</option>
+                <option value="sudah" @selected(request('status') === 'sudah')>Sudah Cair</option>
+                <option value="belum" @selected(request('status') === 'belum')>Belum Cair</option>
             </select>
         </form>
     </div>
