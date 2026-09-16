@@ -36,6 +36,7 @@
                 ['label' => 'Data Pelanggaran', 'icon' => 'fas fa-exclamation-circle', 'color' => 'red', 'href' => route('aktivitas-kelas.pelanggaran-siswa')],
                 ['label' => 'Manajemen WhatsApp', 'icon' => 'fab fa-whatsapp', 'color' => 'green', 'href' => route('walikelas.whatsapp')],
                 ['label' => 'Ajukan Bansos', 'icon' => 'fas fa-hand-holding-heart', 'color' => 'amber', 'href' => route('bansos.ajukan')],
+                ['label' => 'Data PIP', 'icon' => 'fas fa-hand-holding-usd', 'color' => 'blue', 'href' => route('pip.index')],
             ],
         ],
         'kepsek' => [
@@ -158,6 +159,7 @@
                 ['label' => 'Pelanggaran', 'icon' => 'fas fa-gavel', 'color' => 'coral', 'href' => route('tatib.index')],
                 ['label' => 'Rekap Absen Mingguan', 'icon' => 'fas fa-calendar-week', 'color' => 'purple', 'href' => route('kesiswaan.rekap-mingguan')],
                 ['label' => 'Rekap Penerima Bansos', 'icon' => 'fas fa-hand-holding-heart', 'color' => 'amber', 'href' => route('bansos.rekap')],
+                ['label' => 'Data PIP', 'icon' => 'fas fa-hand-holding-usd', 'color' => 'blue', 'href' => route('pip.index')],
             ],
         ],
         'admin_kegiatan' => [

@@ -268,6 +268,13 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     Route::prefix('kesiswaan')->name('kesiswaan.')->middleware('role:kesiswaan,kepsek,bk,tatib')->group(function () {
         Route::get('/tidak-masuk', [KesiswaanController::class, 'tidakMasuk'])->name('tidak-masuk');
         Route::get('/rekap-mingguan', [KesiswaanController::class, 'rekapMingguan'])->name('rekap-mingguan');
+
+    });
+
+    // Data PIP - Kesiswaan lihat semua, Wali Kelas lihat kelasnya sendiri saja
+    Route::prefix('pip')->name('pip.')->middleware('role:kesiswaan,walikelas')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PipSiswaController::class, 'index'])->name('index');
+        Route::get('/{pipSiswa}', [\App\Http\Controllers\PipSiswaController::class, 'show'])->name('show');
     });
 
     // Absen Guru (piket) - terpadu: sudah diacc + menunggu ACC + Ajuan Manual
@@ -301,6 +308,10 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/', [SuperadminDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'edit'])->name('pengaturan-sistem.edit');
+
+        Route::get('/pip', [\App\Http\Controllers\Superadmin\PipController::class, 'form'])->name('pip.form');
+        Route::post('/pip/unggah', [\App\Http\Controllers\Superadmin\PipController::class, 'unggah'])->name('pip.unggah');
+        Route::post('/pip/simpan-kemiripan', [\App\Http\Controllers\Superadmin\PipController::class, 'simpanKemiripan'])->name('pip.simpan-kemiripan');
         Route::put('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'update'])->name('pengaturan-sistem.update');
 
         Route::get('/upload-foto-kelas', [\App\Http\Controllers\Superadmin\UploadFotoKelasController::class, 'form'])->name('upload-foto-kelas.form');

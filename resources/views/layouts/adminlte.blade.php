@@ -144,6 +144,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.pip.form') }}" class="nav-link {{ request()->routeIs('superadmin.pip.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-hand-holding-usd"></i>
+                            <p>Import Data PIP</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.upload-foto-kelas.form') }}" class="nav-link {{ request()->routeIs('superadmin.upload-foto-kelas.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-images"></i>
                             <p>Upload Foto Kelas</p>
