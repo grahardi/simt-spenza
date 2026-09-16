@@ -748,15 +748,16 @@
             const namaTerpilih = document.getElementById('inputNama').value;
             const siswa = daftarSiswaKelasIni.find(s => s.nama === namaTerpilih);
             if (siswa && siswa.usia) {
+                const usiaBulat = Math.floor(Number(siswa.usia)); // pengaman ganda - pastikan bilangan bulat, bukan desimal
                 const selectUsia = document.getElementById('inputUsia');
-                const adaOpsi = Array.from(selectUsia.options).some(o => o.value == siswa.usia);
+                const adaOpsi = Array.from(selectUsia.options).some(o => o.value == usiaBulat);
                 if (!adaOpsi) {
                     const opsiBaru = document.createElement('option');
-                    opsiBaru.value = siswa.usia;
-                    opsiBaru.textContent = `${siswa.usia} Tahun (otomatis dari tanggal lahir)`;
+                    opsiBaru.value = usiaBulat;
+                    opsiBaru.textContent = `${usiaBulat} Tahun (otomatis dari tanggal lahir)`;
                     selectUsia.insertBefore(opsiBaru, selectUsia.firstChild);
                 }
-                selectUsia.value = siswa.usia;
+                selectUsia.value = usiaBulat;
             }
         }
         let myChart = null;

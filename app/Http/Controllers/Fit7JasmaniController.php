@@ -25,7 +25,7 @@ class Fit7JasmaniController extends Controller
             ->get(['nama_lengkap as nama', 'tanggal_lahir'])
             ->map(fn ($s) => [
                 'nama' => $s->nama,
-                'usia' => $s->tanggal_lahir ? now()->diffInYears($s->tanggal_lahir) : null,
+                'usia' => $s->tanggal_lahir ? (int) floor($s->tanggal_lahir->age) : null,
             ]);
 
         return response()->json($daftar);
