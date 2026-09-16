@@ -309,6 +309,9 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
         Route::get('/', [SuperadminDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/pengaturan-sistem', [\App\Http\Controllers\Superadmin\PengaturanSistemController::class, 'edit'])->name('pengaturan-sistem.edit');
+        Route::get('/pengaturan-fitur', [\App\Http\Controllers\Superadmin\PengaturanFiturController::class, 'index'])->name('pengaturan-fitur.index');
+        Route::get('/pengaturan-fitur/{role}', [\App\Http\Controllers\Superadmin\PengaturanFiturController::class, 'detail'])->name('pengaturan-fitur.detail');
+        Route::post('/pengaturan-fitur/{role}', [\App\Http\Controllers\Superadmin\PengaturanFiturController::class, 'simpan'])->name('pengaturan-fitur.simpan');
 
         Route::get('/pip', [\App\Http\Controllers\Superadmin\PipController::class, 'form'])->name('pip.form');
         Route::post('/pip/unggah', [\App\Http\Controllers\Superadmin\PipController::class, 'unggah'])->name('pip.unggah');

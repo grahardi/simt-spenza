@@ -144,6 +144,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('superadmin.pengaturan-fitur.index') }}" class="nav-link {{ request()->routeIs('superadmin.pengaturan-fitur.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-toggle-on"></i>
+                            <p>Pengaturan Fitur</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('superadmin.pip.form') }}" class="nav-link {{ request()->routeIs('superadmin.pip.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-hand-holding-usd"></i>
                             <p>Import Data PIP</p>
