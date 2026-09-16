@@ -38,6 +38,28 @@ class PipSiswaController extends Controller
         return view('pip.index', compact('daftar', 'daftarKelas'));
     }
 
+    /** List teks siap-copy (Nama / Kelas - Status) buat wali kelas kirim ke WhatsApp - default filter Belum Cair. */
+    public function listTeks(Request $request)
+    {
+        $member = Auth::guard('member')->user();
+        $kelasWali = trim((string) $member->walikelas);
+        abort_if($kelasWali === '', 403, 'Akun ini tidak terhubung ke kelas manapun.');
+
+        $status = $request->input('status', 'belum');
+
+        $daftar = PipSiswa::with('siswa')
+            ->whereHas('siswa', fn ($q) => $q->where('kelas', $kelasWali))
+            ->when($status === 'sudah', fn ($q) => $q->where('status_cair', 'like', '%sudah%'))
+            ->when($status === 'belum', fn ($q) => $q->where('status_cair', 'like', '%belum%'))
+            ->get()
+            ->sortBy(fn ($p) => $p->siswa->nama_lengkap ?? '')
+            ->values();
+
+        $teks = $daftar->map(fn ($p) => "{$p->siswa->nama_lengkap} / {$p->siswa->kelas} - {$p->status_cair}")->implode("\n");
+
+        return view('pip.list-teks', compact('daftar', 'teks', 'kelasWali', 'status'));
+    }
+
     /** Detail lengkap 1 data PIP. */
     public function show(PipSiswa $pipSiswa)
     {

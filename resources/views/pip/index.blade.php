@@ -3,8 +3,16 @@
 @section('title', 'Data PIP')
 
 @section('content')
-<div class="px-4 py-2 mb-3 text-white rounded shadow" style="background:#4b0082;">
-    <h1 class="h5 pt-2 mb-0"><i class="fas fa-hand-holding-usd me-2"></i>Data PIP</h1>
+<div class="px-4 py-2 mb-3 text-white rounded shadow d-flex flex-column flex-md-row" style="background:#4b0082;">
+    <div class="d-flex align-items-center me-md-auto">
+        <i class="fas fa-hand-holding-usd me-2"></i>
+        <h1 class="h5 pt-2 mb-0">Data PIP</h1>
+    </div>
+    @if (auth('member')->user()->hasRole('walikelas'))
+        <a href="{{ route('pip.list-teks') }}" class="btn btn-light btn-sm mt-2 mt-md-0">
+            <i class="fas fa-clipboard me-1"></i> List untuk WhatsApp
+        </a>
+    @endif
 </div>
 
 @if ($daftarKelas->isNotEmpty())

@@ -274,6 +274,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // Data PIP - Kesiswaan lihat semua, Wali Kelas lihat kelasnya sendiri saja
     Route::prefix('pip')->name('pip.')->middleware('role:kesiswaan,walikelas')->group(function () {
         Route::get('/', [\App\Http\Controllers\PipSiswaController::class, 'index'])->name('index');
+        Route::get('/list-teks', [\App\Http\Controllers\PipSiswaController::class, 'listTeks'])->name('list-teks')->middleware('role:walikelas');
         Route::get('/{pipSiswa}', [\App\Http\Controllers\PipSiswaController::class, 'show'])->name('show');
     });
 
