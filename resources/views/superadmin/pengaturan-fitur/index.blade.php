@@ -2,7 +2,7 @@
 
 @section('title', 'Pengaturan Fitur')
 
-@include('partials.definisi-menu-panel')
+@php $panels = \App\Services\MenuPanelDefinisi::semua(); @endphp
 
 @section('content')
 <div class="card">

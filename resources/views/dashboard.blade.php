@@ -2,7 +2,10 @@
 
 @section('title', 'Depan')
 
-@include('partials.definisi-menu-panel')
+@php
+    $member = auth('member')->user();
+    $panels = \App\Services\MenuPanelDefinisi::semua();
+@endphp
 
 @section('content')
 <div class="p-4 bg-white rounded shadow mb-4">

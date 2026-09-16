@@ -2,7 +2,7 @@
 
 @section('title', 'Pengaturan Fitur - ' . $role)
 
-@include('partials.definisi-menu-panel')
+@php $panels = \App\Services\MenuPanelDefinisi::semua(); @endphp
 
 @section('content')
 @php

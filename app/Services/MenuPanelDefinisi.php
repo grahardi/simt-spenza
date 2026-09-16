@@ -1,12 +1,16 @@
-@php
-    $member = auth('member')->user();
+<?php
 
-    // Pengganti depan.php lama: setiap role yang dimiliki user memunculkan
-    // satu grup menu (dulu: include panel_guru.php, panel_kepsek.php, dst -
-    // bisa tampil lebih dari satu sekaligus kalau user punya banyak role).
-    // Warna dikelompokkan per kategori: biru = absensi, teal = data master,
-    // amber = dokumen/RPP, coral/merah = pelanggaran/laporan, hijau = kehadiran,
-    // pink/ungu = lainnya.
+namespace App\Services;
+
+/**
+ * Definisi menu/fitur per role untuk dashboard - dipakai bersama oleh
+ * dashboard.blade.php dan halaman Superadmin > Pengaturan Fitur, supaya
+ * tidak ada 2 sumber kebenaran yang bisa beda-beda.
+ */
+class MenuPanelDefinisi
+{
+    public static function semua(): array
+    {
     $panels = [
         'guru' => [
             'title' => 'Menu Jabatan Guru',
@@ -168,4 +172,7 @@
             ],
         ],
     ];
-@endphp
+
+        return $panels;
+    }
+}
