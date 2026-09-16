@@ -19,8 +19,10 @@ class Siswa extends Model
 
     protected $fillable = [
         'id_member', 'nisn', 'kelas', 'nama_lengkap', 'jenis_kelamin', 'agama',
-        'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku', 'id_guru_wali',
+        'alamat', 'email', 'whatsapp', 'foto_profil', 'nomer_bangku', 'id_guru_wali', 'tanggal_lahir',
     ];
+
+    protected $casts = ['tanggal_lahir' => 'date'];
 
     /** Non-muslim kalau kolom agama terisi & bukan "Islam" (kosong dianggap belum diisi, bukan ditandai apapun). */
     public function bukanIslam(): bool

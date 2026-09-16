@@ -247,7 +247,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nama Lengkap Siswa</label>
-                            <select id="inputNama" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm bg-white">
+                            <select id="inputNama" required onchange="isiUsiaOtomatis()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm bg-white">
                                 <option value="">- Pilih kelas dulu -</option>
                             </select>
                         </div>
@@ -723,6 +723,7 @@
         let records = JSON.parse(localStorage.getItem('fit7_records') || '[]');
 
         // Ambil daftar siswa dari data asli aplikasi (bukan ketik manual lagi) - sesuai kelas yang dipilih.
+        let daftarSiswaKelasIni = [];
         async function muatSiswaKelas() {
             const kelas = document.getElementById('inputKelas').value;
             const selectNama = document.getElementById('inputNama');
@@ -733,11 +734,29 @@
             }
             try {
                 const respon = await fetch(`{{ url('/fit7-jasmani/siswa') }}/${encodeURIComponent(kelas)}`);
-                const daftar = await respon.json();
+                daftarSiswaKelasIni = await respon.json();
                 selectNama.innerHTML = '<option value="">- Pilih siswa -</option>' +
-                    daftar.map(s => `<option value="${s.nama}">${s.nama}</option>`).join('');
+                    daftarSiswaKelasIni.map(s => `<option value="${s.nama}">${s.nama}</option>`).join('');
             } catch (e) {
                 selectNama.innerHTML = '<option value="">Gagal memuat data siswa</option>';
+            }
+        }
+
+        // Usia otomatis terisi dari tanggal lahir siswa (kalau datanya ada) begitu nama dipilih -
+        // TAPI dropdown usianya tetap bisa diganti manual oleh guru kalau memang perlu.
+        function isiUsiaOtomatis() {
+            const namaTerpilih = document.getElementById('inputNama').value;
+            const siswa = daftarSiswaKelasIni.find(s => s.nama === namaTerpilih);
+            if (siswa && siswa.usia) {
+                const selectUsia = document.getElementById('inputUsia');
+                const adaOpsi = Array.from(selectUsia.options).some(o => o.value == siswa.usia);
+                if (!adaOpsi) {
+                    const opsiBaru = document.createElement('option');
+                    opsiBaru.value = siswa.usia;
+                    opsiBaru.textContent = `${siswa.usia} Tahun (otomatis dari tanggal lahir)`;
+                    selectUsia.insertBefore(opsiBaru, selectUsia.firstChild);
+                }
+                selectUsia.value = siswa.usia;
             }
         }
         let myChart = null;

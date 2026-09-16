@@ -22,7 +22,11 @@ class Fit7JasmaniController extends Controller
     {
         $daftar = Siswa::where('kelas', $kelas)
             ->orderBy('nama_lengkap')
-            ->get(['nama_lengkap as nama']);
+            ->get(['nama_lengkap as nama', 'tanggal_lahir'])
+            ->map(fn ($s) => [
+                'nama' => $s->nama,
+                'usia' => $s->tanggal_lahir ? now()->diffInYears($s->tanggal_lahir) : null,
+            ]);
 
         return response()->json($daftar);
     }
