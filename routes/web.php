@@ -200,6 +200,7 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
     // FIT7 Jasmani - khusus guru mapel PJO (cek jabatan di controller)
     Route::prefix('fit7-jasmani')->name('fit7-jasmani.')->middleware('role:guru,superadmin')->group(function () {
         Route::get('/', [\App\Http\Controllers\Fit7JasmaniController::class, 'index'])->name('index');
+        Route::get('/aplikasi', [\App\Http\Controllers\Fit7JasmaniController::class, 'aplikasi'])->name('aplikasi');
         Route::get('/siswa/{kelas}', [\App\Http\Controllers\Fit7JasmaniController::class, 'siswaKelas'])->name('siswa-kelas');
     });
 
