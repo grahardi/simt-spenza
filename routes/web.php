@@ -197,6 +197,12 @@ Route::middleware(['auth:member', \App\Http\Middleware\ForcePasswordChange::clas
 
     // Pendampingan - catatan kegiatan pendampingan guru wali ke anak walinya
     // Upload Soal - guru upload per kelas+mapel, Admin Soal lihat semua+download
+    // FIT7 Jasmani - khusus guru mapel PJO (cek jabatan di controller)
+    Route::prefix('fit7-jasmani')->name('fit7-jasmani.')->middleware('role:guru,superadmin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Fit7JasmaniController::class, 'index'])->name('index');
+        Route::get('/siswa/{kelas}', [\App\Http\Controllers\Fit7JasmaniController::class, 'siswaKelas'])->name('siswa-kelas');
+    });
+
     Route::prefix('soal-upload')->name('soal-upload.')->group(function () {
         Route::get('/', [\App\Http\Controllers\SoalUploadController::class, 'form'])->name('form')->middleware('role:guru');
         Route::post('/', [\App\Http\Controllers\SoalUploadController::class, 'store'])->name('store')->middleware('role:guru');

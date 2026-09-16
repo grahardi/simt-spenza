@@ -4,7 +4,7 @@
 
 @php
     $member = auth('member')->user();
-    $panels = \App\Services\MenuPanelDefinisi::semua();
+    $panels = \App\Services\MenuPanelDefinisi::semua($member);
 @endphp
 
 @section('content')

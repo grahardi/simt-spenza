@@ -9,7 +9,7 @@ namespace App\Services;
  */
 class MenuPanelDefinisi
 {
-    public static function semua(): array
+    public static function semua(?\App\Models\Member $member = null): array
     {
     $panels = [
         'guru' => [
@@ -25,6 +25,10 @@ class MenuPanelDefinisi
                 ['label' => 'Peminjaman', 'icon' => 'fas fa-door-open', 'color' => 'teal', 'href' => route('smart.kalender')],
                 ['label' => 'Daftar Nama Siswa', 'icon' => 'fas fa-user-graduate', 'color' => 'teal', 'href' => route('siswa.index')],
                 ['label' => 'Foto Siswa', 'icon' => 'fas fa-images', 'color' => 'pink', 'href' => route('foto-siswa.pilih-kelas')],
+                // Khusus guru mapel PJO - link ke Aplikasi Kebugaran Jasmani (FIT7).
+                ...($member && $member->dataGuru && str_contains(strtoupper((string) $member->dataGuru->jabatan), 'PJO')
+                    ? [['label' => 'Kebugaran Jasmani (FIT7)', 'icon' => 'fas fa-heartbeat', 'color' => 'green', 'href' => route('fit7-jasmani.index')]]
+                    : []),
             ],
         ],
         'walikelas' => [
