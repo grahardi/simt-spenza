@@ -137,47 +137,96 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.pengaturan-sistem.edit') }}" class="nav-link {{ request()->routeIs('superadmin.pengaturan-sistem.edit') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-cogs"></i>
-                            <p>Pengaturan Sistem</p>
+
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.pengaturan-sistem.*', 'superadmin.pengaturan-fitur.*', 'superadmin.akun.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.pengaturan-sistem.*', 'superadmin.pengaturan-fitur.*', 'superadmin.akun.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-cog"></i>
+                            <p>
+                                System
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.pengaturan-sistem.edit') }}" class="nav-link {{ request()->routeIs('superadmin.pengaturan-sistem.edit') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Pengaturan Sistem</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.pengaturan-fitur.index') }}" class="nav-link {{ request()->routeIs('superadmin.pengaturan-fitur.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Pengaturan Fitur</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.akun.index') }}" class="nav-link {{ request()->routeIs('superadmin.akun.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Kelola Akun</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.pengaturan-fitur.index') }}" class="nav-link {{ request()->routeIs('superadmin.pengaturan-fitur.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-toggle-on"></i>
-                            <p>Pengaturan Fitur</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.pip.form') }}" class="nav-link {{ request()->routeIs('superadmin.pip.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-hand-holding-usd"></i>
-                            <p>Import Data PIP</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.upload-foto-kelas.form') }}" class="nav-link {{ request()->routeIs('superadmin.upload-foto-kelas.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-images"></i>
-                            <p>Upload Foto Kelas</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.whatsapp-log.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-log.*') ? 'active' : '' }}">
-                            <i class="nav-icon fab fa-whatsapp"></i>
-                            <p>Log WhatsApp</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.siswa.index') }}" class="nav-link {{ request()->routeIs('superadmin.siswa.*') ? 'active' : '' }}">
+
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.siswa.*', 'superadmin.kelas.*', 'superadmin.absensi.*', 'superadmin.pelanggaran.*', 'superadmin.bk.*', 'superadmin.pip.*', 'superadmin.upload-foto-kelas.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.siswa.*', 'superadmin.kelas.*', 'superadmin.absensi.*', 'superadmin.pelanggaran.*', 'superadmin.bk.*', 'superadmin.pip.*', 'superadmin.upload-foto-kelas.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-graduate"></i>
-                            <p>Data Siswa</p>
+                            <p>
+                                Manajemen Siswa
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.siswa.index') }}" class="nav-link {{ request()->routeIs('superadmin.siswa.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Data Siswa</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.kelas.index') }}" class="nav-link {{ request()->routeIs('superadmin.kelas.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Data Kelas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.absensi.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Data Absensi</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.pelanggaran.index') }}" class="nav-link {{ request()->routeIs('superadmin.pelanggaran.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Data Pelanggaran</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.bk.index') }}" class="nav-link {{ request()->routeIs('superadmin.bk.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Data Bimbingan Konseling</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.pip.form') }}" class="nav-link {{ request()->routeIs('superadmin.pip.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Import Data PIP</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.upload-foto-kelas.form') }}" class="nav-link {{ request()->routeIs('superadmin.upload-foto-kelas.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Upload Foto Kelas</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*', 'superadmin.guru-wali.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*', 'superadmin.guru-wali.*') ? 'active' : '' }}">
+
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*', 'superadmin.guru-wali.*', 'superadmin.absensi-guru.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.guru.*', 'superadmin.karyawan.*', 'superadmin.guru-wali.*', 'superadmin.absensi-guru.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chalkboard-teacher"></i>
                             <p>
-                                Guru dan Karyawan
+                                Manajemen Guru
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -206,69 +255,17 @@
                                     <p>Rekap Guru Wali</p>
                                 </a>
                             </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.kelas.index') }}" class="nav-link {{ request()->routeIs('superadmin.kelas.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-door-closed"></i>
-                            <p>Data Kelas</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.akun.index') }}" class="nav-link {{ request()->routeIs('superadmin.akun.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-user-shield"></i>
-                            <p>Kelola Akun</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.absensi.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-clipboard-check"></i>
-                            <p>Data Absensi</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.absensi-guru.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi-guru.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-chalkboard-teacher"></i>
-                            <p>Data Absensi Guru</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.pelanggaran.index') }}" class="nav-link {{ request()->routeIs('superadmin.pelanggaran.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-gavel"></i>
-                            <p>Data Pelanggaran</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('superadmin.bk.index') }}" class="nav-link {{ request()->routeIs('superadmin.bk.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-hands-helping"></i>
-                            <p>Data Bimbingan Konseling</p>
-                        </a>
-                    </li>
-                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.log.*', 'superadmin.log-login.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.log.*', 'superadmin.log-login.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-history"></i>
-                            <p>
-                                Log
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('superadmin.log.index') }}" class="nav-link {{ request()->routeIs('superadmin.log.*') ? 'active' : '' }}">
+                                <a href="{{ route('superadmin.absensi-guru.index') }}" class="nav-link {{ request()->routeIs('superadmin.absensi-guru.*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Log Aktivitas</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('superadmin.log-login.index') }}" class="nav-link {{ request()->routeIs('superadmin.log-login.*') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Log Login</p>
+                                    <p>Data Absensi Guru</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.whatsapp-*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.whatsapp-*') ? 'active' : '' }}">
+
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.whatsapp-menu.*', 'superadmin.whatsapp-template.*', 'superadmin.whatsapp-nomor.*', 'superadmin.whatsapp-guru.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.whatsapp-menu.*', 'superadmin.whatsapp-template.*', 'superadmin.whatsapp-nomor.*', 'superadmin.whatsapp-guru.*') ? 'active' : '' }}">
                             <i class="nav-icon fab fa-whatsapp"></i>
                             <p>
                                 WhatsApp
@@ -291,13 +288,43 @@
                             <li class="nav-item">
                                 <a href="{{ route('superadmin.whatsapp-nomor.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-nomor.*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Nomor WA Terdaftar (Siswa)</p>
+                                    <p>WA Siswa Terdaftar</p>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('superadmin.whatsapp-guru.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-guru.*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Nomor WA Terdaftar (Guru)</p>
+                                    <p>WA Guru Terdaftar</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview {{ request()->routeIs('superadmin.whatsapp-log.*', 'superadmin.log.*', 'superadmin.log-login.*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('superadmin.whatsapp-log.*', 'superadmin.log.*', 'superadmin.log-login.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-history"></i>
+                            <p>
+                                Log
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.whatsapp-log.index') }}" class="nav-link {{ request()->routeIs('superadmin.whatsapp-log.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Log WhatsApp</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.log.index') }}" class="nav-link {{ request()->routeIs('superadmin.log.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Log Aktivitas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('superadmin.log-login.index') }}" class="nav-link {{ request()->routeIs('superadmin.log-login.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Log Login</p>
                                 </a>
                             </li>
                         </ul>
