@@ -8,7 +8,11 @@
 <body>
 <div class="container">
     <div class="header-nav">
-        <h2 class="m-0">Kartu Ujian Peserta (F4 - 8 Kartu/Lembar)</h2>
+        <h2 class="m-0">
+            Kartu Ujian Peserta (F4 - 8 Kartu/Lembar)
+            @if ($ruang)<span class="badge bg-primary ms-2">Ruang {{ $ruang }}</span>@endif
+            @if ($kelas)<span class="badge bg-primary ms-2">Kelas {{ $kelas }}</span>@endif
+        </h2>
         <div>
             <a href="{{ route('kartu-ujian.import') }}" class="btn-nav">Import Data</a>
             <button class="btn-print" onclick="window.print()">Cetak</button>

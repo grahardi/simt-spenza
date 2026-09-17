@@ -36,9 +36,10 @@ class KartuUjianController extends Controller
     {
         $jumlahSudahDiisi = KartuUjian::count();
         $jumlahSiswa = Siswa::count();
-        $daftarRuang = KartuUjian::whereNotNull('ruang')->distinct()->orderBy('ruang')->pluck('ruang');
+        $daftarRuang = KartuUjian::whereNotNull('ruang')->distinct()->orderByRaw('CAST(ruang AS UNSIGNED) ASC')->pluck('ruang');
+        $daftarKelas = KartuUjian::whereHas('siswa')->with('siswa')->get()->pluck('siswa.kelas')->unique()->sort()->values();
 
-        return view('kartu-ujian.index', compact('jumlahSudahDiisi', 'jumlahSiswa', 'daftarRuang'));
+        return view('kartu-ujian.index', compact('jumlahSudahDiisi', 'jumlahSiswa', 'daftarRuang', 'daftarKelas'));
     }
 
     /** Halaman import Excel (Nomor Induk, Password, Ruang, No Kursi). */
@@ -116,10 +117,12 @@ class KartuUjianController extends Controller
     }
 
     /** Data siswa lengkap (gabungan Siswa + KartuUjian) - dipakai bersama oleh cetak kartu & label. */
-    private function dataPeserta()
+    private function dataPeserta(?string $ruang = null, ?string $kelas = null)
     {
         return KartuUjian::with('siswa')
             ->whereHas('siswa')
+            ->when($ruang, fn ($q) => $q->where('ruang', $ruang))
+            ->when($kelas, fn ($q) => $q->whereHas('siswa', fn ($qs) => $qs->where('kelas', $kelas)))
             ->get()
             ->sortBy([
                 fn ($a, $b) => (int) $a->ruang <=> (int) $b->ruang,
@@ -127,16 +130,30 @@ class KartuUjianController extends Controller
             ]);
     }
 
-    /** Fitur 1: Cetak Kartu Ujian - 8 kartu per lembar F4, dengan password. */
-    public function cetakKartu()
+    /** Fitur 1: Cetak Kartu Ujian - 8 kartu per lembar F4, dengan password. Bisa difilter per ruang/kelas. */
+    public function cetakKartu(Request $request)
     {
-        return view('kartu-ujian.cetak-kartu', ['peserta' => $this->dataPeserta()]);
+        $ruang = $request->query('ruang');
+        $kelas = $request->query('kelas');
+
+        return view('kartu-ujian.cetak-kartu', [
+            'peserta' => $this->dataPeserta($ruang, $kelas),
+            'ruang' => $ruang,
+            'kelas' => $kelas,
+        ]);
     }
 
-    /** Fitur 2: Label Meja - sama seperti kartu tapi TANPA password. */
-    public function cetakLabel()
+    /** Fitur 2: Label Meja - sama seperti kartu tapi TANPA password. Bisa difilter per ruang/kelas. */
+    public function cetakLabel(Request $request)
     {
-        return view('kartu-ujian.cetak-label', ['peserta' => $this->dataPeserta()]);
+        $ruang = $request->query('ruang');
+        $kelas = $request->query('kelas');
+
+        return view('kartu-ujian.cetak-label', [
+            'peserta' => $this->dataPeserta($ruang, $kelas),
+            'ruang' => $ruang,
+            'kelas' => $kelas,
+        ]);
     }
 
     /** Fitur 3: Denah 1 ruang - grid zigzag, 1 meja bisa isi 2 siswa (nokursi sama). */

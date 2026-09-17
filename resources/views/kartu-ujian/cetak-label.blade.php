@@ -8,7 +8,11 @@
 <body>
 <div class="container">
     <div class="header-nav">
-        <h2 class="m-0">Label Meja Peserta (F4 - Tanpa Password)</h2>
+        <h2 class="m-0">
+            Label Meja Peserta (F4 - Tanpa Password)
+            @if ($ruang)<span class="badge bg-primary ms-2">Ruang {{ $ruang }}</span>@endif
+            @if ($kelas)<span class="badge bg-primary ms-2">Kelas {{ $kelas }}</span>@endif
+        </h2>
         <button class="btn-print" onclick="window.print()">Cetak</button>
     </div>
     <div class="grid-container">

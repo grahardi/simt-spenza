@@ -22,14 +22,6 @@
         <span class="menu-icon"><i class="fas fa-file-excel"></i></span>
         <span class="menu-title">Import Data (Excel)</span>
     </a>
-    <a href="{{ route('kartu-ujian.cetak-kartu') }}" class="menu-card bg-green" target="_blank">
-        <span class="menu-icon"><i class="fas fa-id-card"></i></span>
-        <span class="menu-title">Cetak Kartu Ujian</span>
-    </a>
-    <a href="{{ route('kartu-ujian.cetak-label') }}" class="menu-card bg-teal" target="_blank">
-        <span class="menu-icon"><i class="fas fa-tag"></i></span>
-        <span class="menu-title">Cetak Label Meja</span>
-    </a>
     <a href="{{ route('kartu-ujian.cetak-semua-denah') }}" class="menu-card bg-amber" target="_blank">
         <span class="menu-icon"><i class="fas fa-th"></i></span>
         <span class="menu-title">Cetak Semua Denah</span>
@@ -43,6 +35,55 @@
         <span class="menu-title">Pengaturan Judul &amp; Tanggal</span>
     </a>
 </div>
+
+<div class="p-4 bg-white rounded shadow mt-3">
+    <h6 class="mb-3"><i class="fas fa-id-card me-1"></i> Cetak Kartu Ujian / Label Meja</h6>
+    <p class="text-muted small">Bisa cetak semua sekaligus, atau pilih per ruang / per kelas saja.</p>
+    <form method="GET" class="row g-2 align-items-end" id="formCetakKartu">
+        <div class="col-md-4">
+            <label class="form-label small mb-1">Filter</label>
+            <select id="pilihFilter" class="form-select" onchange="ubahFilterCetak()">
+                <option value="">Semua Peserta</option>
+                <option value="ruang">Per Ruang</option>
+                <option value="kelas">Per Kelas</option>
+            </select>
+        </div>
+        <div class="col-md-4" id="wadahPilihRuang" style="display:none;">
+            <label class="form-label small mb-1">Ruang</label>
+            <select name="ruang" class="form-select" disabled>
+                @foreach ($daftarRuang as $r)
+                    <option value="{{ $r }}">Ruang {{ $r }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4" id="wadahPilihKelas" style="display:none;">
+            <label class="form-label small mb-1">Kelas</label>
+            <select name="kelas" class="form-select" disabled>
+                @foreach ($daftarKelas as $k)
+                    <option value="{{ $k }}">{{ $k }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" formaction="{{ route('kartu-ujian.cetak-kartu') }}" formtarget="_blank" class="btn btn-success">
+                <i class="fas fa-id-card me-1"></i> Cetak Kartu
+            </button>
+            <button type="submit" formaction="{{ route('kartu-ujian.cetak-label') }}" formtarget="_blank" class="btn btn-outline-secondary">
+                <i class="fas fa-tag me-1"></i> Cetak Label
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+function ubahFilterCetak() {
+    const pilihan = document.getElementById('pilihFilter').value;
+    document.getElementById('wadahPilihRuang').style.display = pilihan === 'ruang' ? 'block' : 'none';
+    document.getElementById('wadahPilihKelas').style.display = pilihan === 'kelas' ? 'block' : 'none';
+    document.querySelector('#wadahPilihRuang select').disabled = pilihan !== 'ruang';
+    document.querySelector('#wadahPilihKelas select').disabled = pilihan !== 'kelas';
+}
+</script>
 
 @if ($daftarRuang->isNotEmpty())
     <div class="p-4 bg-white rounded shadow mt-3">
